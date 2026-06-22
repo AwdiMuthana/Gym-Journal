@@ -12,7 +12,11 @@ export async function GET(request: Request) {
     if (!error) {
       return NextResponse.redirect(`${origin}${next}`)
     }
+    // Show actual error message instead of generic "auth"
+    return NextResponse.redirect(
+      `${origin}/?error=${encodeURIComponent(error.message)}`
+    )
   }
 
-  return NextResponse.redirect(`${origin}/?error=auth`)
+  return NextResponse.redirect(`${origin}/?error=no_code_in_url`)
 }
