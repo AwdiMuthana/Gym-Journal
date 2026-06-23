@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
-import { signIn, signInWithGoogle, signOut } from './actions'
+import { signIn, signInWithGoogle } from './actions'
+import { redirect } from 'next/navigation'
 
 export default async function Home({
   searchParams,
@@ -11,22 +12,7 @@ export default async function Home({
   const { data: { user } } = await supabase.auth.getUser()
 
   if (user) {
-    return (
-      <main className="flex min-h-screen flex-col items-center justify-center p-8 bg-black text-white">
-        <div className="w-full max-w-md space-y-6 text-center">
-          <h1 className="text-3xl font-semibold">You&apos;re signed in</h1>
-          <p className="text-gray-400">{user.email}</p>
-          <form action={signOut}>
-            <button
-              type="submit"
-              className="rounded-lg bg-white px-6 py-2 text-black font-medium"
-            >
-              Sign out
-            </button>
-          </form>
-        </div>
-      </main>
-    )
+    redirect('/plan')
   }
 
   return (
