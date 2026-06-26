@@ -69,3 +69,50 @@ export async function finishSession(formData: FormData) {
   revalidatePath('/plan')
   redirect(`/log/done?dayId=${dayId}&sessionId=${session.id}`)
 }
+
+export async function updateSetLog(formData: FormData) {
+  const setLogId = formData.get('setLogId') as string
+  const sessionId = formData.get('sessionId') as string
+  const weightRaw = (formData.get('weight') as string)?.trim() ?? ''
+  const repsRaw = (formData.get('reps') as string)?.trim() ?? ''
+  const notes = ((formData.get('notes') as string) ?? '').trim()
+
+  if (!setLogId || !sessionId) return
+
+  const weight = weightRaw === '' ? null : parseFloat(weightRaw)
+  const reps = repsRaw === '' ? null : parseInt(repsRaw)
+
+  const { supabase } = await requireUser()
+  const { error } = await supabase
+    .from('set_logs')
+    .update({ weight, reps, notes: notes || null })
+    .eq('id', setLogId)
+  if (error) throw error
+
+  revalidatePath('/history')
+  revalidatePath(`/history/${sessionId}`)
+  redirect(`/history/${sessionId}`)
+}
+
+export async function deleteSetLog(formData: FormData) {
+  const setLogId = formData.get('setLogId') as string
+  const sessionId = formData.get('sessionId') as string
+  if (!setLogId || !sessionId) return
+  const { supabase } = await requireUser()
+  const { error } = await supabase.from('set_logs').delete().eq('id', setLogId)
+  if (error) throw error
+  revalidatePath('/history')
+  revalidatePath(`/history/${sessionId}`)
+  redirect(`/history/${sessionId}`)
+}
+
+export async function deleteSession(formData: FormData) {
+  const sessionId = formData.get('sessionId') as string
+  if (!sessionId) return
+  const { supabase } = await requireUser()
+  // set_logs cascade-delete via FK
+  const { error } = await supabase.from('sessions').delete().eq('id', sessionId)
+  if (error) throw error
+  revalidatePath('/history')
+  redirect('/history')
+}

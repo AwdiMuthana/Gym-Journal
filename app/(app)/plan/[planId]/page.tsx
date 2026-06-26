@@ -1,7 +1,13 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getPlanWithDays } from '@/lib/db'
-import { createDay, deletePlan, deleteDay } from '@/app/plan-actions'
+import {
+  createDay,
+  deletePlan,
+  deleteDay,
+  updatePlan,
+  updateDay,
+} from '@/app/plan-actions'
 
 export default async function PlanDetailPage({
   params,
@@ -12,6 +18,8 @@ export default async function PlanDetailPage({
     newDay?: string
     confirmDelete?: string
     confirmDeleteDay?: string
+    renamePlan?: string
+    renameDay?: string
   }>
 }) {
   const { planId } = await params
@@ -22,6 +30,8 @@ export default async function PlanDetailPage({
   const newDayOpen = sp.newDay === '1'
   const confirmDeletePlan = sp.confirmDelete === '1'
   const confirmDeleteDayId = sp.confirmDeleteDay
+  const renamePlanOpen = sp.renamePlan === '1'
+  const renameDayId = sp.renameDay
 
   return (
     <div className="space-y-4">
@@ -31,17 +41,56 @@ export default async function PlanDetailPage({
         </Link>
       </div>
 
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold">{plan.name}</h2>
-        {!newDayOpen && (
-          <Link
-            href={`/plan/${plan.id}?newDay=1`}
-            className="rounded-md bg-[#5B5BD6] px-3 py-1.5 text-sm font-medium text-white"
-          >
-            + Day
-          </Link>
-        )}
-      </div>
+      {renamePlanOpen ? (
+        <form
+          action={updatePlan}
+          className="space-y-2 rounded-lg border border-gray-800 bg-gray-950 p-4"
+        >
+          <input type="hidden" name="planId" value={plan.id} />
+          <input
+            type="text"
+            name="name"
+            defaultValue={plan.name}
+            required
+            autoFocus
+            className="w-full rounded-md border border-gray-700 bg-transparent px-3 py-2 text-lg text-white"
+          />
+          <div className="flex gap-2">
+            <button
+              type="submit"
+              className="flex-1 rounded-md bg-[#5B5BD6] px-3 py-2 text-sm font-medium text-white"
+            >
+              Save
+            </button>
+            <Link
+              href={`/plan/${plan.id}`}
+              className="flex-1 rounded-md border border-gray-700 px-3 py-2 text-center text-sm text-gray-300"
+            >
+              Cancel
+            </Link>
+          </div>
+        </form>
+      ) : (
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0 flex-1">
+            <h2 className="text-2xl font-semibold">{plan.name}</h2>
+            <Link
+              href={`/plan/${plan.id}?renamePlan=1`}
+              className="mt-1 inline-block text-xs text-gray-500 hover:text-white"
+            >
+              Rename
+            </Link>
+          </div>
+          {!newDayOpen && (
+            <Link
+              href={`/plan/${plan.id}?newDay=1`}
+              className="shrink-0 rounded-md bg-[#5B5BD6] px-3 py-1.5 text-sm font-medium text-white"
+            >
+              + Session
+            </Link>
+          )}
+        </div>
+      )}
 
       {newDayOpen && (
         <form
@@ -52,17 +101,20 @@ export default async function PlanDetailPage({
           <input
             type="text"
             name="name"
-            placeholder='Day name (e.g. "Push" or "Legs")'
+            placeholder='Session name (e.g. "Push" or "Legs")'
             required
             autoFocus
             className="w-full rounded-md border border-gray-700 bg-transparent px-3 py-2 text-sm text-white placeholder:text-gray-500"
           />
+          <p className="text-xs text-gray-500">
+            A session is one workout within your plan, not a day of the week.
+          </p>
           <div className="flex gap-2">
             <button
               type="submit"
               className="flex-1 rounded-md bg-[#5B5BD6] px-3 py-2 text-sm font-medium text-white"
             >
-              Add day
+              Add session
             </button>
             <Link
               href={`/plan/${plan.id}`}
@@ -76,64 +128,111 @@ export default async function PlanDetailPage({
 
       {plan.days.length === 0 && !newDayOpen && (
         <div className="rounded-lg border border-gray-800 bg-gray-950 py-12 text-center">
-          <p className="text-gray-400">No days yet.</p>
+          <p className="text-gray-400">No sessions yet.</p>
           <p className="mt-1 text-xs text-gray-500">
-            Add a day like &quot;Push&quot; or &quot;Legs&quot;.
+            Add a session like &quot;Push&quot; or &quot;Legs&quot;.
           </p>
         </div>
       )}
 
       <div className="space-y-2">
-        {plan.days.map((day) => (
-          <div
-            key={day.id}
-            className="rounded-lg border border-gray-800 bg-gray-950 px-4 py-3"
-          >
-            <div className="flex items-center justify-between">
-              <Link href={`/plan/${plan.id}/days/${day.id}`} className="flex-1">
-                <p className="font-medium">{day.name}</p>
-                <p className="text-xs text-gray-500">
-                  {day.exercises.length} exercise
-                  {day.exercises.length === 1 ? '' : 's'}
-                </p>
-              </Link>
-              {confirmDeleteDayId === day.id ? (
-                <form action={deleteDay} className="flex items-center gap-2">
-                  <input type="hidden" name="dayId" value={day.id} />
-                  <input type="hidden" name="planId" value={plan.id} />
+        {plan.days.map((day) => {
+          const isRenaming = renameDayId === day.id
+          if (isRenaming) {
+            return (
+              <form
+                key={day.id}
+                action={updateDay}
+                className="space-y-2 rounded-lg border border-gray-800 bg-gray-950 p-3"
+              >
+                <input type="hidden" name="dayId" value={day.id} />
+                <input type="hidden" name="planId" value={plan.id} />
+                <input
+                  type="text"
+                  name="name"
+                  defaultValue={day.name}
+                  required
+                  autoFocus
+                  className="w-full rounded-md border border-gray-700 bg-transparent px-3 py-2 text-sm text-white"
+                />
+                <div className="flex gap-2">
                   <button
                     type="submit"
-                    className="rounded bg-red-600 px-2 py-1 text-xs text-white"
+                    className="flex-1 rounded-md bg-[#5B5BD6] px-3 py-2 text-sm font-medium text-white"
                   >
-                    Delete
+                    Save
                   </button>
                   <Link
                     href={`/plan/${plan.id}`}
-                    className="rounded border border-gray-700 px-2 py-1 text-xs"
+                    className="flex-1 rounded-md border border-gray-700 px-3 py-2 text-center text-sm text-gray-300"
                   >
                     Cancel
                   </Link>
-                </form>
-              ) : (
+                </div>
+              </form>
+            )
+          }
+          return (
+            <div
+              key={day.id}
+              className="rounded-lg border border-gray-800 bg-gray-950 px-4 py-3"
+            >
+              <div className="flex items-center justify-between">
                 <Link
-                  href={`/plan/${plan.id}?confirmDeleteDay=${day.id}`}
-                  className="ml-3 text-xs text-gray-500 hover:text-red-400"
+                  href={`/plan/${plan.id}/days/${day.id}`}
+                  className="flex-1"
                 >
-                  Delete
+                  <p className="font-medium">{day.name}</p>
+                  <p className="text-xs text-gray-500">
+                    {day.exercises.length} exercise
+                    {day.exercises.length === 1 ? '' : 's'}
+                  </p>
                 </Link>
-              )}
+                {confirmDeleteDayId === day.id ? (
+                  <form action={deleteDay} className="flex items-center gap-2">
+                    <input type="hidden" name="dayId" value={day.id} />
+                    <input type="hidden" name="planId" value={plan.id} />
+                    <button
+                      type="submit"
+                      className="rounded bg-red-600 px-2 py-1 text-xs text-white"
+                    >
+                      Delete
+                    </button>
+                    <Link
+                      href={`/plan/${plan.id}`}
+                      className="rounded border border-gray-700 px-2 py-1 text-xs"
+                    >
+                      Cancel
+                    </Link>
+                  </form>
+                ) : (
+                  <div className="ml-3 flex items-center gap-3">
+                    <Link
+                      href={`/plan/${plan.id}?renameDay=${day.id}`}
+                      className="text-xs text-gray-500 hover:text-white"
+                    >
+                      Rename
+                    </Link>
+                    <Link
+                      href={`/plan/${plan.id}?confirmDeleteDay=${day.id}`}
+                      className="text-xs text-gray-500 hover:text-red-400"
+                    >
+                      Delete
+                    </Link>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
 
-      {/* Delete plan section at bottom */}
       <div className="mt-12 border-t border-gray-800 pt-6">
         {confirmDeletePlan ? (
           <div className="space-y-3 rounded-lg border border-red-900/50 bg-red-950/30 p-4">
             <p className="text-sm">
-              Delete <strong>{plan.name}</strong> and all its days, exercises,
-              and workout history? This can&apos;t be undone.
+              Delete <strong>{plan.name}</strong> and all its sessions,
+              exercises, and workout history? This can&apos;t be undone.
             </p>
             <div className="flex gap-2">
               <form action={deletePlan} className="flex-1">

@@ -108,3 +108,61 @@ export async function deleteExercise(formData: FormData) {
   if (error) throw error
   revalidatePath(`/plan`)
 }
+
+// Edit (rename/update) actions
+
+export async function updatePlan(formData: FormData) {
+  const planId = formData.get('planId') as string
+  const name = (formData.get('name') as string)?.trim()
+  if (!planId || !name) return
+  const { supabase } = await requireUser()
+  const { error } = await supabase
+    .from('plans')
+    .update({ name })
+    .eq('id', planId)
+  if (error) throw error
+  revalidatePath('/plan')
+  revalidatePath(`/plan/${planId}`)
+  redirect(`/plan/${planId}`)
+}
+
+export async function updateDay(formData: FormData) {
+  const dayId = formData.get('dayId') as string
+  const planId = formData.get('planId') as string
+  const name = (formData.get('name') as string)?.trim()
+  if (!dayId || !planId || !name) return
+  const { supabase } = await requireUser()
+  const { error } = await supabase
+    .from('days')
+    .update({ name })
+    .eq('id', dayId)
+  if (error) throw error
+  revalidatePath(`/plan/${planId}`)
+  revalidatePath(`/plan/${planId}/days/${dayId}`)
+  redirect(`/plan/${planId}/days/${dayId}`)
+}
+
+export async function updateExercise(formData: FormData) {
+  const exerciseId = formData.get('exerciseId') as string
+  const planId = formData.get('planId') as string
+  const dayId = formData.get('dayId') as string
+  const name = (formData.get('name') as string)?.trim()
+  const targetSets = parseInt(formData.get('target_sets') as string) || 3
+  const targetReps = ((formData.get('target_reps') as string) || '8-10').trim()
+  if (!exerciseId || !name) return
+  const { supabase } = await requireUser()
+  const { error } = await supabase
+    .from('exercises')
+    .update({
+      name,
+      target_sets: targetSets,
+      target_reps: targetReps,
+    })
+    .eq('id', exerciseId)
+  if (error) throw error
+  revalidatePath('/plan')
+  if (planId && dayId) {
+    revalidatePath(`/plan/${planId}/days/${dayId}`)
+    redirect(`/plan/${planId}/days/${dayId}`)
+  }
+}
