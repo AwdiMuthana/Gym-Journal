@@ -241,3 +241,233 @@ export async function getSessionDetail(sessionId: string): Promise<SessionDetail
     })),
   }
 }
+
+// ---------------------- Analytics queries ----------------------
+
+export type OverviewStats = {
+  total_workouts: number
+  total_sets: number
+  current_streak_weeks: number
+}
+
+export async function getOverviewStats(): Promise<OverviewStats> {
+  const supabase = await createClient()
+
+  // Count workouts
+  const { count: workoutCount } = await supabase
+    .from('sessions')
+    .select('id', { count: 'exact', head: true })
+
+  // Count sets
+  const { count: setCount } = await supabase
+    .from('set_logs')
+    .select('id', { count: 'exact', head: true })
+
+  // Get session dates for streak calculation
+  const { data: sessions } = await supabase
+    .from('sessions')
+    .select('performed_at')
+    .order('performed_at', { ascending: false })
+
+  // Calculate current streak (consecutive weeks with at least one workout)
+  let streak = 0
+  if (sessions && sessions.length > 0) {
+    const weeks = new Set<string>()
+    for (const s of sessions) {
+      const d = new Date(s.performed_at)
+      // ISO week key: year-week
+      const year = d.getFullYear()
+      const startOfYear = new Date(year, 0, 1)
+      const dayOfYear = Math.floor(
+        (d.getTime() - startOfYear.getTime()) / 86400000
+      )
+      const week = Math.ceil((dayOfYear + startOfYear.getDay() + 1) / 7)
+      weeks.add(`${year}-${week}`)
+    }
+    // Walk backwards from this week
+    const today = new Date()
+    const startOfYear = new Date(today.getFullYear(), 0, 1)
+    const dayOfYear = Math.floor(
+      (today.getTime() - startOfYear.getTime()) / 86400000
+    )
+    let curYear = today.getFullYear()
+    let curWeek = Math.ceil((dayOfYear + startOfYear.getDay() + 1) / 7)
+    while (weeks.has(`${curYear}-${curWeek}`)) {
+      streak++
+      curWeek--
+      if (curWeek < 1) {
+        curYear--
+        curWeek = 52
+      }
+    }
+  }
+
+  return {
+    total_workouts: workoutCount ?? 0,
+    total_sets: setCount ?? 0,
+    current_streak_weeks: streak,
+  }
+}
+
+export type WeeklyFrequencyPoint = {
+  week_label: string
+  workout_count: number
+}
+
+export async function getWeeklyFrequency(weeks = 8): Promise<WeeklyFrequencyPoint[]> {
+  const supabase = await createClient()
+  const cutoff = new Date()
+  cutoff.setDate(cutoff.getDate() - weeks * 7)
+
+  const { data, error } = await supabase
+    .from('sessions')
+    .select('performed_at')
+    .gte('performed_at', cutoff.toISOString())
+    .order('performed_at', { ascending: true })
+  if (error) throw error
+
+  // Bucket into weeks
+  const buckets: WeeklyFrequencyPoint[] = []
+  for (let i = weeks - 1; i >= 0; i--) {
+    const weekStart = new Date()
+    weekStart.setDate(weekStart.getDate() - i * 7)
+    const label =
+      i === 0
+        ? 'This wk'
+        : `${weekStart.toLocaleDateString(undefined, { month: 'numeric', day: 'numeric' })}`
+    buckets.push({ week_label: label, workout_count: 0 })
+  }
+
+  for (const s of data ?? []) {
+    const d = new Date(s.performed_at)
+    const now = new Date()
+    const diffDays = Math.floor((now.getTime() - d.getTime()) / 86400000)
+    const weeksAgo = Math.floor(diffDays / 7)
+    const idx = weeks - 1 - weeksAgo
+    if (idx >= 0 && idx < buckets.length) {
+      buckets[idx].workout_count++
+    }
+  }
+
+  return buckets
+}
+
+export type ExerciseOption = {
+  exercise_id: string
+  name: string
+  session_count: number
+}
+
+export async function getLoggedExercises(): Promise<ExerciseOption[]> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('set_logs')
+    .select('exercise_id, exercise_name')
+    .not('exercise_id', 'is', null)
+  if (error) throw error
+
+  const map = new Map<string, { name: string; count: number }>()
+  type Row = { exercise_id: string; exercise_name: string }
+  for (const row of ((data ?? []) as Row[])) {
+    if (!row.exercise_id) continue
+    const existing = map.get(row.exercise_id)
+    if (existing) {
+      existing.count++
+    } else {
+      map.set(row.exercise_id, { name: row.exercise_name, count: 1 })
+    }
+  }
+  return [...map.entries()]
+    .map(([id, v]) => ({ exercise_id: id, name: v.name, session_count: v.count }))
+    .sort((a, b) => b.session_count - a.session_count)
+}
+// 1RM formula (Epley)
+function estimate1RM(weight: number, reps: number): number {
+  if (reps <= 1) return weight
+  return weight * (1 + reps / 30)
+}
+
+export type ProgressPoint = {
+  date: string
+  performed_at_label: string
+  top_weight: number | null
+  est_1rm: number | null
+  volume: number
+}
+
+export async function getExerciseProgress(exerciseId: string): Promise<ProgressPoint[]> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('set_logs')
+    .select('weight, reps, sessions!inner(id, performed_at)')
+    .eq('exercise_id', exerciseId)
+  if (error) throw error
+
+  type Row = { weight: number | null; reps: number | null; sessions: { id: string; performed_at: string } | null }
+  const rows = (data ?? []) as unknown as Row[]
+
+  const bySession = new Map<string, { performed_at: string; sets: { weight: number; reps: number }[] }>()
+  for (const row of rows) {
+    if (!row.sessions) continue
+    if (row.weight === null || row.reps === null) continue
+    const sid = row.sessions.id
+    if (!bySession.has(sid)) {
+      bySession.set(sid, { performed_at: row.sessions.performed_at, sets: [] })
+    }
+    bySession.get(sid)!.sets.push({ weight: row.weight, reps: row.reps })
+  }
+
+  const points: ProgressPoint[] = [...bySession.values()].map((s) => {
+    const topWeight = Math.max(...s.sets.map((x) => x.weight))
+    const est = Math.max(...s.sets.map((x) => estimate1RM(x.weight, x.reps)))
+    const volume = s.sets.reduce((sum, x) => sum + x.weight * x.reps, 0)
+    const d = new Date(s.performed_at)
+    return {
+      date: s.performed_at,
+      performed_at_label: d.toLocaleDateString(undefined, { month: 'numeric', day: 'numeric' }),
+      top_weight: topWeight,
+      est_1rm: Math.round(est * 10) / 10,
+      volume,
+    }
+  }).sort((a, b) => a.date.localeCompare(b.date))
+
+  return points
+}
+
+export type PRItem = {
+  exercise_id: string
+  exercise_name: string
+  best_weight: number
+  best_reps: number
+  performed_at: string
+}
+
+export async function getPRs(): Promise<PRItem[]> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('set_logs')
+    .select('exercise_id, exercise_name, weight, reps, sessions!inner(performed_at)')
+    .not('exercise_id', 'is', null)
+    .not('weight', 'is', null)
+  if (error) throw error
+
+  type Row = { exercise_id: string; exercise_name: string; weight: number; reps: number | null; sessions: { performed_at: string } | null }
+  const rows = (data ?? []) as unknown as Row[]
+
+  const bestPerExercise = new Map<string, PRItem>()
+  for (const row of rows) {
+    if (!row.exercise_id || !row.sessions) continue
+    const existing = bestPerExercise.get(row.exercise_id)
+    if (!existing || row.weight > existing.best_weight) {
+      bestPerExercise.set(row.exercise_id, {
+        exercise_id: row.exercise_id,
+        exercise_name: row.exercise_name,
+        best_weight: row.weight,
+        best_reps: row.reps ?? 0,
+        performed_at: row.sessions.performed_at,
+      })
+    }
+  }
+
+  return [...bestPerExercise.values()].sort((a, b) => b.best_weight - a.best_weight)
+}
