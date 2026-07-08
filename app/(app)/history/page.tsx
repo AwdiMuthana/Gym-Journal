@@ -1,24 +1,6 @@
 import Link from 'next/link'
 import { getSessionsList } from '@/lib/db'
-
-function fmtFullDate(iso: string) {
-  const d = new Date(iso)
-  const now = new Date()
-  const diffMs = now.getTime() - d.getTime()
-  const diffDays = Math.floor(diffMs / 86400000)
-
-  const time = d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })
-
-  if (diffDays === 0) return `Today · ${time}`
-  if (diffDays === 1) return `Yesterday · ${time}`
-  if (diffDays < 7)
-    return `${d.toLocaleDateString(undefined, { weekday: 'long' })} · ${time}`
-  return `${d.toLocaleDateString(undefined, {
-    month: 'short',
-    day: 'numeric',
-    year: d.getFullYear() === now.getFullYear() ? undefined : 'numeric',
-  })} · ${time}`
-}
+import LocalDateTime from '../local-date-time'
 
 export default async function HistoryPage() {
   const sessions = await getSessionsList()
@@ -54,7 +36,7 @@ export default async function HistoryPage() {
               <div className="min-w-0 flex-1">
                 <p className="font-medium">{s.day_name ?? 'Workout'}</p>
                 <p className="mt-0.5 text-xs text-gray-500">
-                  {fmtFullDate(s.performed_at)}
+                  <LocalDateTime iso={s.performed_at} variant="relative" />
                   {s.plan_name && <> · {s.plan_name}</>}
                 </p>
               </div>

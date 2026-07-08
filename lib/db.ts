@@ -310,7 +310,8 @@ export async function getOverviewStats(): Promise<OverviewStats> {
 }
 
 export type WeeklyFrequencyPoint = {
-  week_label: string
+  week_start_iso: string
+  is_current_week: boolean
   workout_count: number
 }
 
@@ -326,16 +327,15 @@ export async function getWeeklyFrequency(weeks = 8): Promise<WeeklyFrequencyPoin
     .order('performed_at', { ascending: true })
   if (error) throw error
 
-  // Bucket into weeks
   const buckets: WeeklyFrequencyPoint[] = []
   for (let i = weeks - 1; i >= 0; i--) {
     const weekStart = new Date()
     weekStart.setDate(weekStart.getDate() - i * 7)
-    const label =
-      i === 0
-        ? 'This wk'
-        : `${weekStart.toLocaleDateString(undefined, { month: 'numeric', day: 'numeric' })}`
-    buckets.push({ week_label: label, workout_count: 0 })
+    buckets.push({
+      week_start_iso: weekStart.toISOString(),
+      is_current_week: i === 0,
+      workout_count: 0,
+    })
   }
 
   for (const s of data ?? []) {
@@ -351,7 +351,6 @@ export async function getWeeklyFrequency(weeks = 8): Promise<WeeklyFrequencyPoin
 
   return buckets
 }
-
 export type ExerciseOption = {
   exercise_id: string
   name: string

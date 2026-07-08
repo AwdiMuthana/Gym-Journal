@@ -1,26 +1,8 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getSessionDetail } from '@/lib/db'
-import {
-  updateSetLog,
-  deleteSetLog,
-  deleteSession,
-} from '@/app/log-actions'
-
-function fmtFullDate(iso: string) {
-  const d = new Date(iso)
-  const date = d.toLocaleDateString(undefined, {
-    weekday: 'long',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
-  const time = d.toLocaleTimeString(undefined, {
-    hour: 'numeric',
-    minute: '2-digit',
-  })
-  return `${date} · ${time}`
-}
+import { updateSetLog, deleteSetLog, deleteSession } from '@/app/log-actions'
+import LocalDateTime from '../../local-date-time'
 
 export default async function HistorySessionPage({
   params,
@@ -55,7 +37,7 @@ export default async function HistorySessionPage({
           {session.day_name ?? 'Workout'}
         </h2>
         <p className="mt-1 text-xs text-gray-500">
-          {fmtFullDate(session.performed_at)}
+          <LocalDateTime iso={session.performed_at} variant="full" />
           {session.plan_name && <> · {session.plan_name}</>}
         </p>
       </div>
@@ -84,11 +66,7 @@ export default async function HistorySessionPage({
                         className="space-y-2 rounded-md border border-gray-800 bg-black p-2.5"
                       >
                         <input type="hidden" name="setLogId" value={s.id} />
-                        <input
-                          type="hidden"
-                          name="sessionId"
-                          value={session.id}
-                        />
+                        <input type="hidden" name="sessionId" value={session.id} />
                         <div className="flex items-center gap-2">
                           <span className="w-10 shrink-0 text-xs font-medium text-gray-500">
                             Set {s.set_number}
@@ -157,16 +135,8 @@ export default async function HistorySessionPage({
                           </Link>
                           {isConfirmingDelete ? (
                             <form action={deleteSetLog} className="flex gap-1">
-                              <input
-                                type="hidden"
-                                name="setLogId"
-                                value={s.id}
-                              />
-                              <input
-                                type="hidden"
-                                name="sessionId"
-                                value={session.id}
-                              />
+                              <input type="hidden" name="setLogId" value={s.id} />
+                              <input type="hidden" name="sessionId" value={session.id} />
                               <button
                                 type="submit"
                                 className="rounded bg-red-600 px-2 py-0.5 text-xs text-white"

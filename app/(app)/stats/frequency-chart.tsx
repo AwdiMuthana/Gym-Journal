@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import {
   BarChart,
   Bar,
@@ -10,16 +11,42 @@ import {
   CartesianGrid,
 } from 'recharts'
 
-type Point = { week_label: string; workout_count: number }
+type Point = {
+  week_start_iso: string
+  is_current_week: boolean
+  workout_count: number
+}
+
+type ChartPoint = Point & { label: string }
 
 export default function FrequencyChart({ data }: { data: Point[] }) {
+  const [chartData, setChartData] = useState<ChartPoint[] | null>(null)
+
+  useEffect(() => {
+    setChartData(
+      data.map((p) => ({
+        ...p,
+        label: p.is_current_week
+          ? 'This wk'
+          : new Date(p.week_start_iso).toLocaleDateString(undefined, {
+              month: 'numeric',
+              day: 'numeric',
+            }),
+      }))
+    )
+  }, [data])
+
+  if (!chartData) {
+    return <div style={{ width: '100%', height: 180 }} />
+  }
+
   return (
     <div style={{ width: '100%', height: 180 }}>
       <ResponsiveContainer>
-        <BarChart data={data} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+        <BarChart data={chartData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
           <CartesianGrid strokeDasharray="2 3" stroke="#1f2937" vertical={false} />
           <XAxis
-            dataKey="week_label"
+            dataKey="label"
             tick={{ fill: '#6b7280', fontSize: 10 }}
             axisLine={{ stroke: '#1f2937' }}
             tickLine={false}
