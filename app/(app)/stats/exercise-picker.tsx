@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 
-type Option = { exercise_id: string; name: string; session_count: number }
+type Option = { key: string; name: string; session_count: number }
 
 export default function ExercisePicker({
   options,
@@ -30,7 +30,7 @@ export default function ExercisePicker({
     >
       <option value="">Select an exercise…</option>
       {options.map((o) => (
-        <option key={o.exercise_id} value={o.exercise_id}>
+        <option key={o.key} value={o.key}>
           {o.name} ({o.session_count} session{o.session_count === 1 ? '' : 's'})
         </option>
       ))}

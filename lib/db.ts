@@ -352,34 +352,41 @@ export async function getWeeklyFrequency(weeks = 8): Promise<WeeklyFrequencyPoin
   return buckets
 }
 export type ExerciseOption = {
-  exercise_id: string
+  key: string
   name: string
   session_count: number
+}
+
+function normalizeExerciseName(name: string): string {
+  return name.trim().toLowerCase().replace(/\s+/g, ' ')
 }
 
 export async function getLoggedExercises(): Promise<ExerciseOption[]> {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('set_logs')
-    .select('exercise_id, exercise_name')
-    .not('exercise_id', 'is', null)
+    .select('exercise_name, session_id')
+    .order('created_at', { ascending: false })
   if (error) throw error
 
-  const map = new Map<string, { name: string; count: number }>()
-  type Row = { exercise_id: string; exercise_name: string }
-  for (const row of ((data ?? []) as Row[])) {
-    if (!row.exercise_id) continue
-    const existing = map.get(row.exercise_id)
-    if (existing) {
-      existing.count++
-    } else {
-      map.set(row.exercise_id, { name: row.exercise_name, count: 1 })
+  type Row = { exercise_name: string; session_id: string }
+  const rows = (data ?? []) as Row[]
+
+  const groups = new Map<string, { name: string; sessionIds: Set<string> }>()
+  for (const row of rows) {
+    const key = normalizeExerciseName(row.exercise_name)
+    if (!key) continue
+    if (!groups.has(key)) {
+      groups.set(key, { name: row.exercise_name.trim(), sessionIds: new Set() })
     }
+    groups.get(key)!.sessionIds.add(row.session_id)
   }
-  return [...map.entries()]
-    .map(([id, v]) => ({ exercise_id: id, name: v.name, session_count: v.count }))
+
+  return [...groups.entries()]
+    .map(([key, v]) => ({ key, name: v.name, session_count: v.sessionIds.size }))
     .sort((a, b) => b.session_count - a.session_count)
 }
+
 // 1RM formula (Epley)
 function estimate1RM(weight: number, reps: number): number {
   if (reps <= 1) return weight
@@ -394,21 +401,21 @@ export type ProgressPoint = {
   volume: number
 }
 
-export async function getExerciseProgress(exerciseId: string): Promise<ProgressPoint[]> {
+export async function getExerciseProgress(exerciseKey: string): Promise<ProgressPoint[]> {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('set_logs')
-    .select('weight, reps, sessions!inner(id, performed_at)')
-    .eq('exercise_id', exerciseId)
+    .select('weight, reps, exercise_name, sessions!inner(id, performed_at)')
   if (error) throw error
 
-  type Row = { weight: number | null; reps: number | null; sessions: { id: string; performed_at: string } | null }
+  type Row = { weight: number | null; reps: number | null; exercise_name: string; sessions: { id: string; performed_at: string } | null }
   const rows = (data ?? []) as unknown as Row[]
 
   const bySession = new Map<string, { performed_at: string; sets: { weight: number; reps: number }[] }>()
   for (const row of rows) {
     if (!row.sessions) continue
     if (row.weight === null || row.reps === null) continue
+    if (normalizeExerciseName(row.exercise_name) !== exerciseKey) continue
     const sid = row.sessions.id
     if (!bySession.has(sid)) {
       bySession.set(sid, { performed_at: row.sessions.performed_at, sets: [] })
@@ -434,7 +441,7 @@ export async function getExerciseProgress(exerciseId: string): Promise<ProgressP
 }
 
 export type PRItem = {
-  exercise_id: string
+  key: string
   exercise_name: string
   best_weight: number
   best_reps: number
@@ -445,22 +452,23 @@ export async function getPRs(): Promise<PRItem[]> {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('set_logs')
-    .select('exercise_id, exercise_name, weight, reps, sessions!inner(performed_at)')
-    .not('exercise_id', 'is', null)
+    .select('exercise_name, weight, reps, sessions!inner(performed_at)')
     .not('weight', 'is', null)
   if (error) throw error
 
-  type Row = { exercise_id: string; exercise_name: string; weight: number; reps: number | null; sessions: { performed_at: string } | null }
+  type Row = { exercise_name: string; weight: number; reps: number | null; sessions: { performed_at: string } | null }
   const rows = (data ?? []) as unknown as Row[]
 
   const bestPerExercise = new Map<string, PRItem>()
   for (const row of rows) {
-    if (!row.exercise_id || !row.sessions) continue
-    const existing = bestPerExercise.get(row.exercise_id)
+    if (!row.sessions) continue
+    const key = normalizeExerciseName(row.exercise_name)
+    if (!key) continue
+    const existing = bestPerExercise.get(key)
     if (!existing || row.weight > existing.best_weight) {
-      bestPerExercise.set(row.exercise_id, {
-        exercise_id: row.exercise_id,
-        exercise_name: row.exercise_name,
+      bestPerExercise.set(key, {
+        key,
+        exercise_name: row.exercise_name.trim(),
         best_weight: row.weight,
         best_reps: row.reps ?? 0,
         performed_at: row.sessions.performed_at,

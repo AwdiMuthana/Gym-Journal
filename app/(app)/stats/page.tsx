@@ -8,16 +8,7 @@ import {
 import FrequencyChart from './frequency-chart'
 import ProgressChart from './progress-chart'
 import ExercisePicker from './exercise-picker'
-
-function fmtDate(iso: string) {
-  const d = new Date(iso)
-  const now = new Date()
-  return d.toLocaleDateString(undefined, {
-    month: 'short',
-    day: 'numeric',
-    year: d.getFullYear() === now.getFullYear() ? undefined : 'numeric',
-  })
-}
+import LocalDateTime from '../local-date-time'
 
 export default async function StatsPage({
   searchParams,
@@ -45,21 +36,18 @@ export default async function StatsPage({
     )
   }
 
-  // Default to the most-logged exercise if none selected and any exist
-  const effectiveExerciseId =
-    selectedExercise ?? exercises[0]?.exercise_id ?? undefined
-  const progress = effectiveExerciseId
-    ? await getExerciseProgress(effectiveExerciseId)
+  const effectiveExerciseKey = selectedExercise ?? exercises[0]?.key ?? undefined
+  const progress = effectiveExerciseKey
+    ? await getExerciseProgress(effectiveExerciseKey)
     : []
   const selectedExerciseName = exercises.find(
-    (e) => e.exercise_id === effectiveExerciseId
+    (e) => e.key === effectiveExerciseKey
   )?.name
 
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-semibold">Your stats</h2>
 
-      {/* Overview */}
       <div className="grid grid-cols-3 gap-2">
         <div className="rounded-lg border border-gray-800 bg-gray-950 px-3 py-3 text-center">
           <p className="text-2xl font-semibold">{overview.total_workouts}</p>
@@ -83,7 +71,6 @@ export default async function StatsPage({
         </div>
       </div>
 
-      {/* Per-exercise progress */}
       {exercises.length > 0 && (
         <div className="rounded-lg border border-gray-800 bg-gray-950 p-4">
           <div className="mb-3">
@@ -93,16 +80,12 @@ export default async function StatsPage({
             </p>
           </div>
           <div className="mb-3">
-            <ExercisePicker
-              options={exercises}
-              selected={effectiveExerciseId}
-            />
+            <ExercisePicker options={exercises} selected={effectiveExerciseKey} />
           </div>
           <ProgressChart data={progress} />
         </div>
       )}
 
-      {/* PRs */}
       {prs.length > 0 && (
         <div className="rounded-lg border border-gray-800 bg-gray-950 p-4">
           <div className="mb-3">
@@ -114,7 +97,7 @@ export default async function StatsPage({
           <div className="space-y-2">
             {prs.map((pr) => (
               <div
-                key={pr.exercise_id}
+                key={pr.key}
                 className="flex items-center justify-between rounded-md border border-gray-800 bg-black px-3 py-2"
               >
                 <div className="min-w-0 flex-1">
@@ -122,7 +105,7 @@ export default async function StatsPage({
                     {pr.exercise_name}
                   </p>
                   <p className="text-xs text-gray-500">
-                    {fmtDate(pr.performed_at)}
+                    <LocalDateTime iso={pr.performed_at} variant="short" />
                   </p>
                 </div>
                 <p className="ml-3 text-sm font-semibold tabular-nums">
@@ -134,7 +117,6 @@ export default async function StatsPage({
         </div>
       )}
 
-      {/* Weekly frequency */}
       <div className="rounded-lg border border-gray-800 bg-gray-950 p-4">
         <div className="mb-3">
           <p className="text-sm font-medium">Weekly frequency</p>
