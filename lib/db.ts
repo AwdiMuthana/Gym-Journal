@@ -478,3 +478,36 @@ export async function getPRs(): Promise<PRItem[]> {
 
   return [...bestPerExercise.values()].sort((a, b) => b.best_weight - a.best_weight)
 }
+
+export async function getLastSetsForExerciseName(name: string): Promise<{ performed_at: string; sets: { weight: number | null; reps: number | null; notes: string | null }[] } | null> {
+  const supabase = await createClient()
+  const trimmed = name.trim()
+  if (!trimmed) return null
+  const key = trimmed.toLowerCase().replace(/\s+/g, ' ')
+
+  const { data, error } = await supabase
+    .from('set_logs')
+    .select('weight, reps, notes, set_number, exercise_name, sessions!inner(performed_at)')
+    .ilike('exercise_name', trimmed)
+    .order('set_number', { ascending: true })
+  if (error || !data) return null
+
+  type Row = { weight: number | null; reps: number | null; notes: string | null; set_number: number; exercise_name: string; sessions: { performed_at: string } | null }
+  const rows = data as unknown as Row[]
+  const matching = rows.filter((r) => r.exercise_name.trim().toLowerCase().replace(/\s+/g, ' ') === key)
+  if (matching.length === 0) return null
+
+  const sessions = new Map<string, Row[]>()
+  for (const row of matching) {
+    const sKey = row.sessions?.performed_at ?? ''
+    if (!sessions.has(sKey)) sessions.set(sKey, [])
+    sessions.get(sKey)!.push(row)
+  }
+  const sorted = [...sessions.entries()].sort((a, b) => b[0].localeCompare(a[0]))
+  if (sorted.length === 0) return null
+  const [performed_at, rowsForSession] = sorted[0]
+  return {
+    performed_at,
+    sets: rowsForSession.map((r) => ({ weight: r.weight, reps: r.reps, notes: r.notes })),
+  }
+}

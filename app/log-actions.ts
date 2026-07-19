@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { getLastSetsForExerciseName } from '@/lib/db'
 
 async function requireUser() {
   const supabase = await createClient()
@@ -12,12 +13,16 @@ async function requireUser() {
 }
 
 type LoggedSet = {
-  exerciseId: string
+  exerciseId: string | null
   exerciseName: string
   setNumber: number
   weight: number | null
   reps: number | null
   notes: string | null
+}
+
+export async function lookupLastByName(name: string) {
+  return await getLastSetsForExerciseName(name)
 }
 
 export async function finishSession(formData: FormData) {
@@ -34,7 +39,6 @@ export async function finishSession(formData: FormData) {
     redirect('/log')
   }
 
-  // Filter out empty sets (no weight AND no reps)
   sets = sets.filter((s) => s.weight !== null || s.reps !== null)
 
   if (sets.length === 0) {
@@ -43,7 +47,6 @@ export async function finishSession(formData: FormData) {
 
   const { supabase, user } = await requireUser()
 
-  // Create the session
   const { data: session, error: sessionErr } = await supabase
     .from('sessions')
     .insert({ user_id: user.id, day_id: dayId, performed_at: new Date().toISOString() })
@@ -51,7 +54,6 @@ export async function finishSession(formData: FormData) {
     .single()
   if (sessionErr) throw sessionErr
 
-  // Insert set_logs
   const setLogRows = sets.map((s) => ({
     session_id: session.id,
     exercise_id: s.exerciseId,
@@ -110,7 +112,6 @@ export async function deleteSession(formData: FormData) {
   const sessionId = formData.get('sessionId') as string
   if (!sessionId) return
   const { supabase } = await requireUser()
-  // set_logs cascade-delete via FK
   const { error } = await supabase.from('sessions').delete().eq('id', sessionId)
   if (error) throw error
   revalidatePath('/history')
