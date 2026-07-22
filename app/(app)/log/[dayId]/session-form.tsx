@@ -87,6 +87,7 @@ export default function SessionForm({
   const [swapKey, setSwapKey] = useState<string | null>(null)
   const [swapName, setSwapName] = useState('')
   const [swapBusy, setSwapBusy] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Restore in-progress workout from localStorage on mount
   useEffect(() => {
@@ -445,7 +446,7 @@ export default function SessionForm({
               )}
             </div>
           )
-        })}
+        })}      
       </div>
 
       {addOpen ? (
@@ -495,16 +496,24 @@ export default function SessionForm({
         </button>
       )}
 
-      {slots.length > 0 && (
-        <form action={finishSession} className="pt-2">
+{slots.length > 0 && (
+        <form
+          action={finishSession}
+          onSubmit={() => setIsSubmitting(true)}
+          className="pt-2"
+        >
           <input type="hidden" name="dayId" value={day.id} />
           <input type="hidden" name="sets" value={JSON.stringify(payload)} />
           <button
             type="submit"
-            disabled={totalSetsLogged === 0}
+            disabled={totalSetsLogged === 0 || isSubmitting}
             className="w-full rounded-md bg-[#5B5BD6] px-4 py-3 text-base font-medium text-white disabled:cursor-not-allowed disabled:opacity-40"
           >
-            {totalSetsLogged === 0 ? 'Log at least one set' : `Finish workout (${totalSetsLogged} sets)`}
+            {isSubmitting
+              ? 'Saving…'
+              : totalSetsLogged === 0
+              ? 'Log at least one set'
+              : `Finish workout (${totalSetsLogged} sets)`}
           </button>
         </form>
       )}
