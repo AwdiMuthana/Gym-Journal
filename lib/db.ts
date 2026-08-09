@@ -458,11 +458,12 @@ export async function getPRs(): Promise<PRItem[]> {
   if (error) throw error
 
   type Row = { exercise_name: string; weight: number; reps: number | null; sessions: { performed_at: string } | null }
-  const rows = (data ?? []) as unknown as Row[]
+  const rows = ((data ?? []) as unknown as Row[])
+    .filter((r) => r.sessions)
+    .sort((a, b) => a.sessions!.performed_at.localeCompare(b.sessions!.performed_at))
 
   const bestPerExercise = new Map<string, PRItem>()
   for (const row of rows) {
-    if (!row.sessions) continue
     const key = normalizeExerciseName(row.exercise_name)
     if (!key) continue
     const existing = bestPerExercise.get(key)
@@ -472,12 +473,56 @@ export async function getPRs(): Promise<PRItem[]> {
         exercise_name: row.exercise_name.trim(),
         best_weight: row.weight,
         best_reps: row.reps ?? 0,
-        performed_at: row.sessions.performed_at,
+        performed_at: row.sessions!.performed_at,
       })
     }
   }
 
   return [...bestPerExercise.values()].sort((a, b) => b.best_weight - a.best_weight)
+}
+
+export async function getSessionPRs(sessionId: string): Promise<Set<string>> {
+  const supabase = await createClient()
+
+  const { data: sessionRow, error: sessionErr } = await supabase
+    .from('sessions')
+    .select('performed_at')
+    .eq('id', sessionId)
+    .single()
+  if (sessionErr || !sessionRow) return new Set()
+
+  const { data, error } = await supabase
+    .from('set_logs')
+    .select('exercise_name, weight, session_id, sessions!inner(performed_at)')
+    .not('weight', 'is', null)
+  if (error || !data) return new Set()
+
+  type Row = { exercise_name: string; weight: number; session_id: string; sessions: { performed_at: string } | null }
+  const rows = data as unknown as Row[]
+
+  const thisSessionMax = new Map<string, number>()
+  const priorMax = new Map<string, number>()
+
+  for (const row of rows) {
+    if (!row.sessions) continue
+    const key = normalizeExerciseName(row.exercise_name)
+    if (!key) continue
+
+    if (row.session_id === sessionId) {
+      thisSessionMax.set(key, Math.max(thisSessionMax.get(key) ?? 0, row.weight))
+    } else if (row.sessions.performed_at < sessionRow.performed_at) {
+      priorMax.set(key, Math.max(priorMax.get(key) ?? 0, row.weight))
+    }
+  }
+
+  const prExercises = new Set<string>()
+  for (const [key, weight] of thisSessionMax.entries()) {
+    const prior = priorMax.get(key) ?? 0
+    if (weight > prior) {
+      prExercises.add(key)
+    }
+  }
+  return prExercises
 }
 
 export async function getLastSetsForExerciseName(name: string): Promise<{ performed_at: string; sets: { weight: number | null; reps: number | null; notes: string | null }[] } | null> {

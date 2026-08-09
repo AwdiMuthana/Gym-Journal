@@ -2,7 +2,7 @@ import Link from 'next/link'
 import {
   getMostRecentSessionId,
   getSessionDetail,
-  getPRs,
+  getSessionPRs,
   normalizeExerciseName,
 } from '@/lib/db'
 import LocalDateTime from '../../local-date-time'
@@ -38,7 +38,10 @@ export default async function LastWorkoutPage({
     )
   }
 
-  const [session, prs] = await Promise.all([getSessionDetail(sessionId), getPRs()])
+  const [session, prExerciseKeys] = await Promise.all([
+    getSessionDetail(sessionId),
+    getSessionPRs(sessionId),
+  ])
 
   if (!session) {
     return (
@@ -58,8 +61,6 @@ export default async function LastWorkoutPage({
     (sum, ex) => sum + ex.sets.reduce((s, set) => s + (set.weight ?? 0) * (set.reps ?? 0), 0),
     0
   )
-
-  const prByName = new Map(prs.map((pr) => [normalizeExerciseName(pr.exercise_name), pr]))
 
   return (
     <div className="space-y-4">
@@ -91,9 +92,7 @@ export default async function LastWorkoutPage({
       <div className="space-y-3">
         {session.exercises.map((ex) => {
           const key = normalizeExerciseName(ex.exercise_name)
-          const pr = prByName.get(key)
-          const topWeightThisSession = Math.max(...ex.sets.map((s) => s.weight ?? 0))
-          const isPR = pr && pr.best_weight === topWeightThisSession && pr.performed_at === session.performed_at
+          const isPR = prExerciseKeys.has(key)
 
           return (
             <div key={ex.exercise_id ?? ex.exercise_name} className="rounded-lg border border-gray-800 bg-gray-950 p-3">
