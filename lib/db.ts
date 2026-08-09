@@ -357,7 +357,8 @@ export type ExerciseOption = {
   session_count: number
 }
 
-function normalizeExerciseName(name: string): string {
+
+export function normalizeExerciseName(name: string): string {
   return name.trim().toLowerCase().replace(/\s+/g, ' ')
 }
 
@@ -510,4 +511,15 @@ export async function getLastSetsForExerciseName(name: string): Promise<{ perfor
     performed_at,
     sets: rowsForSession.map((r) => ({ weight: r.weight, reps: r.reps, notes: r.notes })),
   }
+}
+export async function getMostRecentSessionId(): Promise<string | null> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('sessions')
+    .select('id')
+    .order('performed_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+  if (error || !data) return null
+  return data.id
 }

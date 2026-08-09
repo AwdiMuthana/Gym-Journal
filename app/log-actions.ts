@@ -69,7 +69,7 @@ export async function finishSession(formData: FormData) {
 
   revalidatePath('/log')
   revalidatePath('/plan')
-  redirect(`/log/done?dayId=${dayId}&sessionId=${session.id}`)
+  redirect(`/stats/last-workout?dayId=${dayId}`)
 }
 
 export async function updateSetLog(formData: FormData) {

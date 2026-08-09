@@ -5,6 +5,7 @@ import {
   getExerciseProgress,
   getPRs,
 } from '@/lib/db'
+import Link from 'next/link'
 import FrequencyChart from './frequency-chart'
 import ProgressChart from './progress-chart'
 import ExercisePicker from './exercise-picker'
@@ -46,7 +47,12 @@ export default async function StatsPage({
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold">Your stats</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-semibold">Your stats</h2>
+        <Link href="/stats/last-workout" className="text-xs text-[#5B5BD6] hover:underline">
+          Last workout →
+        </Link>
+      </div>
 
       <div className="grid grid-cols-3 gap-2">
         <div className="rounded-lg border border-gray-800 bg-gray-950 px-3 py-3 text-center">
