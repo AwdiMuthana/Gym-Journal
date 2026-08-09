@@ -17,7 +17,25 @@ export async function signIn(formData: FormData) {
   if (error) {
     redirect('/?error=' + encodeURIComponent(error.message))
   }
-  redirect('/?sent=true')
+  redirect('/?codeSent=1&email=' + encodeURIComponent(email))
+}
+
+export async function verifyEmailCode(formData: FormData) {
+  const email = formData.get('email') as string
+  const token = ((formData.get('token') as string) ?? '').trim()
+
+  if (!email || !token) {
+    redirect('/?error=' + encodeURIComponent('Missing email or code'))
+  }
+
+  const supabase = await createClient()
+  const { error } = await supabase.auth.verifyOtp({ email, token, type: 'email' })
+
+  if (error) {
+    redirect('/?codeSent=1&email=' + encodeURIComponent(email) + '&error=' + encodeURIComponent(error.message))
+  }
+
+  redirect('/')
 }
 
 export async function signInWithGoogle() {
