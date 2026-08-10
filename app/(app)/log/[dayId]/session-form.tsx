@@ -49,8 +49,8 @@ type SavedSlot = {
 type SavedState = {
   slots: SavedSlot[]
   startedAt: number
+  activeKey: string | null
   restUntil: number | null
-  restIsFinish: boolean
 }
 
 const storageKey = (dayId: string) => `gym-journal:session:${dayId}`
@@ -79,6 +79,15 @@ function computePrefill(slot: ExerciseSlot): { weight: string; reps: string } {
   return { weight: '', reps: '' }
 }
 
+// Shrinks the stepper numeral as the value gets longer so it never gets cropped.
+function stepperSizeClass(value: string): string {
+  const len = value.length
+  if (len <= 3) return 'text-4xl'
+  if (len === 4) return 'text-3xl'
+  if (len === 5) return 'text-2xl'
+  return 'text-xl'
+}
+
 export default function SessionForm({
   day,
   exercisesWithLast,
@@ -103,9 +112,9 @@ export default function SessionForm({
   const [restored, setRestored] = useState(false)
   const [startedAt, setStartedAt] = useState<number>(() => Date.now())
 
+  const [activeKey, setActiveKey] = useState<string | null>(() => exercisesWithLast[0]?.exercise.id ?? null)
   const [mode, setMode] = useState<'focus' | 'resting'>('focus')
   const [restUntil, setRestUntil] = useState<number | null>(null)
-  const [restIsFinish, setRestIsFinish] = useState(false)
   const [now, setNow] = useState(() => Date.now())
 
   const [weightInput, setWeightInput] = useState('')
@@ -124,10 +133,9 @@ export default function SessionForm({
   const [swapBusy, setSwapBusy] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const activeSlotIdxRaw = slots.findIndex((s) => !s.done)
-  const activeSlotIdx = activeSlotIdxRaw === -1 ? slots.length : activeSlotIdxRaw
-  const activeSlot = activeSlotIdx < slots.length ? slots[activeSlotIdx] : null
-  const allDone = slots.length > 0 && activeSlotIdx >= slots.length
+  const rawActiveIdx = slots.findIndex((s) => s.key === activeKey)
+  const activeSlotIdx = rawActiveIdx !== -1 ? rawActiveIdx : 0
+  const activeSlot = slots.length > 0 ? slots[activeSlotIdx] : null
 
   // Restore in-progress workout from localStorage on mount
   useEffect(() => {
@@ -161,9 +169,10 @@ export default function SessionForm({
           return [...plannedRestored, ...adhocRestored]
         })
         if (typeof parsed.startedAt === 'number') setStartedAt(parsed.startedAt)
+        if (parsed.activeKey) setActiveKey(parsed.activeKey)
         if (parsed.restUntil && parsed.restUntil > Date.now()) {
+          setNow(Date.now())
           setRestUntil(parsed.restUntil)
-          setRestIsFinish(!!parsed.restIsFinish)
           setMode('resting')
         }
       }
@@ -196,8 +205,8 @@ export default function SessionForm({
               done: s.done,
             })),
           startedAt,
+          activeKey,
           restUntil: mode === 'resting' ? restUntil : null,
-          restIsFinish,
         }
         localStorage.setItem(storageKey(day.id), JSON.stringify(toSave))
       } else {
@@ -206,7 +215,7 @@ export default function SessionForm({
     } catch {
       // ignore save errors
     }
-  }, [slots, day.id, restored, startedAt, mode, restUntil, restIsFinish])
+  }, [slots, day.id, restored, startedAt, activeKey, mode, restUntil])
 
   // Re-seed the weight/rep inputs whenever the active slot (or its progress) changes
   useEffect(() => {
@@ -236,17 +245,38 @@ export default function SessionForm({
     setRepsInput(String(Math.max(0, cur + delta)))
   }
 
-  function startRest(isFinish: boolean) {
+  function startRest() {
     const startedNow = Date.now()
     setNow(startedNow)
     setRestUntil(startedNow + REST_SECONDS * 1000)
-    setRestIsFinish(isFinish)
     setMode('resting')
   }
 
   function endRest() {
     setMode('focus')
     setRestUntil(null)
+  }
+
+  function jumpTo(key: string) {
+    setActiveKey(key)
+    setMode('focus')
+    setRestUntil(null)
+    setOverviewOpen(false)
+  }
+
+  function nextExercise() {
+    if (slots.length < 2) return
+    const nextIdx = (activeSlotIdx + 1) % slots.length
+    jumpTo(slots[nextIdx].key)
+  }
+
+  function applySlotUpdate(updatedSlot: ExerciseSlot, advanceIfDone: boolean) {
+    const nextSlots = slots.map((s, i) => (i === activeSlotIdx ? updatedSlot : s))
+    setSlots(nextSlots)
+    if (advanceIfDone && updatedSlot.done && nextSlots.length > 1) {
+      const nextIdx = (activeSlotIdx + 1) % nextSlots.length
+      setActiveKey(nextSlots[nextIdx].key)
+    }
   }
 
   function logSet() {
@@ -258,10 +288,8 @@ export default function SessionForm({
     if (updatedSlot.targetSets !== null && updatedSlot.sets.length + updatedSlot.skipped >= updatedSlot.targetSets) {
       updatedSlot.done = true
     }
-    const nextSlots = slots.map((s, i) => (i === activeSlotIdx ? updatedSlot : s))
-    setSlots(nextSlots)
-    const isFinish = nextSlots.findIndex((s) => !s.done) === -1
-    startRest(isFinish)
+    applySlotUpdate(updatedSlot, true)
+    startRest()
   }
 
   function skipSet() {
@@ -270,12 +298,7 @@ export default function SessionForm({
     if (updatedSlot.targetSets !== null && updatedSlot.sets.length + updatedSlot.skipped >= updatedSlot.targetSets) {
       updatedSlot.done = true
     }
-    setSlots(slots.map((s, i) => (i === activeSlotIdx ? updatedSlot : s)))
-  }
-
-  function nextExercise() {
-    if (!activeSlot) return
-    setSlots(slots.map((s, i) => (i === activeSlotIdx ? { ...s, done: true } : s)))
+    applySlotUpdate(updatedSlot, true)
   }
 
   function removeSlot(slotIdx: number) {
@@ -374,8 +397,8 @@ export default function SessionForm({
   const hasInProgress = totalSetsLogged > 0
   const remainingSec = restUntil ? Math.ceil(Math.max(0, restUntil - now) / 1000) : 0
 
-  const inputClasses =
-    'w-full min-w-0 flex-1 border-0 bg-transparent text-center text-4xl font-black tabular-nums tracking-tight text-bg focus-visible:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
+  const inputBaseClasses =
+    'w-full min-w-0 flex-1 border-0 bg-transparent text-center font-black tabular-nums tracking-tight text-bg focus-visible:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
 
   return (
     <form action={finishSession} onSubmit={() => setIsSubmitting(true)} className="space-y-4">
@@ -456,11 +479,11 @@ export default function SessionForm({
         <div className="space-y-4 border-2 border-accent bg-accent p-6 text-center text-bg">
           <p className="text-[11px] font-extrabold uppercase tracking-[0.14em]">Resting</p>
           <p className="text-xs font-extrabold uppercase tracking-wide opacity-80">
-            {restIsFinish || !activeSlot
-              ? 'Session complete'
-              : activeSlot.sets.length + activeSlot.skipped > 0
-              ? `Set ${String(activeSlot.sets.length + activeSlot.skipped + 1).padStart(2, '0')} · ${activeSlot.name}`
-              : activeSlot.name}
+            {activeSlot
+              ? activeSlot.sets.length + activeSlot.skipped > 0
+                ? `Set ${String(activeSlot.sets.length + activeSlot.skipped + 1).padStart(2, '0')} · ${activeSlot.name}`
+                : activeSlot.name
+              : ''}
           </p>
           <p className="py-4 text-7xl font-black tabular-nums tracking-tight">{fmtClock(remainingSec)}</p>
           <div className="grid grid-cols-2 gap-2">
@@ -471,32 +494,10 @@ export default function SessionForm({
             >
               +30 sec
             </button>
-            {restIsFinish ? (
-              <button
-                type="submit"
-                disabled={totalSetsLogged === 0 || isSubmitting}
-                className="bg-ink px-4 py-3 text-sm font-black uppercase tracking-wide text-bg disabled:opacity-40"
-              >
-                {isSubmitting ? 'Saving…' : 'Finish workout →'}
-              </button>
-            ) : (
-              <button type="button" onClick={endRest} className="bg-ink px-4 py-3 text-sm font-black uppercase tracking-wide text-bg">
-                {remainingSec > 0 ? 'Skip rest →' : 'Continue →'}
-              </button>
-            )}
+            <button type="button" onClick={endRest} className="bg-ink px-4 py-3 text-sm font-black uppercase tracking-wide text-bg">
+              {remainingSec > 0 ? 'Skip rest →' : 'Continue →'}
+            </button>
           </div>
-        </div>
-      ) : allDone ? (
-        <div className="space-y-4 border-2 border-neutral-700 p-6 text-center">
-          <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-accent">Session complete</p>
-          <p className="text-3xl font-black uppercase tracking-tight">All exercises done</p>
-          <button
-            type="submit"
-            disabled={totalSetsLogged === 0 || isSubmitting}
-            className="w-full bg-accent px-4 py-4 text-lg font-black uppercase tracking-wide text-bg disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            {isSubmitting ? 'Saving…' : totalSetsLogged === 0 ? 'Log at least one set' : 'Finish workout →'}
-          </button>
         </div>
       ) : activeSlot ? (
         <div className="space-y-4 border-2 border-neutral-700 p-4">
@@ -516,13 +517,15 @@ export default function SessionForm({
               >
                 Swap
               </button>
-              <button
-                type="button"
-                onClick={nextExercise}
-                className="text-[11px] font-extrabold uppercase tracking-wide text-neutral-500 hover:text-accent"
-              >
-                Next exercise →
-              </button>
+              {slots.length > 1 && (
+                <button
+                  type="button"
+                  onClick={nextExercise}
+                  className="text-[11px] font-extrabold uppercase tracking-wide text-neutral-500 hover:text-accent"
+                >
+                  Next exercise →
+                </button>
+              )}
             </div>
           </div>
 
@@ -565,7 +568,7 @@ export default function SessionForm({
                   inputMode="decimal"
                   value={weightInput}
                   onChange={(e) => setWeightInput(e.target.value)}
-                  className={inputClasses}
+                  className={`${inputBaseClasses} ${stepperSizeClass(weightInput)}`}
                   aria-label="Weight"
                 />
                 <button
@@ -594,7 +597,7 @@ export default function SessionForm({
                   inputMode="numeric"
                   value={repsInput}
                   onChange={(e) => setRepsInput(e.target.value)}
-                  className={inputClasses}
+                  className={`${inputBaseClasses} ${stepperSizeClass(repsInput)}`}
                   aria-label="Reps"
                 />
                 <button
@@ -645,6 +648,16 @@ export default function SessionForm({
           </div>
         </div>
       ) : null}
+
+      {hasInProgress && (
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full border-2 border-accent px-4 py-3 text-sm font-black uppercase tracking-wide text-accent hover:bg-accent hover:text-bg disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          {isSubmitting ? 'Saving…' : `Finish workout (${totalSetsLogged} set${totalSetsLogged === 1 ? '' : 's'})`}
+        </button>
+      )}
 
       {slots.length > 0 && (
         <div className="border-2 border-neutral-700">
@@ -706,7 +719,11 @@ export default function SessionForm({
                       </div>
                     ) : (
                       <div className="flex items-start justify-between gap-2">
-                        <div className="min-w-0 flex-1">
+                        <button
+                          type="button"
+                          onClick={() => jumpTo(s.key)}
+                          className="min-w-0 flex-1 text-left"
+                        >
                           <p className={`font-bold uppercase tracking-tight ${idx === activeSlotIdx ? 'text-accent' : ''}`}>
                             {s.name}
                           </p>
@@ -717,7 +734,7 @@ export default function SessionForm({
                               ? `${s.sets.length + s.skipped} of ${s.targetSets} logged`
                               : 'Not in your plan'}
                           </p>
-                        </div>
+                        </button>
                         <div className="flex shrink-0 items-center gap-3">
                           <button
                             type="button"
