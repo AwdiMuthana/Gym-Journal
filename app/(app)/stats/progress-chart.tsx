@@ -22,7 +22,7 @@ type Point = {
 export default function ProgressChart({ data }: { data: Point[] }) {
   if (data.length === 0) {
     return (
-      <div className="py-8 text-center text-sm text-gray-500">
+      <div className="py-8 text-center text-sm text-neutral-500">
         No logged sets yet for this exercise.
       </div>
     )
@@ -35,36 +35,36 @@ export default function ProgressChart({ data }: { data: Point[] }) {
           data={data}
           margin={{ top: 8, right: 10, left: -20, bottom: 0 }}
         >
-          <CartesianGrid strokeDasharray="2 3" stroke="#1f2937" vertical={false} />
+          <CartesianGrid strokeDasharray="2 3" stroke="#444141" vertical={false} />
           <XAxis
             dataKey="performed_at_label"
-            tick={{ fill: '#6b7280', fontSize: 10 }}
-            axisLine={{ stroke: '#1f2937' }}
+            tick={{ fill: '#9b9797', fontSize: 10, fontWeight: 800 }}
+            axisLine={{ stroke: '#444141' }}
             tickLine={false}
           />
           <YAxis
             yAxisId="weight"
-            tick={{ fill: '#6b7280', fontSize: 10 }}
+            tick={{ fill: '#9b9797', fontSize: 10, fontWeight: 800 }}
             axisLine={false}
             tickLine={false}
           />
           <YAxis
             yAxisId="volume"
             orientation="right"
-            tick={{ fill: '#6b7280', fontSize: 10 }}
+            tick={{ fill: '#9b9797', fontSize: 10, fontWeight: 800 }}
             axisLine={false}
             tickLine={false}
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: '#0a0a0a',
-              border: '1px solid #1f2937',
-              borderRadius: 6,
+              backgroundColor: '#201e1d',
+              border: '2px solid #605d5d',
+              borderRadius: 0,
               fontSize: 12,
             }}
-            labelStyle={{ color: '#9ca3af' }}
-            itemStyle={{ color: '#fff' }}
-            cursor={{ stroke: '#5B5BD6', strokeWidth: 1, strokeDasharray: '2 2' }}
+            labelStyle={{ color: '#9b9797' }}
+            itemStyle={{ color: '#f3f2f2' }}
+            cursor={{ stroke: '#ec3013', strokeWidth: 1, strokeDasharray: '2 2' }}
           />
           <Legend
             wrapperStyle={{ fontSize: 11, paddingTop: 6 }}
@@ -75,9 +75,9 @@ export default function ProgressChart({ data }: { data: Point[] }) {
             type="monotone"
             dataKey="top_weight"
             name="Top weight"
-            stroke="#5B5BD6"
+            stroke="#ec3013"
             strokeWidth={2}
-            dot={{ r: 3, fill: '#5B5BD6' }}
+            dot={{ r: 3, fill: '#ec3013' }}
             activeDot={{ r: 5 }}
           />
           <Line
@@ -85,17 +85,17 @@ export default function ProgressChart({ data }: { data: Point[] }) {
             type="monotone"
             dataKey="est_1rm"
             name="Est. 1RM"
-            stroke="#10b981"
+            stroke="#f3f2f2"
             strokeWidth={2}
             strokeDasharray="4 4"
-            dot={{ r: 2, fill: '#10b981' }}
+            dot={{ r: 2, fill: '#f3f2f2' }}
           />
           <Line
             yAxisId="volume"
             type="monotone"
             dataKey="volume"
             name="Volume"
-            stroke="#f59e0b"
+            stroke="#9b9797"
             strokeWidth={1.5}
             strokeDasharray="2 2"
             dot={false}

@@ -26,7 +26,7 @@ export default function ExercisePicker({
         }
         router.push(`/stats?${params.toString()}`)
       }}
-      className="w-full rounded-md border border-gray-700 bg-black px-3 py-2 text-sm text-white"
+      className="w-full border-2 border-neutral-700 bg-transparent px-3 py-2 text-sm text-bg focus-visible:border-accent focus-visible:outline-none"
     >
       <option value="">Select an exercise…</option>
       {options.map((o) => (

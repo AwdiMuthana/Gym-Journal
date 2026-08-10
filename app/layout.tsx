@@ -1,14 +1,9 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Archivo } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const archivo = Archivo({
+  variable: "--font-archivo",
   subsets: ["latin"],
 });
 
@@ -27,7 +22,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport = {
-  themeColor: "#5B5BD6",
+  themeColor: "#ec3013",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -40,10 +35,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
+    <html lang="en" className={`${archivo.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

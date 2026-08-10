@@ -28,9 +28,9 @@ export default async function StatsPage({
 
   if (overview.total_workouts === 0) {
     return (
-      <div className="rounded-lg border border-gray-800 bg-gray-950 py-12 text-center">
-        <p className="text-gray-400">No data yet.</p>
-        <p className="mt-1 text-xs text-gray-500">
+      <div className="border-2 border-neutral-700 py-12 text-center">
+        <p className="text-neutral-400">No data yet.</p>
+        <p className="mt-1 text-[11px] font-extrabold uppercase tracking-wide text-neutral-500">
           Log a few workouts and stats will appear here.
         </p>
       </div>
@@ -48,40 +48,40 @@ export default async function StatsPage({
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Your stats</h2>
-        <Link href="/stats/last-workout" className="text-xs text-[#5B5BD6] hover:underline">
+        <h2 className="text-2xl font-black uppercase tracking-tight">Your stats</h2>
+        <Link href="/stats/last-workout" className="text-[11px] font-extrabold uppercase tracking-wide text-accent hover:underline">
           Last workout →
         </Link>
       </div>
 
       <div className="grid grid-cols-3 gap-2">
-        <div className="rounded-lg border border-gray-800 bg-gray-950 px-3 py-3 text-center">
-          <p className="text-2xl font-semibold">{overview.total_workouts}</p>
-          <p className="mt-1 text-[10px] uppercase tracking-wider text-gray-500">
+        <div className="border-2 border-neutral-700 px-3 py-3 text-center">
+          <p className="text-3xl font-black tabular-nums">{overview.total_workouts}</p>
+          <p className="mt-1 text-[10px] font-extrabold uppercase tracking-[0.14em] text-neutral-500">
             Workouts
           </p>
         </div>
-        <div className="rounded-lg border border-gray-800 bg-gray-950 px-3 py-3 text-center">
-          <p className="text-2xl font-semibold">{overview.total_sets}</p>
-          <p className="mt-1 text-[10px] uppercase tracking-wider text-gray-500">
+        <div className="border-2 border-neutral-700 px-3 py-3 text-center">
+          <p className="text-3xl font-black tabular-nums">{overview.total_sets}</p>
+          <p className="mt-1 text-[10px] font-extrabold uppercase tracking-[0.14em] text-neutral-500">
             Total sets
           </p>
         </div>
-        <div className="rounded-lg border border-gray-800 bg-gray-950 px-3 py-3 text-center">
-          <p className="text-2xl font-semibold">
+        <div className="border-2 border-neutral-700 px-3 py-3 text-center">
+          <p className="text-3xl font-black tabular-nums text-accent">
             {overview.current_streak_weeks}
           </p>
-          <p className="mt-1 text-[10px] uppercase tracking-wider text-gray-500">
+          <p className="mt-1 text-[10px] font-extrabold uppercase tracking-[0.14em] text-neutral-500">
             Week streak
           </p>
         </div>
       </div>
 
       {exercises.length > 0 && (
-        <div className="rounded-lg border border-gray-800 bg-gray-950 p-4">
+        <div className="border-2 border-neutral-700 p-4">
           <div className="mb-3">
-            <p className="text-sm font-medium">Exercise progress</p>
-            <p className="text-xs text-gray-500">
+            <p className="text-sm font-black uppercase tracking-tight">Exercise progress</p>
+            <p className="text-[11px] text-neutral-500">
               {selectedExerciseName ?? 'Pick an exercise'} · top weight, est. 1RM, volume
             </p>
           </div>
@@ -93,10 +93,10 @@ export default async function StatsPage({
       )}
 
       {prs.length > 0 && (
-        <div className="rounded-lg border border-gray-800 bg-gray-950 p-4">
+        <div className="border-2 border-neutral-700 p-4">
           <div className="mb-3">
-            <p className="text-sm font-medium">Personal records</p>
-            <p className="text-xs text-gray-500">
+            <p className="text-sm font-black uppercase tracking-tight">Personal records</p>
+            <p className="text-[11px] text-neutral-500">
               Heaviest weight per exercise
             </p>
           </div>
@@ -104,17 +104,17 @@ export default async function StatsPage({
             {prs.map((pr) => (
               <div
                 key={pr.key}
-                className="flex items-center justify-between rounded-md border border-gray-800 bg-black px-3 py-2"
+                className="flex items-center justify-between border-2 border-neutral-800 px-3 py-2"
               >
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium">
+                  <p className="truncate text-sm font-bold uppercase tracking-tight">
                     {pr.exercise_name}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-[11px] text-neutral-500">
                     <LocalDateTime iso={pr.performed_at} variant="short" />
                   </p>
                 </div>
-                <p className="ml-3 text-sm font-semibold tabular-nums">
+                <p className="ml-3 text-sm font-black tabular-nums text-accent">
                   {pr.best_weight} × {pr.best_reps}
                 </p>
               </div>
@@ -123,10 +123,10 @@ export default async function StatsPage({
         </div>
       )}
 
-      <div className="rounded-lg border border-gray-800 bg-gray-950 p-4">
+      <div className="border-2 border-neutral-700 p-4">
         <div className="mb-3">
-          <p className="text-sm font-medium">Weekly frequency</p>
-          <p className="text-xs text-gray-500">Workouts per week, last 8 weeks</p>
+          <p className="text-sm font-black uppercase tracking-tight">Weekly frequency</p>
+          <p className="text-[11px] text-neutral-500">Workouts per week, last 8 weeks</p>
         </div>
         <FrequencyChart data={frequency} />
       </div>

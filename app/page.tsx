@@ -19,22 +19,22 @@ export default async function Home({
   const showCodeStep = params.codeSent === '1' && !!params.email
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-8 bg-black text-white">
+    <main className="flex min-h-screen flex-col items-center justify-center p-8 bg-ink text-bg">
       <div className="w-full max-w-md space-y-6">
         <div className="space-y-2 text-center">
-          <h1 className="text-3xl font-semibold">Gym Journal</h1>
-          <p className="text-gray-400">Sign in to log your workouts</p>
+          <h1 className="text-4xl font-black uppercase tracking-tight">Gym Journal</h1>
+          <p className="text-neutral-400">Sign in to log your workouts</p>
         </div>
 
         {params.error && (
-          <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-center text-sm text-red-400">
+          <div className="border-2 border-accent p-4 text-center text-sm text-accent-400">
             {decodeURIComponent(params.error)}
           </div>
         )}
 
         {showCodeStep ? (
           <>
-            <div className="rounded-lg border border-green-500/30 bg-green-500/10 p-4 text-center text-sm text-green-400">
+            <div className="bg-bg p-4 text-center text-sm font-medium text-ink">
               We sent a code to {decodeURIComponent(params.email!)}.
             </div>
 
@@ -49,23 +49,23 @@ export default async function Home({
                 placeholder="Enter code"
                 required
                 autoFocus
-                className="w-full rounded-lg border border-gray-700 bg-transparent px-4 py-3 text-center text-xl tracking-[0.3em] text-white placeholder:text-gray-600 placeholder:tracking-normal"
+                className="w-full border-2 border-neutral-700 bg-transparent px-4 py-3 text-center text-xl tracking-[0.3em] text-bg placeholder:text-neutral-600 placeholder:tracking-normal focus-visible:border-accent focus-visible:outline-none"
               />
               <button
                 type="submit"
-                className="w-full rounded-lg bg-white px-6 py-3 font-medium text-black"
+                className="w-full bg-bg px-6 py-3 font-black uppercase tracking-wide text-ink"
               >
                 Verify code
               </button>
             </form>
 
-            <div className="flex items-center justify-between text-xs text-gray-500">
-              <Link href="/" className="hover:text-white">
+            <div className="flex items-center justify-between text-[11px] font-extrabold uppercase tracking-wide text-neutral-500">
+              <Link href="/" className="hover:text-accent">
                 Use a different email
               </Link>
               <form action={signIn}>
                 <input type="hidden" name="email" value={params.email} />
-                <button type="submit" className="hover:text-white">
+                <button type="submit" className="hover:text-accent">
                   Resend code
                 </button>
               </form>
@@ -76,7 +76,7 @@ export default async function Home({
             <form action={signInWithGoogle}>
               <button
                 type="submit"
-                className="w-full rounded-lg bg-white px-6 py-3 font-medium text-black flex items-center justify-center gap-3"
+                className="w-full bg-bg px-6 py-3 font-black uppercase tracking-wide text-ink flex items-center justify-center gap-3"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -90,10 +90,12 @@ export default async function Home({
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-800"></div>
+                <div className="w-full border-t-2 border-neutral-800"></div>
               </div>
-              <div className="relative flex justify-center text-xs">
-                <span className="bg-black px-2 text-gray-500">or with email</span>
+              <div className="relative flex justify-center text-[10px]">
+                <span className="bg-ink px-2 font-extrabold uppercase tracking-[0.14em] text-neutral-500">
+                  or with email
+                </span>
               </div>
             </div>
 
@@ -103,11 +105,11 @@ export default async function Home({
                 name="email"
                 placeholder="you@example.com"
                 required
-                className="w-full rounded-lg border border-gray-700 bg-transparent px-4 py-3 text-base text-white placeholder:text-gray-500"
+                className="w-full border-2 border-neutral-700 bg-transparent px-4 py-3 text-base text-bg placeholder:text-neutral-600 focus-visible:border-accent focus-visible:outline-none"
               />
               <button
                 type="submit"
-                className="w-full rounded-lg border border-gray-700 bg-transparent px-6 py-3 font-medium text-white"
+                className="w-full border-2 border-neutral-700 bg-transparent px-6 py-3 font-black uppercase tracking-wide text-bg hover:border-accent hover:text-accent"
               >
                 Send sign-in code
               </button>

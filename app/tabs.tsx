@@ -14,18 +14,20 @@ export default function Tabs() {
   const pathname = usePathname()
 
   return (
-    <nav className="border-b border-gray-800 bg-black">
+    <nav className="border-b-2 border-neutral-800 bg-ink">
       <div className="mx-auto flex max-w-2xl">
-        {TABS.map((tab) => {
+        {TABS.map((tab, i) => {
           const isActive = pathname === tab.href || pathname.startsWith(tab.href + '/')
           return (
             <Link
               key={tab.href}
               href={tab.href}
-              className={`flex-1 border-b-2 px-4 py-3 text-center text-sm font-medium transition ${
+              className={`flex-1 px-4 py-3 text-center text-[11px] font-extrabold uppercase tracking-[0.1em] transition ${
+                i !== TABS.length - 1 ? 'border-r-2 border-neutral-800' : ''
+              } ${
                 isActive
-                  ? 'border-white text-white'
-                  : 'border-transparent text-gray-500 hover:text-gray-300'
+                  ? 'bg-bg text-ink'
+                  : 'text-neutral-500 hover:text-bg'
               }`}
             >
               {tab.label}
