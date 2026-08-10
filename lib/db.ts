@@ -481,7 +481,11 @@ export async function getPRs(): Promise<PRItem[]> {
   return [...bestPerExercise.values()].sort((a, b) => b.best_weight - a.best_weight)
 }
 
-export async function getSessionPRs(sessionId: string): Promise<Set<string>> {
+// Maps normalized exercise key -> weight delta over the prior best for exercises
+// that hit a new PR this session. Delta is null when there's no prior session to
+// compare against (first time logging that exercise), so it's still a PR but the
+// UI shouldn't show a fabricated "▲" number.
+export async function getSessionPRs(sessionId: string): Promise<Map<string, number | null>> {
   const supabase = await createClient()
 
   const { data: sessionRow, error: sessionErr } = await supabase
@@ -489,13 +493,13 @@ export async function getSessionPRs(sessionId: string): Promise<Set<string>> {
     .select('performed_at')
     .eq('id', sessionId)
     .single()
-  if (sessionErr || !sessionRow) return new Set()
+  if (sessionErr || !sessionRow) return new Map()
 
   const { data, error } = await supabase
     .from('set_logs')
     .select('exercise_name, weight, session_id, sessions!inner(performed_at)')
     .not('weight', 'is', null)
-  if (error || !data) return new Set()
+  if (error || !data) return new Map()
 
   type Row = { exercise_name: string; weight: number; session_id: string; sessions: { performed_at: string } | null }
   const rows = data as unknown as Row[]
@@ -515,14 +519,18 @@ export async function getSessionPRs(sessionId: string): Promise<Set<string>> {
     }
   }
 
-  const prExercises = new Set<string>()
+  const prDeltas = new Map<string, number | null>()
   for (const [key, weight] of thisSessionMax.entries()) {
-    const prior = priorMax.get(key) ?? 0
+    if (!priorMax.has(key)) {
+      prDeltas.set(key, null)
+      continue
+    }
+    const prior = priorMax.get(key)!
     if (weight > prior) {
-      prExercises.add(key)
+      prDeltas.set(key, weight - prior)
     }
   }
-  return prExercises
+  return prDeltas
 }
 
 export async function getLastSetsForExerciseName(name: string): Promise<{ performed_at: string; sets: { weight: number | null; reps: number | null; notes: string | null }[] } | null> {

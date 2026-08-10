@@ -28,6 +28,7 @@ export async function lookupLastByName(name: string) {
 export async function finishSession(formData: FormData) {
   const dayId = formData.get('dayId') as string
   const setsRaw = formData.get('sets') as string
+  const startedAtRaw = formData.get('startedAt') as string | null
   if (!dayId || !setsRaw) {
     redirect('/log')
   }
@@ -69,7 +70,16 @@ export async function finishSession(formData: FormData) {
 
   revalidatePath('/log')
   revalidatePath('/plan')
-  redirect(`/stats/last-workout?dayId=${dayId}`)
+
+  const startedAt = startedAtRaw ? parseInt(startedAtRaw, 10) : NaN
+  const minutes = Number.isFinite(startedAt)
+    ? Math.max(0, Math.round((Date.now() - startedAt) / 60000))
+    : null
+
+  const summaryUrl = minutes !== null
+    ? `/stats/last-workout?dayId=${dayId}&minutes=${minutes}`
+    : `/stats/last-workout?dayId=${dayId}`
+  redirect(summaryUrl)
 }
 
 export async function updateSetLog(formData: FormData) {

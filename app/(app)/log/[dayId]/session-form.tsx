@@ -5,6 +5,9 @@ import Link from 'next/link'
 import { finishSession, lookupLastByName } from '@/app/log-actions'
 import type { DayWithExercises, Exercise } from '@/lib/types'
 
+const REST_SECONDS = 120
+const EXTEND_SECONDS = 30
+
 type LastSets = {
   performed_at: string
   sets: { weight: number | null; reps: number | null; notes: string | null }[]
@@ -27,6 +30,8 @@ type ExerciseSlot = {
   targetReps: string | null
   last: LastSets
   sets: SetInput[]
+  skipped: number
+  done: boolean
 }
 
 type SavedSlot = {
@@ -37,10 +42,15 @@ type SavedSlot = {
   targetSets: number | null
   targetReps: string | null
   sets: SetInput[]
+  skipped: number
+  done: boolean
 }
 
 type SavedState = {
   slots: SavedSlot[]
+  startedAt: number
+  restUntil: number | null
+  restIsFinish: boolean
 }
 
 const storageKey = (dayId: string) => `gym-journal:session:${dayId}`
@@ -49,14 +59,24 @@ function uid() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8)
 }
 
-function fmtDate(iso: string) {
-  const d = new Date(iso)
-  const now = new Date()
-  const diffDays = Math.floor((now.getTime() - d.getTime()) / 86400000)
-  if (diffDays === 0) return 'today'
-  if (diffDays === 1) return 'yesterday'
-  if (diffDays < 7) return `${diffDays}d ago`
-  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+function fmtClock(totalSeconds: number) {
+  const safe = Math.max(0, totalSeconds)
+  const m = Math.floor(safe / 60)
+  const s = safe % 60
+  return `${m}:${String(s).padStart(2, '0')}`
+}
+
+function computePrefill(slot: ExerciseSlot): { weight: string; reps: string } {
+  const prevSet = slot.sets[slot.sets.length - 1]
+  if (prevSet) return { weight: prevSet.weight, reps: prevSet.reps }
+  if (slot.last && slot.last.sets.length > 0) {
+    const firstLast = slot.last.sets[0]
+    return {
+      weight: firstLast.weight !== null ? String(firstLast.weight) : '',
+      reps: firstLast.reps !== null ? String(firstLast.reps) : '',
+    }
+  }
+  return { weight: '', reps: '' }
 }
 
 export default function SessionForm({
@@ -76,9 +96,24 @@ export default function SessionForm({
       targetReps: exercise.target_reps,
       last,
       sets: [],
+      skipped: 0,
+      done: false,
     }))
   )
   const [restored, setRestored] = useState(false)
+  const [startedAt, setStartedAt] = useState<number>(() => Date.now())
+
+  const [mode, setMode] = useState<'focus' | 'resting'>('focus')
+  const [restUntil, setRestUntil] = useState<number | null>(null)
+  const [restIsFinish, setRestIsFinish] = useState(false)
+  const [now, setNow] = useState(() => Date.now())
+
+  const [weightInput, setWeightInput] = useState('')
+  const [repsInput, setRepsInput] = useState('')
+  const [notesInput, setNotesInput] = useState('')
+  const [notesOpen, setNotesOpen] = useState(false)
+
+  const [overviewOpen, setOverviewOpen] = useState(false)
 
   const [addOpen, setAddOpen] = useState(false)
   const [addName, setAddName] = useState('')
@@ -88,6 +123,11 @@ export default function SessionForm({
   const [swapName, setSwapName] = useState('')
   const [swapBusy, setSwapBusy] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const activeSlotIdxRaw = slots.findIndex((s) => !s.done)
+  const activeSlotIdx = activeSlotIdxRaw === -1 ? slots.length : activeSlotIdxRaw
+  const activeSlot = activeSlotIdx < slots.length ? slots[activeSlotIdx] : null
+  const allDone = slots.length > 0 && activeSlotIdx >= slots.length
 
   // Restore in-progress workout from localStorage on mount
   useEffect(() => {
@@ -100,7 +140,9 @@ export default function SessionForm({
             const match = parsed.slots.find(
               (s) => s.source === 'planned' && s.exerciseId === slot.exerciseId
             )
-            return match ? { ...slot, sets: match.sets } : slot
+            return match
+              ? { ...slot, sets: match.sets, skipped: match.skipped ?? 0, done: match.done ?? false }
+              : slot
           })
           const adhocRestored: ExerciseSlot[] = parsed.slots
             .filter((s) => s.source === 'adhoc')
@@ -113,9 +155,17 @@ export default function SessionForm({
               targetReps: null,
               last: null,
               sets: s.sets,
+              skipped: s.skipped ?? 0,
+              done: s.done ?? false,
             }))
           return [...plannedRestored, ...adhocRestored]
         })
+        if (typeof parsed.startedAt === 'number') setStartedAt(parsed.startedAt)
+        if (parsed.restUntil && parsed.restUntil > Date.now()) {
+          setRestUntil(parsed.restUntil)
+          setRestIsFinish(!!parsed.restIsFinish)
+          setMode('resting')
+        }
       }
     } catch {
       // ignore restore errors
@@ -127,11 +177,13 @@ export default function SessionForm({
   useEffect(() => {
     if (!restored) return
     try {
-      const hasProgress = slots.some((s) => s.sets.length > 0 || s.source === 'adhoc')
+      const hasProgress = slots.some(
+        (s) => s.sets.length > 0 || s.skipped > 0 || s.done || s.source === 'adhoc'
+      )
       if (hasProgress) {
         const toSave: SavedState = {
           slots: slots
-            .filter((s) => s.sets.length > 0 || s.source === 'adhoc')
+            .filter((s) => s.sets.length > 0 || s.skipped > 0 || s.done || s.source === 'adhoc')
             .map((s) => ({
               key: s.key,
               source: s.source,
@@ -140,7 +192,12 @@ export default function SessionForm({
               targetSets: s.targetSets,
               targetReps: s.targetReps,
               sets: s.sets,
+              skipped: s.skipped,
+              done: s.done,
             })),
+          startedAt,
+          restUntil: mode === 'resting' ? restUntil : null,
+          restIsFinish,
         }
         localStorage.setItem(storageKey(day.id), JSON.stringify(toSave))
       } else {
@@ -149,49 +206,76 @@ export default function SessionForm({
     } catch {
       // ignore save errors
     }
-  }, [slots, day.id, restored])
+  }, [slots, day.id, restored, startedAt, mode, restUntil, restIsFinish])
 
-  function addSet(slotIdx: number) {
-    setSlots((prev) => {
-      const next = [...prev]
-      const slot = { ...next[slotIdx] }
-      const prevSet = slot.sets[slot.sets.length - 1]
+  // Re-seed the weight/rep inputs whenever the active slot (or its progress) changes
+  useEffect(() => {
+    if (!activeSlot) return
+    const prefill = computePrefill(activeSlot)
+    setWeightInput(prefill.weight)
+    setRepsInput(prefill.reps)
+    setNotesInput('')
+    setNotesOpen(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeSlotIdx, activeSlot?.name, activeSlot?.sets.length, activeSlot?.skipped])
 
-      let prefillWeight = ''
-      let prefillReps = ''
-      if (prevSet) {
-        prefillWeight = prevSet.weight
-        prefillReps = prevSet.reps
-      } else if (slot.last && slot.last.sets.length > 0) {
-        const firstLast = slot.last.sets[0]
-        prefillWeight = firstLast.weight !== null ? String(firstLast.weight) : ''
-        prefillReps = firstLast.reps !== null ? String(firstLast.reps) : ''
-      }
+  // Tick the rest countdown
+  useEffect(() => {
+    if (mode !== 'resting') return
+    const id = setInterval(() => setNow(Date.now()), 250)
+    return () => clearInterval(id)
+  }, [mode])
 
-      slot.sets = [...slot.sets, { weight: prefillWeight, reps: prefillReps, notes: '' }]
-      next[slotIdx] = slot
-      return next
-    })
+  function bumpWeight(delta: number) {
+    const cur = parseFloat(weightInput) || 0
+    setWeightInput(String(Math.max(0, cur + delta)))
   }
 
-  function removeSet(slotIdx: number, setIdx: number) {
-    setSlots((prev) => {
-      const next = [...prev]
-      const slot = { ...next[slotIdx] }
-      slot.sets = slot.sets.filter((_, i) => i !== setIdx)
-      next[slotIdx] = slot
-      return next
-    })
+  function bumpReps(delta: number) {
+    const cur = parseInt(repsInput) || 0
+    setRepsInput(String(Math.max(0, cur + delta)))
   }
 
-  function updateSet(slotIdx: number, setIdx: number, field: keyof SetInput, value: string) {
-    setSlots((prev) => {
-      const next = [...prev]
-      const slot = { ...next[slotIdx] }
-      slot.sets = slot.sets.map((s, i) => (i === setIdx ? { ...s, [field]: value } : s))
-      next[slotIdx] = slot
-      return next
-    })
+  function startRest(isFinish: boolean) {
+    const startedNow = Date.now()
+    setNow(startedNow)
+    setRestUntil(startedNow + REST_SECONDS * 1000)
+    setRestIsFinish(isFinish)
+    setMode('resting')
+  }
+
+  function endRest() {
+    setMode('focus')
+    setRestUntil(null)
+  }
+
+  function logSet() {
+    if (!activeSlot) return
+    const updatedSlot: ExerciseSlot = {
+      ...activeSlot,
+      sets: [...activeSlot.sets, { weight: weightInput, reps: repsInput, notes: notesInput }],
+    }
+    if (updatedSlot.targetSets !== null && updatedSlot.sets.length + updatedSlot.skipped >= updatedSlot.targetSets) {
+      updatedSlot.done = true
+    }
+    const nextSlots = slots.map((s, i) => (i === activeSlotIdx ? updatedSlot : s))
+    setSlots(nextSlots)
+    const isFinish = nextSlots.findIndex((s) => !s.done) === -1
+    startRest(isFinish)
+  }
+
+  function skipSet() {
+    if (!activeSlot) return
+    const updatedSlot: ExerciseSlot = { ...activeSlot, skipped: activeSlot.skipped + 1 }
+    if (updatedSlot.targetSets !== null && updatedSlot.sets.length + updatedSlot.skipped >= updatedSlot.targetSets) {
+      updatedSlot.done = true
+    }
+    setSlots(slots.map((s, i) => (i === activeSlotIdx ? updatedSlot : s)))
+  }
+
+  function nextExercise() {
+    if (!activeSlot) return
+    setSlots(slots.map((s, i) => (i === activeSlotIdx ? { ...s, done: true } : s)))
   }
 
   function removeSlot(slotIdx: number) {
@@ -200,7 +284,11 @@ export default function SessionForm({
 
   function clearProgress() {
     if (!confirm('Clear all logged sets for this workout?')) return
-    setSlots((prev) => prev.filter((s) => s.source === 'planned').map((s) => ({ ...s, sets: [] })))
+    setSlots((prev) =>
+      prev.filter((s) => s.source === 'planned').map((s) => ({ ...s, sets: [], skipped: 0, done: false }))
+    )
+    setMode('focus')
+    setRestUntil(null)
   }
 
   async function confirmAdd() {
@@ -215,7 +303,18 @@ export default function SessionForm({
     }
     setSlots((prev) => [
       ...prev,
-      { key: uid(), source: 'adhoc', exerciseId: null, name, targetSets: null, targetReps: null, last, sets: [] },
+      {
+        key: uid(),
+        source: 'adhoc',
+        exerciseId: null,
+        name,
+        targetSets: null,
+        targetReps: null,
+        last,
+        sets: [],
+        skipped: 0,
+        done: false,
+      },
     ])
     setAddBusy(false)
     setAddOpen(false)
@@ -250,6 +349,8 @@ export default function SessionForm({
         targetReps: null,
         last,
         sets: [],
+        skipped: 0,
+        done: false,
       }
       return next
     })
@@ -271,252 +372,427 @@ export default function SessionForm({
 
   const totalSetsLogged = payload.filter((s) => s.weight !== null || s.reps !== null).length
   const hasInProgress = totalSetsLogged > 0
+  const remainingSec = restUntil ? Math.ceil(Math.max(0, restUntil - now) / 1000) : 0
+
+  const inputClasses =
+    'w-full min-w-0 flex-1 border-0 bg-transparent text-center text-4xl font-black tabular-nums tracking-tight text-bg focus-visible:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
 
   return (
-    <div className="space-y-4">
+    <form action={finishSession} onSubmit={() => setIsSubmitting(true)} className="space-y-4">
+      <input type="hidden" name="dayId" value={day.id} />
+      <input type="hidden" name="sets" value={JSON.stringify(payload)} />
+      <input type="hidden" name="startedAt" value={String(startedAt)} />
+
       <div className="flex items-center justify-between">
-        <Link href="/log" className="text-sm text-gray-400 hover:text-white">
+        <Link href="/log" className="text-sm font-extrabold uppercase tracking-wide text-neutral-500 hover:text-accent">
           ← Cancel
         </Link>
         {hasInProgress && (
-          <button type="button" onClick={clearProgress} className="text-xs text-gray-500 hover:text-red-400">
+          <button type="button" onClick={clearProgress} className="text-[11px] font-extrabold uppercase tracking-wide text-neutral-500 hover:text-accent">
             Clear progress
           </button>
         )}
       </div>
 
       <div>
-        <h2 className="text-2xl font-semibold">{day.name}</h2>
+        <h2 className="text-3xl font-black uppercase tracking-tight">{day.name}</h2>
         {hasInProgress && (
-          <p className="mt-1 text-xs text-[#5B5BD6]">
+          <p className="mt-1 text-xs font-extrabold uppercase tracking-wide text-accent">
             ✓ Auto-saved · {totalSetsLogged} set{totalSetsLogged === 1 ? '' : 's'} logged
           </p>
         )}
       </div>
 
-      {slots.length === 0 && !addOpen && (
-        <div className="rounded-lg border border-gray-800 bg-gray-950 py-8 text-center text-sm text-gray-400">
-          This day has no exercises yet. Add one below, or add exercises on the Plan tab.
-        </div>
-      )}
-
-      <div className="space-y-3">
-        {slots.map((slot, slotIdx) => {
-          const lastStr = slot.last
-            ? slot.last.sets.map((s) => `${s.weight ?? '–'}×${s.reps ?? '–'}`).join(' · ')
-            : null
-          const isSwapping = swapKey === slot.key
-
-          return (
-            <div key={slot.key} className="rounded-lg border border-gray-800 bg-gray-950 p-3">
-              {isSwapping ? (
-                <div className="space-y-2">
-                  <p className="text-xs uppercase tracking-wide text-gray-500">
-                    Swap for a different exercise
-                  </p>
-                  <input
-                    type="text"
-                    value={swapName}
-                    onChange={(e) => setSwapName(e.target.value)}
-                    placeholder="Exercise name"
-                    autoFocus
-                    className="w-full rounded-md border border-gray-700 bg-transparent px-3 py-2 text-sm text-white placeholder:text-gray-500"
-                  />
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      disabled={swapBusy || !swapName.trim()}
-                      onClick={() => confirmSwap(slotIdx)}
-                      className="flex-1 rounded-md bg-[#5B5BD6] px-3 py-2 text-sm font-medium text-white disabled:opacity-40"
-                    >
-                      {swapBusy ? 'Swapping…' : 'Swap'}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSwapKey(null)
-                        setSwapName('')
-                      }}
-                      className="flex-1 rounded-md border border-gray-700 px-3 py-2 text-sm text-gray-300"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <div className="mb-3 flex items-start justify-between gap-2">
-                    <div className="min-w-0 flex-1">
-                      <p className="font-medium">{slot.name}</p>
-                      {slot.source === 'planned' ? (
-                        <p className="text-xs text-gray-500">
-                          Target: {slot.targetSets} × {slot.targetReps}
-                        </p>
-                      ) : (
-                        <p className="text-xs text-gray-500">Not in your plan</p>
-                      )}
-                      {lastStr ? (
-                        <p className="mt-0.5 text-xs text-gray-500">
-                          Last ({fmtDate(slot.last!.performed_at)}): {lastStr}
-                        </p>
-                      ) : (
-                        <p className="mt-0.5 text-xs text-gray-500">No previous log yet.</p>
-                      )}
-                    </div>
-                    <div className="flex shrink-0 items-center gap-3">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setSwapKey(slot.key)
-                          setSwapName('')
-                        }}
-                        className="text-xs text-gray-500 hover:text-white"
-                      >
-                        Swap
-                      </button>
-                      {slot.source === 'adhoc' && (
-                        <button
-                          type="button"
-                          onClick={() => removeSlot(slotIdx)}
-                          className="text-xs text-gray-500 hover:text-red-400"
-                        >
-                          Remove
-                        </button>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="mb-2 space-y-2">
-                    {slot.sets.map((s, setIdx) => (
-                      <div key={setIdx} className="space-y-2 rounded-md border border-gray-800 bg-black p-2.5">
-                        <div className="flex items-center gap-2">
-                          <span className="w-10 shrink-0 text-xs font-medium text-gray-500">
-                            Set {setIdx + 1}
-                          </span>
-                          <input
-                            type="number"
-                            inputMode="decimal"
-                            placeholder="Weight"
-                            value={s.weight}
-                            onChange={(e) => updateSet(slotIdx, setIdx, 'weight', e.target.value)}
-                            className="w-full min-w-0 rounded border border-gray-700 bg-transparent px-3 py-2.5 text-base text-white placeholder:text-gray-600"
-                            aria-label={`Set ${setIdx + 1} weight`}
-                          />
-                          <input
-                            type="number"
-                            inputMode="numeric"
-                            placeholder="Reps"
-                            value={s.reps}
-                            onChange={(e) => updateSet(slotIdx, setIdx, 'reps', e.target.value)}
-                            className="w-full min-w-0 rounded border border-gray-700 bg-transparent px-3 py-2.5 text-base text-white placeholder:text-gray-600"
-                            aria-label={`Set ${setIdx + 1} reps`}
-                          />
-                          <button
-                            type="button"
-                            onClick={() => removeSet(slotIdx, setIdx)}
-                            className="shrink-0 rounded p-2 text-gray-500 hover:text-red-400"
-                            aria-label={`Remove set ${setIdx + 1}`}
-                          >
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <line x1="18" y1="6" x2="6" y2="18" />
-                              <line x1="6" y1="6" x2="18" y2="18" />
-                            </svg>
-                          </button>
-                        </div>
-                        <input
-                          type="text"
-                          placeholder="RPE / notes (optional)"
-                          value={s.notes}
-                          onChange={(e) => updateSet(slotIdx, setIdx, 'notes', e.target.value)}
-                          className="w-full rounded border border-gray-700 bg-transparent px-3 py-2 text-sm text-white placeholder:text-gray-600"
-                          aria-label={`Set ${setIdx + 1} notes`}
-                        />
-                      </div>
-                    ))}
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => addSet(slotIdx)}
-                    className="w-full rounded-md border border-gray-700 px-3 py-2.5 text-sm text-gray-300 hover:bg-gray-900"
-                  >
-                    + Add set
-                  </button>
-                </>
-              )}
+      {slots.length === 0 ? (
+        <div className="space-y-3">
+          <div className="border-2 border-neutral-700 py-8 text-center text-sm text-neutral-400">
+            This day has no exercises yet. Add one below, or add exercises on the Plan tab.
+          </div>
+          {addOpen ? (
+            <div className="space-y-2 border-2 border-neutral-700 p-4">
+              <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-neutral-500">
+                Add an exercise for this workout only
+              </p>
+              <input
+                type="text"
+                value={addName}
+                onChange={(e) => setAddName(e.target.value)}
+                placeholder="Exercise name (e.g. Incline DB Press)"
+                autoFocus
+                className="w-full border-2 border-neutral-700 bg-transparent px-3 py-2 text-sm text-bg placeholder:text-neutral-600 focus-visible:border-accent focus-visible:outline-none"
+              />
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  disabled={addBusy || !addName.trim()}
+                  onClick={confirmAdd}
+                  className="flex-1 bg-accent px-3 py-2 text-sm font-black uppercase tracking-wide text-bg disabled:opacity-40"
+                >
+                  {addBusy ? 'Adding…' : 'Add'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAddOpen(false)
+                    setAddName('')
+                  }}
+                  className="flex-1 border-2 border-neutral-700 px-3 py-2 text-sm font-extrabold uppercase tracking-wide text-bg"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
-          )
-        })}      
-      </div>
-
-      {addOpen ? (
-        <div className="space-y-2 rounded-lg border border-gray-800 bg-gray-950 p-4">
-          <p className="text-xs uppercase tracking-wide text-gray-500">
-            Add an exercise for this workout only
-          </p>
-          <input
-            type="text"
-            value={addName}
-            onChange={(e) => setAddName(e.target.value)}
-            placeholder="Exercise name (e.g. Incline DB Press)"
-            autoFocus
-            className="w-full rounded-md border border-gray-700 bg-transparent px-3 py-2 text-sm text-white placeholder:text-gray-500"
-          />
-          <p className="text-xs text-gray-500">
-            This won&apos;t be added to your plan — just logged for today.
-          </p>
-          <div className="flex gap-2">
+          ) : (
             <button
               type="button"
-              disabled={addBusy || !addName.trim()}
-              onClick={confirmAdd}
-              className="flex-1 rounded-md bg-[#5B5BD6] px-3 py-2 text-sm font-medium text-white disabled:opacity-40"
+              onClick={() => setAddOpen(true)}
+              className="w-full border-2 border-dashed border-neutral-700 px-3 py-2.5 text-sm font-extrabold uppercase tracking-wide text-neutral-400 hover:border-accent hover:text-accent"
             >
-              {addBusy ? 'Adding…' : 'Add'}
+              + Add exercise
             </button>
+          )}
+        </div>
+      ) : mode === 'resting' ? (
+        <div className="space-y-4 border-2 border-accent bg-accent p-6 text-center text-bg">
+          <p className="text-[11px] font-extrabold uppercase tracking-[0.14em]">Resting</p>
+          <p className="text-xs font-extrabold uppercase tracking-wide opacity-80">
+            {restIsFinish || !activeSlot
+              ? 'Session complete'
+              : activeSlot.sets.length + activeSlot.skipped > 0
+              ? `Set ${String(activeSlot.sets.length + activeSlot.skipped + 1).padStart(2, '0')} · ${activeSlot.name}`
+              : activeSlot.name}
+          </p>
+          <p className="py-4 text-7xl font-black tabular-nums tracking-tight">{fmtClock(remainingSec)}</p>
+          <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
-              onClick={() => {
-                setAddOpen(false)
-                setAddName('')
-              }}
-              className="flex-1 rounded-md border border-gray-700 px-3 py-2 text-sm text-gray-300"
+              onClick={() => setRestUntil((prev) => (prev ?? Date.now()) + EXTEND_SECONDS * 1000)}
+              className="border-2 border-bg px-4 py-3 text-sm font-black uppercase tracking-wide"
             >
-              Cancel
+              +30 sec
             </button>
+            {restIsFinish ? (
+              <button
+                type="submit"
+                disabled={totalSetsLogged === 0 || isSubmitting}
+                className="bg-ink px-4 py-3 text-sm font-black uppercase tracking-wide text-bg disabled:opacity-40"
+              >
+                {isSubmitting ? 'Saving…' : 'Finish workout →'}
+              </button>
+            ) : (
+              <button type="button" onClick={endRest} className="bg-ink px-4 py-3 text-sm font-black uppercase tracking-wide text-bg">
+                {remainingSec > 0 ? 'Skip rest →' : 'Continue →'}
+              </button>
+            )}
           </div>
         </div>
-      ) : (
-        <button
-          type="button"
-          onClick={() => setAddOpen(true)}
-          className="w-full rounded-md border border-dashed border-gray-700 px-3 py-2.5 text-sm text-gray-400 hover:bg-gray-900"
-        >
-          + Add exercise not in this plan
-        </button>
-      )}
-
-{slots.length > 0 && (
-        <form
-          action={finishSession}
-          onSubmit={() => setIsSubmitting(true)}
-          className="pt-2"
-        >
-          <input type="hidden" name="dayId" value={day.id} />
-          <input type="hidden" name="sets" value={JSON.stringify(payload)} />
+      ) : allDone ? (
+        <div className="space-y-4 border-2 border-neutral-700 p-6 text-center">
+          <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-accent">Session complete</p>
+          <p className="text-3xl font-black uppercase tracking-tight">All exercises done</p>
           <button
             type="submit"
             disabled={totalSetsLogged === 0 || isSubmitting}
-            className="w-full rounded-md bg-[#5B5BD6] px-4 py-3 text-base font-medium text-white disabled:cursor-not-allowed disabled:opacity-40"
+            className="w-full bg-accent px-4 py-4 text-lg font-black uppercase tracking-wide text-bg disabled:cursor-not-allowed disabled:opacity-40"
           >
-            {isSubmitting
-              ? 'Saving…'
-              : totalSetsLogged === 0
-              ? 'Log at least one set'
-              : `Finish workout (${totalSetsLogged} sets)`}
+            {isSubmitting ? 'Saving…' : totalSetsLogged === 0 ? 'Log at least one set' : 'Finish workout →'}
           </button>
-        </form>
+        </div>
+      ) : activeSlot ? (
+        <div className="space-y-4 border-2 border-neutral-700 p-4">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-extrabold uppercase tracking-wide text-neutral-500">
+              Exercise {activeSlotIdx + 1}/{slots.length}
+            </span>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setSwapKey(activeSlot.key)
+                  setSwapName('')
+                  setOverviewOpen(true)
+                }}
+                className="text-[11px] font-extrabold uppercase tracking-wide text-neutral-500 hover:text-accent"
+              >
+                Swap
+              </button>
+              <button
+                type="button"
+                onClick={nextExercise}
+                className="text-[11px] font-extrabold uppercase tracking-wide text-neutral-500 hover:text-accent"
+              >
+                Next exercise →
+              </button>
+            </div>
+          </div>
+
+          {activeSlot.targetSets !== null && (
+            <div className="grid gap-0.5" style={{ gridTemplateColumns: `repeat(${activeSlot.targetSets}, 1fr)` }}>
+              {Array.from({ length: activeSlot.targetSets }).map((_, i) => (
+                <i
+                  key={i}
+                  className={`h-1.5 ${i < activeSlot.sets.length + activeSlot.skipped ? 'bg-accent' : 'bg-neutral-800'}`}
+                />
+              ))}
+            </div>
+          )}
+
+          <div>
+            <p className="text-3xl font-black uppercase tracking-tight">{activeSlot.name}</p>
+            <p className="mt-1 text-[11px] font-extrabold uppercase tracking-wide text-neutral-500">
+              {activeSlot.targetSets !== null
+                ? `Set ${String(activeSlot.sets.length + activeSlot.skipped + 1).padStart(2, '0')} of ${String(activeSlot.targetSets).padStart(2, '0')}`
+                : `Set ${activeSlot.sets.length + activeSlot.skipped + 1}`}
+              {activeSlot.last &&
+                ` · last time ${activeSlot.last.sets.map((s) => `${s.weight ?? '–'}×${s.reps ?? '–'}`).join(' · ')}`}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 border-y-2 border-neutral-700 py-5">
+            <div>
+              <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-neutral-500">Weight</p>
+              <div className="mt-2 flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => bumpWeight(-5)}
+                  className="h-12 w-12 shrink-0 border-2 border-neutral-700 text-2xl font-black text-bg"
+                  aria-label="Decrease weight"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  inputMode="decimal"
+                  value={weightInput}
+                  onChange={(e) => setWeightInput(e.target.value)}
+                  className={inputClasses}
+                  aria-label="Weight"
+                />
+                <button
+                  type="button"
+                  onClick={() => bumpWeight(5)}
+                  className="h-12 w-12 shrink-0 bg-accent text-2xl font-black text-bg"
+                  aria-label="Increase weight"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+            <div>
+              <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-neutral-500">Reps</p>
+              <div className="mt-2 flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => bumpReps(-1)}
+                  className="h-12 w-12 shrink-0 border-2 border-neutral-700 text-2xl font-black text-bg"
+                  aria-label="Decrease reps"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  value={repsInput}
+                  onChange={(e) => setRepsInput(e.target.value)}
+                  className={inputClasses}
+                  aria-label="Reps"
+                />
+                <button
+                  type="button"
+                  onClick={() => bumpReps(1)}
+                  className="h-12 w-12 shrink-0 bg-accent text-2xl font-black text-bg"
+                  aria-label="Increase reps"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {notesOpen && (
+            <input
+              type="text"
+              value={notesInput}
+              onChange={(e) => setNotesInput(e.target.value)}
+              placeholder="RPE / notes"
+              autoFocus
+              className="w-full border-2 border-neutral-700 bg-transparent px-3 py-2 text-sm text-bg placeholder:text-neutral-600 focus-visible:border-accent focus-visible:outline-none"
+            />
+          )}
+
+          <button
+            type="button"
+            onClick={logSet}
+            className="w-full bg-accent px-4 py-4 text-lg font-black uppercase tracking-wide text-bg"
+          >
+            Log set · rest {fmtClock(REST_SECONDS)}
+          </button>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => setNotesOpen((v) => !v)}
+              className="border-2 border-neutral-700 px-3 py-2.5 text-xs font-extrabold uppercase tracking-wide text-bg"
+            >
+              {notesOpen ? 'Hide note' : 'Note / RPE'}
+            </button>
+            <button
+              type="button"
+              onClick={skipSet}
+              className="border-2 border-neutral-700 px-3 py-2.5 text-xs font-extrabold uppercase tracking-wide text-bg"
+            >
+              Skip set
+            </button>
+          </div>
+        </div>
+      ) : null}
+
+      {slots.length > 0 && (
+        <div className="border-2 border-neutral-700">
+          <button
+            type="button"
+            onClick={() => setOverviewOpen((v) => !v)}
+            className="flex w-full items-center justify-between px-4 py-3 text-left"
+          >
+            <span className="text-[11px] font-extrabold uppercase tracking-wide text-neutral-500">All exercises</span>
+            <div className="flex items-center gap-3">
+              <div className="flex gap-1">
+                {slots.map((s) => (
+                  <i key={s.key} className={`h-2 w-2 ${s.done ? 'bg-accent' : 'bg-neutral-700'}`} />
+                ))}
+              </div>
+              <span className="text-neutral-500">{overviewOpen ? '▴' : '▾'}</span>
+            </div>
+          </button>
+
+          {overviewOpen && (
+            <div className="divide-y-2 divide-neutral-800 border-t-2 border-neutral-700">
+              {slots.map((s, idx) => {
+                const isSwapping = swapKey === s.key
+                return (
+                  <div key={s.key} className="p-3">
+                    {isSwapping ? (
+                      <div className="space-y-2">
+                        <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-neutral-500">
+                          Swap for a different exercise
+                        </p>
+                        <input
+                          type="text"
+                          value={swapName}
+                          onChange={(e) => setSwapName(e.target.value)}
+                          placeholder="Exercise name"
+                          autoFocus
+                          className="w-full border-2 border-neutral-700 bg-transparent px-3 py-2 text-sm text-bg placeholder:text-neutral-600 focus-visible:border-accent focus-visible:outline-none"
+                        />
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            disabled={swapBusy || !swapName.trim()}
+                            onClick={() => confirmSwap(idx)}
+                            className="flex-1 bg-accent px-3 py-2 text-sm font-black uppercase tracking-wide text-bg disabled:opacity-40"
+                          >
+                            {swapBusy ? 'Swapping…' : 'Swap'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSwapKey(null)
+                              setSwapName('')
+                            }}
+                            className="flex-1 border-2 border-neutral-700 px-3 py-2 text-sm font-extrabold uppercase tracking-wide text-bg"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0 flex-1">
+                          <p className={`font-bold uppercase tracking-tight ${idx === activeSlotIdx ? 'text-accent' : ''}`}>
+                            {s.name}
+                          </p>
+                          <p className="text-[11px] font-extrabold uppercase tracking-wide text-neutral-500">
+                            {s.done
+                              ? '✓ Done'
+                              : s.targetSets !== null
+                              ? `${s.sets.length + s.skipped} of ${s.targetSets} logged`
+                              : 'Not in your plan'}
+                          </p>
+                        </div>
+                        <div className="flex shrink-0 items-center gap-3">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSwapKey(s.key)
+                              setSwapName('')
+                            }}
+                            className="text-[11px] font-extrabold uppercase tracking-wide text-neutral-500 hover:text-accent"
+                          >
+                            Swap
+                          </button>
+                          {s.source === 'adhoc' && (
+                            <button
+                              type="button"
+                              onClick={() => removeSlot(idx)}
+                              className="text-[11px] font-extrabold uppercase tracking-wide text-neutral-500 hover:text-accent"
+                            >
+                              Remove
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+              <div className="p-3">
+                {addOpen ? (
+                  <div className="space-y-2">
+                    <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-neutral-500">
+                      Add an exercise for this workout only
+                    </p>
+                    <input
+                      type="text"
+                      value={addName}
+                      onChange={(e) => setAddName(e.target.value)}
+                      placeholder="Exercise name (e.g. Incline DB Press)"
+                      autoFocus
+                      className="w-full border-2 border-neutral-700 bg-transparent px-3 py-2 text-sm text-bg placeholder:text-neutral-600 focus-visible:border-accent focus-visible:outline-none"
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        disabled={addBusy || !addName.trim()}
+                        onClick={confirmAdd}
+                        className="flex-1 bg-accent px-3 py-2 text-sm font-black uppercase tracking-wide text-bg disabled:opacity-40"
+                      >
+                        {addBusy ? 'Adding…' : 'Add'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAddOpen(false)
+                          setAddName('')
+                        }}
+                        className="flex-1 border-2 border-neutral-700 px-3 py-2 text-sm font-extrabold uppercase tracking-wide text-bg"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setAddOpen(true)}
+                    className="w-full border-2 border-dashed border-neutral-700 px-3 py-2.5 text-sm font-extrabold uppercase tracking-wide text-neutral-400 hover:border-accent hover:text-accent"
+                  >
+                    + Add exercise not in this plan
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
       )}
-    </div>
+    </form>
   )
 }
