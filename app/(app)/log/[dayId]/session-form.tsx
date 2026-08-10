@@ -82,10 +82,10 @@ function computePrefill(slot: ExerciseSlot): { weight: string; reps: string } {
 // Shrinks the stepper numeral as the value gets longer so it never gets cropped.
 function stepperSizeClass(value: string): string {
   const len = value.length
-  if (len <= 3) return 'text-4xl'
-  if (len === 4) return 'text-3xl'
-  if (len === 5) return 'text-2xl'
-  return 'text-xl'
+  if (len <= 3) return 'text-3xl'
+  if (len === 4) return 'text-2xl'
+  if (len === 5) return 'text-xl'
+  return 'text-lg'
 }
 
 export default function SessionForm({
