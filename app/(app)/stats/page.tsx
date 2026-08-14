@@ -9,6 +9,7 @@ import Link from 'next/link'
 import FrequencyChart from './frequency-chart'
 import ProgressChart from './progress-chart'
 import ExercisePicker from './exercise-picker'
+import InsightsCard from './insights-card'
 import LocalDateTime from '../local-date-time'
 
 export default async function StatsPage({
@@ -76,6 +77,8 @@ export default async function StatsPage({
           </p>
         </div>
       </div>
+
+      <InsightsCard />
 
       {exercises.length > 0 && (
         <div className="border-2 border-neutral-700 p-4">

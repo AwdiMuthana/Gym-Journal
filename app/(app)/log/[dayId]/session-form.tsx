@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { finishSession, lookupLastByName } from '@/app/log-actions'
+import { finishSession, lookupLastByName, suggestNextWeight, type WeightSuggestion } from '@/app/log-actions'
 import type { DayWithExercises, Exercise } from '@/lib/types'
 
 const REST_SECONDS = 120
@@ -162,6 +162,8 @@ export default function SessionForm({
   const [swapName, setSwapName] = useState('')
   const [swapBusy, setSwapBusy] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const [suggestions, setSuggestions] = useState<Record<string, WeightSuggestion | 'loading'>>({})
 
   const rawActiveIdx = slots.findIndex((s) => s.key === activeKey)
   const activeSlotIdx = rawActiveIdx !== -1 ? rawActiveIdx : 0
@@ -365,6 +367,31 @@ export default function SessionForm({
       )
     )
     setEditingSet(null)
+  }
+
+  async function fetchSuggestion() {
+    if (!activeSlot) return
+    const slotKey = activeSlot.key
+    setSuggestions((prev) => ({ ...prev, [slotKey]: 'loading' }))
+    let result: WeightSuggestion
+    try {
+      result = await suggestNextWeight({
+        exerciseName: activeSlot.name,
+        targetReps: activeSlot.targetReps,
+        last: activeSlot.last,
+      })
+    } catch {
+      result = { ok: false, reason: 'error', message: 'Something went wrong — try again.' }
+    }
+    setSuggestions((prev) => ({ ...prev, [slotKey]: result }))
+  }
+
+  function acceptSuggestion() {
+    if (!activeSlot) return
+    const suggestion = suggestions[activeSlot.key]
+    if (!suggestion || suggestion === 'loading' || !suggestion.ok) return
+    setWeightInput(String(suggestion.weight))
+    setRepsInput(String(suggestion.reps))
   }
 
   function startRest() {
@@ -753,6 +780,50 @@ export default function SessionForm({
                 ` · last time ${activeSlot.last.sets.map((s) => `${s.weight ?? '–'}×${s.reps ?? '–'}`).join(' · ')}`}
             </p>
           </div>
+
+          {activeSlot.last && (() => {
+            const suggestion = suggestions[activeSlot.key]
+            if (suggestion === undefined) {
+              return (
+                <button
+                  type="button"
+                  onClick={fetchSuggestion}
+                  className="text-[11px] font-extrabold uppercase tracking-wide text-neutral-500 hover:text-accent"
+                >
+                  Get AI suggestion
+                </button>
+              )
+            }
+            if (suggestion === 'loading') {
+              return (
+                <p className="text-[11px] font-extrabold uppercase tracking-wide text-neutral-500">
+                  Thinking…
+                </p>
+              )
+            }
+            if (!suggestion.ok) {
+              return (
+                <p className="text-[11px] font-extrabold uppercase tracking-wide text-neutral-500">
+                  {suggestion.message}
+                </p>
+              )
+            }
+            return (
+              <button
+                type="button"
+                onClick={acceptSuggestion}
+                className="flex w-full items-center justify-between gap-2 border-2 border-accent px-3 py-2 text-left"
+              >
+                <span className="min-w-0 truncate text-xs font-bold uppercase tracking-tight text-bg">
+                  AI: {suggestion.weight} × {suggestion.reps}
+                  {suggestion.note ? ` · ${suggestion.note}` : ''}
+                </span>
+                <span className="shrink-0 text-[11px] font-extrabold uppercase tracking-wide text-accent">
+                  Use ▸
+                </span>
+              </button>
+            )
+          })()}
 
           <div className="grid grid-cols-2 gap-4 border-y-2 border-neutral-700 py-5">
             <div>

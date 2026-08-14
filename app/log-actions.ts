@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { getLastSetsForExerciseName } from '@/lib/db'
+import { generateText } from '@/lib/gemini'
 
 async function requireUser() {
   const supabase = await createClient()
@@ -23,6 +24,53 @@ type LoggedSet = {
 
 export async function lookupLastByName(name: string) {
   return await getLastSetsForExerciseName(name)
+}
+
+export type WeightSuggestion =
+  | { ok: true; weight: number; reps: number; note: string }
+  | { ok: false; reason: 'missing_key' | 'rate_limited' | 'error'; message: string }
+
+// Suggests a target weight/reps for today based on the last logged session for
+// this exercise, following progressive-overload rules (small increase if reps
+// were all hit, hold or smaller jump if reps were missed).
+export async function suggestNextWeight(input: {
+  exerciseName: string
+  targetReps: string | null
+  last: { performed_at: string; sets: { weight: number | null; reps: number | null; notes: string | null }[] } | null
+}): Promise<WeightSuggestion> {
+  const { exerciseName, targetReps, last } = input
+  const validSets = (last?.sets ?? []).filter(
+    (s): s is { weight: number; reps: number; notes: string | null } => s.weight !== null && s.reps !== null
+  )
+  if (validSets.length === 0) {
+    return { ok: false, reason: 'error', message: 'No completed sets last time to base a suggestion on.' }
+  }
+
+  const setsSummary = validSets.map((s, i) => `Set ${i + 1}: ${s.weight} lb x ${s.reps} reps`).join('; ')
+
+  const prompt = `You are a strength-training coach. A lifter is about to perform "${exerciseName}"${
+    targetReps ? ` with a target of ${targetReps} reps per set` : ''
+  }. Their most recent session for this exercise: ${setsSummary}.
+
+Using progressive overload — if they hit all target reps last time, suggest a small weight increase; if they missed reps, suggest holding the same weight or a smaller jump — suggest a single target weight and rep count for today's first set.
+
+Respond in EXACTLY this format and nothing else:
+WEIGHT: <number>
+REPS: <integer>
+NOTE: <one short clause, under 12 words, no trailing punctuation>`
+
+  const result = await generateText(prompt)
+  if (!result.ok) return result
+
+  const weightMatch = result.text.match(/WEIGHT:\s*([\d.]+)/i)
+  const repsMatch = result.text.match(/REPS:\s*(\d+)/i)
+  const noteMatch = result.text.match(/NOTE:\s*(.+)/i)
+  const weight = weightMatch ? parseFloat(weightMatch[1]) : NaN
+  const reps = repsMatch ? parseInt(repsMatch[1], 10) : NaN
+  if (!Number.isFinite(weight) || !Number.isFinite(reps)) {
+    return { ok: false, reason: 'error', message: 'Couldn’t parse a suggestion — try again.' }
+  }
+  return { ok: true, weight, reps, note: noteMatch?.[1]?.trim() ?? '' }
 }
 
 export async function finishSession(formData: FormData) {
