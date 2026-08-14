@@ -8,6 +8,22 @@ import type { DayWithExercises, Exercise } from '@/lib/types'
 const REST_SECONDS = 120
 const EXTEND_SECONDS = 30
 
+// Hardcoded for now — bar weight and plate sizes aren't user-configurable yet.
+const BAR_WEIGHT = 45
+const PLATE_DENOMINATIONS = [45, 35, 25, 10, 5, 2.5]
+
+function BarbellIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={className}>
+      <line x1="2" y1="12" x2="22" y2="12" />
+      <line x1="6" y1="7" x2="6" y2="17" />
+      <line x1="9" y1="9" x2="9" y2="15" />
+      <line x1="15" y1="9" x2="15" y2="15" />
+      <line x1="18" y1="7" x2="18" y2="17" />
+    </svg>
+  )
+}
+
 type LastSets = {
   performed_at: string
   sets: { weight: number | null; reps: number | null; notes: string | null }[]
@@ -32,6 +48,8 @@ type ExerciseSlot = {
   sets: SetInput[]
   skipped: number
   done: boolean
+  plateBarOn: boolean
+  plateDouble: boolean
 }
 
 type SavedSlot = {
@@ -44,6 +62,8 @@ type SavedSlot = {
   sets: SetInput[]
   skipped: number
   done: boolean
+  plateBarOn: boolean
+  plateDouble: boolean
 }
 
 type SavedState = {
@@ -107,6 +127,8 @@ export default function SessionForm({
       sets: [],
       skipped: 0,
       done: false,
+      plateBarOn: true,
+      plateDouble: true,
     }))
   )
   const [restored, setRestored] = useState(false)
@@ -121,6 +143,14 @@ export default function SessionForm({
   const [repsInput, setRepsInput] = useState('')
   const [notesInput, setNotesInput] = useState('')
   const [notesOpen, setNotesOpen] = useState(false)
+
+  const [plateOpen, setPlateOpen] = useState(false)
+  const [plateCounts, setPlateCounts] = useState<Record<number, number>>({})
+
+  const [editingSet, setEditingSet] = useState<{ slotKey: string; setIdx: number } | null>(null)
+  const [editWeight, setEditWeight] = useState('')
+  const [editReps, setEditReps] = useState('')
+  const [editNotes, setEditNotes] = useState('')
 
   const [overviewOpen, setOverviewOpen] = useState(false)
 
@@ -149,7 +179,14 @@ export default function SessionForm({
               (s) => s.source === 'planned' && s.exerciseId === slot.exerciseId
             )
             return match
-              ? { ...slot, sets: match.sets, skipped: match.skipped ?? 0, done: match.done ?? false }
+              ? {
+                  ...slot,
+                  sets: match.sets,
+                  skipped: match.skipped ?? 0,
+                  done: match.done ?? false,
+                  plateBarOn: match.plateBarOn ?? true,
+                  plateDouble: match.plateDouble ?? true,
+                }
               : slot
           })
           const adhocRestored: ExerciseSlot[] = parsed.slots
@@ -165,6 +202,8 @@ export default function SessionForm({
               sets: s.sets,
               skipped: s.skipped ?? 0,
               done: s.done ?? false,
+              plateBarOn: s.plateBarOn ?? true,
+              plateDouble: s.plateDouble ?? true,
             }))
           return [...plannedRestored, ...adhocRestored]
         })
@@ -203,6 +242,8 @@ export default function SessionForm({
               sets: s.sets,
               skipped: s.skipped,
               done: s.done,
+              plateBarOn: s.plateBarOn,
+              plateDouble: s.plateDouble,
             })),
           startedAt,
           activeKey,
@@ -225,6 +266,8 @@ export default function SessionForm({
     setRepsInput(prefill.reps)
     setNotesInput('')
     setNotesOpen(false)
+    setPlateCounts({})
+    setPlateOpen(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeSlotIdx, activeSlot?.name, activeSlot?.sets.length, activeSlot?.skipped])
 
@@ -243,6 +286,85 @@ export default function SessionForm({
   function bumpReps(delta: number) {
     const cur = parseInt(repsInput) || 0
     setRepsInput(String(Math.max(0, cur + delta)))
+  }
+
+  function plateTotal(counts: Record<number, number>, barOn: boolean, doubleSided: boolean) {
+    const perSide = PLATE_DENOMINATIONS.reduce((sum, denom) => sum + denom * (counts[denom] ?? 0), 0)
+    const barWeight = barOn ? BAR_WEIGHT : 0
+    return barWeight + perSide * (doubleSided ? 2 : 1)
+  }
+
+  function addPlate(denom: number) {
+    if (!activeSlot) return
+    const { plateBarOn, plateDouble } = activeSlot
+    setPlateCounts((prev) => {
+      const next = { ...prev, [denom]: (prev[denom] ?? 0) + 1 }
+      setWeightInput(String(plateTotal(next, plateBarOn, plateDouble)))
+      return next
+    })
+  }
+
+  function removePlate(denom: number) {
+    if (!activeSlot) return
+    const { plateBarOn, plateDouble } = activeSlot
+    setPlateCounts((prev) => {
+      const current = prev[denom] ?? 0
+      if (current <= 0) return prev
+      const next = { ...prev, [denom]: current - 1 }
+      setWeightInput(String(plateTotal(next, plateBarOn, plateDouble)))
+      return next
+    })
+  }
+
+  function resetPlates() {
+    setPlateCounts({})
+  }
+
+  function toggleSlotPlateBar() {
+    if (!activeSlot) return
+    const nextBarOn = !activeSlot.plateBarOn
+    const updatedSlot = { ...activeSlot, plateBarOn: nextBarOn }
+    setSlots(slots.map((s, i) => (i === activeSlotIdx ? updatedSlot : s)))
+    setWeightInput(String(plateTotal(plateCounts, nextBarOn, activeSlot.plateDouble)))
+  }
+
+  function toggleSlotPlateDouble() {
+    if (!activeSlot) return
+    const nextDouble = !activeSlot.plateDouble
+    const updatedSlot = { ...activeSlot, plateDouble: nextDouble }
+    setSlots(slots.map((s, i) => (i === activeSlotIdx ? updatedSlot : s)))
+    setWeightInput(String(plateTotal(plateCounts, activeSlot.plateBarOn, nextDouble)))
+  }
+
+  function startEditSet(slotKey: string, setIdx: number) {
+    const slot = slots.find((s) => s.key === slotKey)
+    const set = slot?.sets[setIdx]
+    if (!set) return
+    setEditingSet({ slotKey, setIdx })
+    setEditWeight(set.weight)
+    setEditReps(set.reps)
+    setEditNotes(set.notes)
+  }
+
+  function cancelEditSet() {
+    setEditingSet(null)
+  }
+
+  function saveEditSet() {
+    if (!editingSet) return
+    setSlots((prev) =>
+      prev.map((s) =>
+        s.key === editingSet.slotKey
+          ? {
+              ...s,
+              sets: s.sets.map((set, i) =>
+                i === editingSet.setIdx ? { weight: editWeight, reps: editReps, notes: editNotes } : set
+              ),
+            }
+          : s
+      )
+    )
+    setEditingSet(null)
   }
 
   function startRest() {
@@ -337,6 +459,8 @@ export default function SessionForm({
         sets: [],
         skipped: 0,
         done: false,
+        plateBarOn: true,
+        plateDouble: true,
       },
     ])
     setAddBusy(false)
@@ -374,6 +498,8 @@ export default function SessionForm({
         sets: [],
         skipped: 0,
         done: false,
+        plateBarOn: true,
+        plateDouble: true,
       }
       return next
     })
@@ -399,6 +525,83 @@ export default function SessionForm({
 
   const inputBaseClasses =
     'w-full min-w-0 flex-1 border-0 bg-transparent text-center font-black tabular-nums tracking-tight text-bg focus-visible:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
+
+  function renderSlotSets(slot: ExerciseSlot) {
+    if (slot.sets.length === 0) return null
+    return (
+      <div className="divide-y-2 divide-neutral-800 border-2 border-neutral-700">
+        {slot.sets.map((set, idx) => {
+          const isEditing = editingSet?.slotKey === slot.key && editingSet.setIdx === idx
+          return (
+            <div key={idx} className="p-3">
+              {isEditing ? (
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    <input
+                      type="number"
+                      inputMode="decimal"
+                      value={editWeight}
+                      onChange={(e) => setEditWeight(e.target.value)}
+                      placeholder="Weight"
+                      autoFocus
+                      className="w-full border-2 border-neutral-700 bg-transparent px-2 py-1.5 text-center text-sm font-bold tabular-nums text-bg placeholder:text-neutral-600 focus-visible:border-accent focus-visible:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    />
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      value={editReps}
+                      onChange={(e) => setEditReps(e.target.value)}
+                      placeholder="Reps"
+                      className="w-full border-2 border-neutral-700 bg-transparent px-2 py-1.5 text-center text-sm font-bold tabular-nums text-bg placeholder:text-neutral-600 focus-visible:border-accent focus-visible:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    />
+                  </div>
+                  <input
+                    type="text"
+                    value={editNotes}
+                    onChange={(e) => setEditNotes(e.target.value)}
+                    placeholder="RPE / notes"
+                    className="w-full border-2 border-neutral-700 bg-transparent px-3 py-1.5 text-sm text-bg placeholder:text-neutral-600 focus-visible:border-accent focus-visible:outline-none"
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={saveEditSet}
+                      className="flex-1 bg-accent px-3 py-1.5 text-xs font-black uppercase tracking-wide text-bg"
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      onClick={cancelEditSet}
+                      className="flex-1 border-2 border-neutral-700 px-3 py-1.5 text-xs font-extrabold uppercase tracking-wide text-bg"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold tabular-nums text-bg">
+                      Set {String(idx + 1).padStart(2, '0')} · {set.weight || '–'} × {set.reps || '–'}
+                    </p>
+                    {set.notes && <p className="truncate text-[11px] text-neutral-500">{set.notes}</p>}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => startEditSet(slot.key, idx)}
+                    className="shrink-0 text-[11px] font-extrabold uppercase tracking-wide text-neutral-500 hover:text-accent"
+                  >
+                    Edit
+                  </button>
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    )
+  }
 
   return (
     <form action={finishSession} onSubmit={() => setIsSubmitting(true)} className="space-y-4">
@@ -612,6 +815,98 @@ export default function SessionForm({
             </div>
           </div>
 
+          <button
+            type="button"
+            onClick={() => setPlateOpen((v) => !v)}
+            className={`flex w-full items-center justify-between gap-2 border-2 px-3 py-2.5 text-xs font-extrabold uppercase tracking-wide ${
+              plateOpen ? 'border-accent text-accent' : 'border-neutral-700 text-bg'
+            }`}
+          >
+            <span className="flex items-center gap-2">
+              <BarbellIcon className="h-4 w-4 shrink-0" />
+              Plate calculator
+            </span>
+            <span className="text-neutral-500">{plateOpen ? 'Hide ▴' : 'Open ▾'}</span>
+          </button>
+
+          {plateOpen && (
+            <div className="space-y-3 border-2 border-t-0 border-neutral-700 p-3">
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={toggleSlotPlateBar}
+                  className={`border-2 px-3 py-2 text-[11px] font-extrabold uppercase tracking-wide ${
+                    activeSlot.plateBarOn ? 'border-accent text-accent' : 'border-neutral-700 text-neutral-500'
+                  }`}
+                >
+                  Bar {activeSlot.plateBarOn ? `on · ${BAR_WEIGHT} lb` : 'off'}
+                </button>
+                <button
+                  type="button"
+                  onClick={toggleSlotPlateDouble}
+                  className={`border-2 px-3 py-2 text-[11px] font-extrabold uppercase tracking-wide ${
+                    activeSlot.plateDouble ? 'border-accent text-accent' : 'border-neutral-700 text-neutral-500'
+                  }`}
+                >
+                  {activeSlot.plateDouble ? 'Double sided' : 'Single sided'}
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-neutral-500">
+                  Plates per side
+                </p>
+                <button
+                  type="button"
+                  onClick={resetPlates}
+                  className="text-[11px] font-extrabold uppercase tracking-wide text-neutral-500 hover:text-accent"
+                >
+                  Clear
+                </button>
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                {PLATE_DENOMINATIONS.map((denom) => {
+                  const count = plateCounts[denom] ?? 0
+                  return (
+                    <div
+                      key={denom}
+                      className={`flex flex-col items-center gap-1.5 border-2 py-2 ${
+                        count > 0 ? 'border-accent' : 'border-neutral-700'
+                      }`}
+                    >
+                      <span className="text-lg font-black tabular-nums text-bg">{denom}</span>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => removePlate(denom)}
+                          disabled={count === 0}
+                          className="h-7 w-7 shrink-0 border-2 border-neutral-700 text-sm font-black text-bg disabled:opacity-30"
+                          aria-label={`Remove ${denom} lb plate`}
+                        >
+                          −
+                        </button>
+                        <span className="w-4 text-center text-sm font-black tabular-nums text-bg">{count}</span>
+                        <button
+                          type="button"
+                          onClick={() => addPlate(denom)}
+                          className="h-7 w-7 shrink-0 bg-accent text-sm font-black text-bg"
+                          aria-label={`Add ${denom} lb plate`}
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+              <p className="text-center text-xs font-extrabold uppercase tracking-wide text-neutral-500">
+                {activeSlot.plateBarOn ? `${BAR_WEIGHT} bar` : 'No bar'} +{' '}
+                {PLATE_DENOMINATIONS.reduce((sum, d) => sum + d * (plateCounts[d] ?? 0), 0)} ×{' '}
+                {activeSlot.plateDouble ? 2 : 1} = {plateTotal(plateCounts, activeSlot.plateBarOn, activeSlot.plateDouble)} lb
+              </p>
+            </div>
+          )}
+
           {notesOpen && (
             <input
               type="text"
@@ -621,6 +916,15 @@ export default function SessionForm({
               autoFocus
               className="w-full border-2 border-neutral-700 bg-transparent px-3 py-2 text-sm text-bg placeholder:text-neutral-600 focus-visible:border-accent focus-visible:outline-none"
             />
+          )}
+
+          {activeSlot.sets.length > 0 && (
+            <div className="space-y-2">
+              <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-neutral-500">
+                Logged this exercise
+              </p>
+              {renderSlotSets(activeSlot)}
+            </div>
           )}
 
           <button
@@ -718,45 +1022,50 @@ export default function SessionForm({
                         </div>
                       </div>
                     ) : (
-                      <div className="flex items-start justify-between gap-2">
-                        <button
-                          type="button"
-                          onClick={() => jumpTo(s.key)}
-                          className="min-w-0 flex-1 text-left"
-                        >
-                          <p className={`font-bold uppercase tracking-tight ${idx === activeSlotIdx ? 'text-accent' : ''}`}>
-                            {s.name}
-                          </p>
-                          <p className="text-[11px] font-extrabold uppercase tracking-wide text-neutral-500">
-                            {s.done
-                              ? '✓ Done'
-                              : s.targetSets !== null
-                              ? `${s.sets.length + s.skipped} of ${s.targetSets} logged`
-                              : 'Not in your plan'}
-                          </p>
-                        </button>
-                        <div className="flex shrink-0 items-center gap-3">
+                      <>
+                        <div className="flex items-start justify-between gap-2">
                           <button
                             type="button"
-                            onClick={() => {
-                              setSwapKey(s.key)
-                              setSwapName('')
-                            }}
-                            className="text-[11px] font-extrabold uppercase tracking-wide text-neutral-500 hover:text-accent"
+                            onClick={() => jumpTo(s.key)}
+                            className="min-w-0 flex-1 text-left"
                           >
-                            Swap
+                            <p className={`font-bold uppercase tracking-tight ${idx === activeSlotIdx ? 'text-accent' : ''}`}>
+                              {s.name}
+                            </p>
+                            <p className="text-[11px] font-extrabold uppercase tracking-wide text-neutral-500">
+                              {s.done
+                                ? '✓ Done'
+                                : s.targetSets !== null
+                                ? `${s.sets.length + s.skipped} of ${s.targetSets} logged`
+                                : 'Not in your plan'}
+                            </p>
                           </button>
-                          {s.source === 'adhoc' && (
+                          <div className="flex shrink-0 items-center gap-3">
                             <button
                               type="button"
-                              onClick={() => removeSlot(idx)}
+                              onClick={() => {
+                                setSwapKey(s.key)
+                                setSwapName('')
+                              }}
                               className="text-[11px] font-extrabold uppercase tracking-wide text-neutral-500 hover:text-accent"
                             >
-                              Remove
+                              Swap
                             </button>
-                          )}
+                            {s.source === 'adhoc' && (
+                              <button
+                                type="button"
+                                onClick={() => removeSlot(idx)}
+                                className="text-[11px] font-extrabold uppercase tracking-wide text-neutral-500 hover:text-accent"
+                              >
+                                Remove
+                              </button>
+                            )}
+                          </div>
                         </div>
-                      </div>
+                        {idx !== activeSlotIdx && s.sets.length > 0 && (
+                          <div className="mt-2">{renderSlotSets(s)}</div>
+                        )}
+                      </>
                     )}
                   </div>
                 )

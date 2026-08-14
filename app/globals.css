@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Dark theme (default). "ink" is the page surface, "bg" is the text/foreground
+   drawn on top of it — the names come from a light-mode convention but this
+   app started dark-only, so the roles are inverted from what the names suggest. */
 :root {
   --color-bg: #f3f2f2;
   --color-ink: #201e1d;
@@ -24,6 +27,93 @@
   --color-accent-700: #ae1800;
   --color-accent-800: #7c1405;
   --color-accent-900: #4d170e;
+}
+
+/* Light theme: bg/ink are swapped (surface becomes light, text becomes dark)
+   and the neutral ramp is mirrored (100<->900) so every existing usage — chosen
+   for its role at a given step, e.g. border-neutral-700, text-neutral-500 —
+   keeps the same relative contrast against the now-light page surface. */
+:root[data-theme='light'] {
+  --color-bg: #201e1d;
+  --color-ink: #f3f2f2;
+
+  --color-neutral-100: #2d2b2b;
+  --color-neutral-200: #444141;
+  --color-neutral-300: #605d5d;
+  --color-neutral-400: #7d7979;
+  --color-neutral-500: #9b9797;
+  --color-neutral-600: #bab6b6;
+  --color-neutral-700: #d7d3d3;
+  --color-neutral-800: #eae7e7;
+  --color-neutral-900: #f8f4f4;
+}
+
+/* Accent presets. Red is the original/default palette baked into :root above;
+   each alternate hue reuses the same lightness ladder so buttons/text/borders
+   keep equivalent contrast no matter which preset is active. */
+:root[data-accent='blue'] {
+  --color-accent: #1d4ed8;
+  --color-accent-100: #f1f4fd;
+  --color-accent-200: #dbe3f9;
+  --color-accent-300: #b7c6f3;
+  --color-accent-400: #809ce9;
+  --color-accent-500: #416ade;
+  --color-accent-600: #1842b5;
+  --color-accent-700: #13338f;
+  --color-accent-800: #0e2568;
+  --color-accent-900: #091945;
+}
+
+:root[data-accent='green'] {
+  --color-accent: #0b8f3c;
+  --color-accent-100: #d3ffe3;
+  --color-accent-200: #84ffb1;
+  --color-accent-300: #00f259;
+  --color-accent-400: #00ce4c;
+  --color-accent-500: #00a73d;
+  --color-accent-600: #098637;
+  --color-accent-700: #006626;
+  --color-accent-800: #03481c;
+  --color-accent-900: #092f17;
+}
+
+:root[data-accent='purple'] {
+  --color-accent: #925af2;
+  --color-accent-100: #f7f3ff;
+  --color-accent-200: #ece2ff;
+  --color-accent-300: #dcc8ff;
+  --color-accent-400: #c4a2ff;
+  --color-accent-500: #a875ff;
+  --color-accent-600: #8a4df3;
+  --color-accent-700: #5f02ff;
+  --color-accent-800: #4707b4;
+  --color-accent-900: #33136b;
+}
+
+:root[data-accent='pink'] {
+  --color-accent: #eb1386;
+  --color-accent-100: #fff1f9;
+  --color-accent-200: #ffdeef;
+  --color-accent-300: #ffc0e1;
+  --color-accent-400: #ff8eca;
+  --color-accent-500: #ff44a8;
+  --color-accent-600: #dc0f7d;
+  --color-accent-700: #ac005c;
+  --color-accent-800: #7c0544;
+  --color-accent-900: #500e31;
+}
+
+:root[data-accent='teal'] {
+  --color-accent: #0b8a86;
+  --color-accent-100: #c8fffd;
+  --color-accent-200: #43fff9;
+  --color-accent-300: #00e9e2;
+  --color-accent-400: #00c7c1;
+  --color-accent-500: #00a29c;
+  --color-accent-600: #09817d;
+  --color-accent-700: #00635f;
+  --color-accent-800: #034543;
+  --color-accent-900: #082f2d;
 }
 
 @theme inline {
