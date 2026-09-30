@@ -1,12 +1,13 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getDayWithExercises } from '@/lib/db'
+import { getDayWithExercises, getLoggedExercises } from '@/lib/db'
 import {
   createExercise,
   deleteExercise,
   updateDay,
   updateExercise,
 } from '@/app/plan-actions'
+import ExerciseNamePicker from '../../../../exercise-name-picker'
 
 export default async function DayEditorPage({
   params,
@@ -17,7 +18,7 @@ export default async function DayEditorPage({
 }) {
   const { planId, dayId } = await params
   const sp = await searchParams
-  const day = await getDayWithExercises(dayId)
+  const [day, recentExercises] = await Promise.all([getDayWithExercises(dayId), getLoggedExercises()])
   if (!day) notFound()
 
   const renameDayOpen = sp.renameDay === '1'
@@ -94,11 +95,10 @@ export default async function DayEditorPage({
                   <input type="hidden" name="exerciseId" value={ex.id} />
                   <input type="hidden" name="planId" value={planId} />
                   <input type="hidden" name="dayId" value={day.id} />
-                  <input
-                    type="text"
+                  <ExerciseNamePicker
                     name="name"
                     defaultValue={ex.name}
-                    required
+                    recent={recentExercises}
                     autoFocus
                     className="w-full border-2 border-neutral-700 bg-transparent px-3 py-2 text-sm text-bg focus-visible:border-accent focus-visible:outline-none"
                   />
@@ -176,11 +176,10 @@ export default async function DayEditorPage({
           Add exercise
         </p>
         <input type="hidden" name="dayId" value={day.id} />
-        <input
-          type="text"
+        <ExerciseNamePicker
           name="name"
           placeholder="Exercise name (e.g. Bench press)"
-          required
+          recent={recentExercises}
           className="w-full border-2 border-neutral-700 bg-transparent px-3 py-2 text-sm text-bg placeholder:text-neutral-600 focus-visible:border-accent focus-visible:outline-none"
         />
         <div className="flex gap-2">

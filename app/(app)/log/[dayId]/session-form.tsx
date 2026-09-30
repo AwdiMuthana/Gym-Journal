@@ -4,13 +4,24 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { finishSession, lookupLastByName } from '@/app/log-actions'
 import type { DayWithExercises, Exercise } from '@/lib/types'
+import {
+  BAR_WEIGHT_KG,
+  BAR_WEIGHT_LB,
+  PLATE_DENOMINATIONS_KG,
+  PLATE_DENOMINATIONS_LB,
+  UNITS_STORAGE_KEY,
+  WEIGHT_BUMP_KG,
+  WEIGHT_BUMP_LB,
+  displayToLbs,
+  formatWeight,
+  readStoredUnits,
+  unitLabel,
+  type UnitSystem,
+} from '@/lib/units'
+import ExerciseNamePicker from '../../exercise-name-picker'
 
 const REST_SECONDS = 120
 const EXTEND_SECONDS = 30
-
-// Hardcoded for now — bar weight and plate sizes aren't user-configurable yet.
-const BAR_WEIGHT = 45
-const PLATE_DENOMINATIONS = [45, 35, 25, 10, 5, 2.5]
 
 function BarbellIcon({ className }: { className?: string }) {
   return (
@@ -30,6 +41,7 @@ type LastSets = {
 } | null
 
 type SetInput = {
+  // weight is always stored here in lb (canonical), regardless of display unit.
   weight: string
   reps: string
   notes: string
@@ -86,13 +98,31 @@ function fmtClock(totalSeconds: number) {
   return `${m}:${String(s).padStart(2, '0')}`
 }
 
-function computePrefill(slot: ExerciseSlot): { weight: string; reps: string } {
+// Converts a lb-string (as stored in SetInput.weight) to a display string.
+function displayFromStored(lbsStr: string, unit: UnitSystem): string {
+  if (lbsStr === '') return ''
+  const n = parseFloat(lbsStr)
+  if (Number.isNaN(n)) return ''
+  return formatWeight(n, unit)
+}
+
+// Converts whatever the user typed/sees (display unit) to a lb-string for storage.
+function toLbsString(display: string, unit: UnitSystem): string {
+  const trimmed = display.trim()
+  if (trimmed === '') return ''
+  const n = parseFloat(trimmed)
+  if (Number.isNaN(n)) return ''
+  const lbs = displayToLbs(n, unit)
+  return String(Math.round(lbs * 100) / 100)
+}
+
+function computePrefill(slot: ExerciseSlot, unit: UnitSystem): { weight: string; reps: string } {
   const prevSet = slot.sets[slot.sets.length - 1]
-  if (prevSet) return { weight: prevSet.weight, reps: prevSet.reps }
+  if (prevSet) return { weight: displayFromStored(prevSet.weight, unit), reps: prevSet.reps }
   if (slot.last && slot.last.sets.length > 0) {
     const firstLast = slot.last.sets[0]
     return {
-      weight: firstLast.weight !== null ? String(firstLast.weight) : '',
+      weight: firstLast.weight !== null ? formatWeight(firstLast.weight, unit) : '',
       reps: firstLast.reps !== null ? String(firstLast.reps) : '',
     }
   }
@@ -111,9 +141,11 @@ function stepperSizeClass(value: string): string {
 export default function SessionForm({
   day,
   exercisesWithLast,
+  recentExercises,
 }: {
   day: DayWithExercises
   exercisesWithLast: { exercise: Exercise; last: LastSets }[]
+  recentExercises: { name: string; session_count: number }[]
 }) {
   const [slots, setSlots] = useState<ExerciseSlot[]>(() =>
     exercisesWithLast.map(({ exercise, last }) => ({
@@ -138,6 +170,8 @@ export default function SessionForm({
   const [mode, setMode] = useState<'focus' | 'resting'>('focus')
   const [restUntil, setRestUntil] = useState<number | null>(null)
   const [now, setNow] = useState(() => Date.now())
+
+  const [unit, setUnit] = useState<UnitSystem>('lbs')
 
   const [weightInput, setWeightInput] = useState('')
   const [repsInput, setRepsInput] = useState('')
@@ -167,58 +201,78 @@ export default function SessionForm({
   const activeSlotIdx = rawActiveIdx !== -1 ? rawActiveIdx : 0
   const activeSlot = slots.length > 0 ? slots[activeSlotIdx] : null
 
+  const plateDenominations = unit === 'kg' ? PLATE_DENOMINATIONS_KG : PLATE_DENOMINATIONS_LB
+  const barWeight = unit === 'kg' ? BAR_WEIGHT_KG : BAR_WEIGHT_LB
+  const weightBump = unit === 'kg' ? WEIGHT_BUMP_KG : WEIGHT_BUMP_LB
+
+  // Read the unit preference on mount and keep it in sync with Settings.
+  useEffect(() => {
+    function sync() {
+      setUnit(readStoredUnits())
+    }
+    sync()
+    function onStorage(e: StorageEvent) {
+      if (e.key === UNITS_STORAGE_KEY) sync()
+    }
+    window.addEventListener('storage', onStorage)
+    return () => window.removeEventListener('storage', onStorage)
+  }, [])
+
   // Restore in-progress workout from localStorage on mount
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(storageKey(day.id))
-      if (saved) {
-        const parsed: SavedState = JSON.parse(saved)
-        setSlots((prev) => {
-          const plannedRestored = prev.map((slot) => {
-            const match = parsed.slots.find(
-              (s) => s.source === 'planned' && s.exerciseId === slot.exerciseId
-            )
-            return match
-              ? {
-                  ...slot,
-                  sets: match.sets,
-                  skipped: match.skipped ?? 0,
-                  done: match.done ?? false,
-                  plateBarOn: match.plateBarOn ?? true,
-                  plateDouble: match.plateDouble ?? true,
-                }
-              : slot
+    function restore() {
+      try {
+        const saved = localStorage.getItem(storageKey(day.id))
+        if (saved) {
+          const parsed: SavedState = JSON.parse(saved)
+          setSlots((prev) => {
+            const plannedRestored = prev.map((slot) => {
+              const match = parsed.slots.find(
+                (s) => s.source === 'planned' && s.exerciseId === slot.exerciseId
+              )
+              return match
+                ? {
+                    ...slot,
+                    sets: match.sets,
+                    skipped: match.skipped ?? 0,
+                    done: match.done ?? false,
+                    plateBarOn: match.plateBarOn ?? true,
+                    plateDouble: match.plateDouble ?? true,
+                  }
+                : slot
+            })
+            const adhocRestored: ExerciseSlot[] = parsed.slots
+              .filter((s) => s.source === 'adhoc')
+              .map((s) => ({
+                key: s.key,
+                source: 'adhoc',
+                exerciseId: null,
+                name: s.name,
+                targetSets: null,
+                targetReps: null,
+                last: null,
+                sets: s.sets,
+                skipped: s.skipped ?? 0,
+                done: s.done ?? false,
+                plateBarOn: s.plateBarOn ?? true,
+                plateDouble: s.plateDouble ?? true,
+              }))
+            return [...plannedRestored, ...adhocRestored]
           })
-          const adhocRestored: ExerciseSlot[] = parsed.slots
-            .filter((s) => s.source === 'adhoc')
-            .map((s) => ({
-              key: s.key,
-              source: 'adhoc',
-              exerciseId: null,
-              name: s.name,
-              targetSets: null,
-              targetReps: null,
-              last: null,
-              sets: s.sets,
-              skipped: s.skipped ?? 0,
-              done: s.done ?? false,
-              plateBarOn: s.plateBarOn ?? true,
-              plateDouble: s.plateDouble ?? true,
-            }))
-          return [...plannedRestored, ...adhocRestored]
-        })
-        if (typeof parsed.startedAt === 'number') setStartedAt(parsed.startedAt)
-        if (parsed.activeKey) setActiveKey(parsed.activeKey)
-        if (parsed.restUntil && parsed.restUntil > Date.now()) {
-          setNow(Date.now())
-          setRestUntil(parsed.restUntil)
-          setMode('resting')
+          if (typeof parsed.startedAt === 'number') setStartedAt(parsed.startedAt)
+          if (parsed.activeKey) setActiveKey(parsed.activeKey)
+          if (parsed.restUntil && parsed.restUntil > Date.now()) {
+            setNow(Date.now())
+            setRestUntil(parsed.restUntil)
+            setMode('resting')
+          }
         }
+      } catch {
+        // ignore restore errors
       }
-    } catch {
-      // ignore restore errors
+      setRestored(true)
     }
-    setRestored(true)
+    restore()
   }, [day.id])
 
   // Auto-save to localStorage
@@ -260,16 +314,19 @@ export default function SessionForm({
 
   // Re-seed the weight/rep inputs whenever the active slot (or its progress) changes
   useEffect(() => {
-    if (!activeSlot) return
-    const prefill = computePrefill(activeSlot)
-    setWeightInput(prefill.weight)
-    setRepsInput(prefill.reps)
-    setNotesInput('')
-    setNotesOpen(false)
-    setPlateCounts({})
-    setPlateOpen(false)
+    function sync() {
+      if (!activeSlot) return
+      const prefill = computePrefill(activeSlot, unit)
+      setWeightInput(prefill.weight)
+      setRepsInput(prefill.reps)
+      setNotesInput('')
+      setNotesOpen(false)
+      setPlateCounts({})
+      setPlateOpen(false)
+    }
+    sync()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeSlotIdx, activeSlot?.name, activeSlot?.sets.length, activeSlot?.skipped])
+  }, [activeSlotIdx, activeSlot?.name, activeSlot?.sets.length, activeSlot?.skipped, unit])
 
   // Tick the rest countdown
   useEffect(() => {
@@ -289,9 +346,9 @@ export default function SessionForm({
   }
 
   function plateTotal(counts: Record<number, number>, barOn: boolean, doubleSided: boolean) {
-    const perSide = PLATE_DENOMINATIONS.reduce((sum, denom) => sum + denom * (counts[denom] ?? 0), 0)
-    const barWeight = barOn ? BAR_WEIGHT : 0
-    return barWeight + perSide * (doubleSided ? 2 : 1)
+    const perSide = plateDenominations.reduce((sum, denom) => sum + denom * (counts[denom] ?? 0), 0)
+    const bar = barOn ? barWeight : 0
+    return bar + perSide * (doubleSided ? 2 : 1)
   }
 
   function addPlate(denom: number) {
@@ -341,7 +398,7 @@ export default function SessionForm({
     const set = slot?.sets[setIdx]
     if (!set) return
     setEditingSet({ slotKey, setIdx })
-    setEditWeight(set.weight)
+    setEditWeight(displayFromStored(set.weight, unit))
     setEditReps(set.reps)
     setEditNotes(set.notes)
   }
@@ -352,13 +409,14 @@ export default function SessionForm({
 
   function saveEditSet() {
     if (!editingSet) return
+    const weightLbs = toLbsString(editWeight, unit)
     setSlots((prev) =>
       prev.map((s) =>
         s.key === editingSet.slotKey
           ? {
               ...s,
               sets: s.sets.map((set, i) =>
-                i === editingSet.setIdx ? { weight: editWeight, reps: editReps, notes: editNotes } : set
+                i === editingSet.setIdx ? { weight: weightLbs, reps: editReps, notes: editNotes } : set
               ),
             }
           : s
@@ -405,7 +463,7 @@ export default function SessionForm({
     if (!activeSlot) return
     const updatedSlot: ExerciseSlot = {
       ...activeSlot,
-      sets: [...activeSlot.sets, { weight: weightInput, reps: repsInput, notes: notesInput }],
+      sets: [...activeSlot.sets, { weight: toLbsString(weightInput, unit), reps: repsInput, notes: notesInput }],
     }
     if (updatedSlot.targetSets !== null && updatedSlot.sets.length + updatedSlot.skipped >= updatedSlot.targetSets) {
       updatedSlot.done = true
@@ -542,7 +600,7 @@ export default function SessionForm({
                       inputMode="decimal"
                       value={editWeight}
                       onChange={(e) => setEditWeight(e.target.value)}
-                      placeholder="Weight"
+                      placeholder={`Weight (${unitLabel(unit)})`}
                       autoFocus
                       className="w-full border-2 border-neutral-700 bg-transparent px-2 py-1.5 text-center text-sm font-bold tabular-nums text-bg placeholder:text-neutral-600 focus-visible:border-accent focus-visible:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     />
@@ -583,7 +641,7 @@ export default function SessionForm({
                 <div className="flex items-center justify-between gap-2">
                   <div className="min-w-0">
                     <p className="text-sm font-bold tabular-nums text-bg">
-                      Set {String(idx + 1).padStart(2, '0')} · {set.weight || '–'} × {set.reps || '–'}
+                      Set {String(idx + 1).padStart(2, '0')} · {displayFromStored(set.weight, unit) || '–'} × {set.reps || '–'}
                     </p>
                     {set.notes && <p className="truncate text-[11px] text-neutral-500">{set.notes}</p>}
                   </div>
@@ -639,13 +697,12 @@ export default function SessionForm({
               <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-neutral-500">
                 Add an exercise for this workout only
               </p>
-              <input
-                type="text"
+              <ExerciseNamePicker
                 value={addName}
-                onChange={(e) => setAddName(e.target.value)}
+                onChange={setAddName}
+                recent={recentExercises}
                 placeholder="Exercise name (e.g. Incline DB Press)"
                 autoFocus
-                className="w-full border-2 border-neutral-700 bg-transparent px-3 py-2 text-sm text-bg placeholder:text-neutral-600 focus-visible:border-accent focus-visible:outline-none"
               />
               <div className="flex gap-2">
                 <button
@@ -750,17 +807,19 @@ export default function SessionForm({
                 ? `Set ${String(activeSlot.sets.length + activeSlot.skipped + 1).padStart(2, '0')} of ${String(activeSlot.targetSets).padStart(2, '0')}`
                 : `Set ${activeSlot.sets.length + activeSlot.skipped + 1}`}
               {activeSlot.last &&
-                ` · last time ${activeSlot.last.sets.map((s) => `${s.weight ?? '–'}×${s.reps ?? '–'}`).join(' · ')}`}
+                ` · last time ${activeSlot.last.sets.map((s) => `${formatWeight(s.weight, unit)}×${s.reps ?? '–'}`).join(' · ')}`}
             </p>
           </div>
 
           <div className="grid grid-cols-2 gap-4 border-y-2 border-neutral-700 py-5">
             <div>
-              <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-neutral-500">Weight</p>
+              <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-neutral-500">
+                Weight ({unitLabel(unit)})
+              </p>
               <div className="mt-2 flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={() => bumpWeight(-5)}
+                  onClick={() => bumpWeight(-weightBump)}
                   className="h-12 w-12 shrink-0 border-2 border-neutral-700 text-2xl font-black text-bg"
                   aria-label="Decrease weight"
                 >
@@ -776,7 +835,7 @@ export default function SessionForm({
                 />
                 <button
                   type="button"
-                  onClick={() => bumpWeight(5)}
+                  onClick={() => bumpWeight(weightBump)}
                   className="h-12 w-12 shrink-0 bg-accent text-2xl font-black text-bg"
                   aria-label="Increase weight"
                 >
@@ -839,7 +898,7 @@ export default function SessionForm({
                     activeSlot.plateBarOn ? 'border-accent text-accent' : 'border-neutral-700 text-neutral-500'
                   }`}
                 >
-                  Bar {activeSlot.plateBarOn ? `on · ${BAR_WEIGHT} lb` : 'off'}
+                  Bar {activeSlot.plateBarOn ? `on · ${barWeight} ${unitLabel(unit)}` : 'off'}
                 </button>
                 <button
                   type="button"
@@ -865,7 +924,7 @@ export default function SessionForm({
                 </button>
               </div>
               <div className="grid grid-cols-3 gap-2">
-                {PLATE_DENOMINATIONS.map((denom) => {
+                {plateDenominations.map((denom) => {
                   const count = plateCounts[denom] ?? 0
                   return (
                     <div
@@ -881,7 +940,7 @@ export default function SessionForm({
                           onClick={() => removePlate(denom)}
                           disabled={count === 0}
                           className="h-7 w-7 shrink-0 border-2 border-neutral-700 text-sm font-black text-bg disabled:opacity-30"
-                          aria-label={`Remove ${denom} lb plate`}
+                          aria-label={`Remove ${denom} ${unitLabel(unit)} plate`}
                         >
                           −
                         </button>
@@ -890,7 +949,7 @@ export default function SessionForm({
                           type="button"
                           onClick={() => addPlate(denom)}
                           className="h-7 w-7 shrink-0 bg-accent text-sm font-black text-bg"
-                          aria-label={`Add ${denom} lb plate`}
+                          aria-label={`Add ${denom} ${unitLabel(unit)} plate`}
                         >
                           +
                         </button>
@@ -900,9 +959,10 @@ export default function SessionForm({
                 })}
               </div>
               <p className="text-center text-xs font-extrabold uppercase tracking-wide text-neutral-500">
-                {activeSlot.plateBarOn ? `${BAR_WEIGHT} bar` : 'No bar'} +{' '}
-                {PLATE_DENOMINATIONS.reduce((sum, d) => sum + d * (plateCounts[d] ?? 0), 0)} ×{' '}
-                {activeSlot.plateDouble ? 2 : 1} = {plateTotal(plateCounts, activeSlot.plateBarOn, activeSlot.plateDouble)} lb
+                {activeSlot.plateBarOn ? `${barWeight} bar` : 'No bar'} +{' '}
+                {plateDenominations.reduce((sum, d) => sum + d * (plateCounts[d] ?? 0), 0)} ×{' '}
+                {activeSlot.plateDouble ? 2 : 1} = {plateTotal(plateCounts, activeSlot.plateBarOn, activeSlot.plateDouble)}{' '}
+                {unitLabel(unit)}
               </p>
             </div>
           )}
@@ -992,13 +1052,12 @@ export default function SessionForm({
                         <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-neutral-500">
                           Swap for a different exercise
                         </p>
-                        <input
-                          type="text"
+                        <ExerciseNamePicker
                           value={swapName}
-                          onChange={(e) => setSwapName(e.target.value)}
+                          onChange={setSwapName}
+                          recent={recentExercises}
                           placeholder="Exercise name"
                           autoFocus
-                          className="w-full border-2 border-neutral-700 bg-transparent px-3 py-2 text-sm text-bg placeholder:text-neutral-600 focus-visible:border-accent focus-visible:outline-none"
                         />
                         <div className="flex gap-2">
                           <button
@@ -1076,13 +1135,12 @@ export default function SessionForm({
                     <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-neutral-500">
                       Add an exercise for this workout only
                     </p>
-                    <input
-                      type="text"
+                    <ExerciseNamePicker
                       value={addName}
-                      onChange={(e) => setAddName(e.target.value)}
+                      onChange={setAddName}
+                      recent={recentExercises}
                       placeholder="Exercise name (e.g. Incline DB Press)"
                       autoFocus
-                      className="w-full border-2 border-neutral-700 bg-transparent px-3 py-2 text-sm text-bg placeholder:text-neutral-600 focus-visible:border-accent focus-visible:outline-none"
                     />
                     <div className="flex gap-2">
                       <button

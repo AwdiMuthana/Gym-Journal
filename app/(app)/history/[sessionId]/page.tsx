@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { getSessionDetail } from '@/lib/db'
 import { updateSetLog, deleteSetLog, deleteSession } from '@/app/log-actions'
 import LocalDateTime from '../../local-date-time'
+import { Weight, WeightInput } from '../../weight'
 
 export default async function HistorySessionPage({
   params,
@@ -71,12 +72,10 @@ export default async function HistorySessionPage({
                           <span className="w-10 shrink-0 text-[10px] font-extrabold uppercase tracking-wide text-neutral-500">
                             Set {s.set_number}
                           </span>
-                          <input
-                            type="number"
-                            inputMode="decimal"
+                          <WeightInput
                             name="weight"
+                            defaultValueLbs={s.weight}
                             placeholder="Weight"
-                            defaultValue={s.weight ?? ''}
                             className="w-full min-w-0 border-2 border-neutral-700 bg-transparent px-3 py-2 text-base font-bold tabular-nums text-bg focus-visible:border-accent focus-visible:outline-none"
                           />
                           <input
@@ -123,7 +122,7 @@ export default async function HistorySessionPage({
                             Set {s.set_number}
                           </span>
                           <span className="font-bold tabular-nums">
-                            {s.weight ?? '–'} × {s.reps ?? '–'}
+                            <Weight lbs={s.weight} /> × {s.reps ?? '–'}
                           </span>
                         </div>
                         <div className="flex items-center gap-3">

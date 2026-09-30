@@ -13,16 +13,28 @@ import {
   type AccentId,
   type ThemeMode,
 } from '@/lib/theme'
+import {
+  DEFAULT_UNITS,
+  UNITS_STORAGE_KEY,
+  UNIT_OPTIONS,
+  readStoredUnits,
+  type UnitSystem,
+} from '@/lib/units'
 
 export default function SettingsPage() {
   const [accent, setAccent] = useState<AccentId>('red')
   const [themeMode, setThemeMode] = useState<ThemeMode>('dark')
+  const [units, setUnits] = useState<UnitSystem>(DEFAULT_UNITS)
 
   // Reconcile with whatever's actually stored once we're on the client —
   // the initial render has to match the server, which has no localStorage.
   useEffect(() => {
-    setAccent(readStoredAccent())
-    setThemeMode(readStoredThemeMode())
+    function sync() {
+      setAccent(readStoredAccent())
+      setThemeMode(readStoredThemeMode())
+      setUnits(readStoredUnits())
+    }
+    sync()
   }, [])
 
   function selectAccent(id: AccentId) {
@@ -35,6 +47,11 @@ export default function SettingsPage() {
     setThemeMode(mode)
     localStorage.setItem(THEME_STORAGE_KEY, mode)
     applyTheme(mode, accent)
+  }
+
+  function selectUnits(id: UnitSystem) {
+    setUnits(id)
+    localStorage.setItem(UNITS_STORAGE_KEY, id)
   }
 
   return (
@@ -89,6 +106,27 @@ export default function SettingsPage() {
             </button>
           ))}
         </div>
+      </div>
+
+      <div className="space-y-3 border-2 border-neutral-700 p-4">
+        <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-neutral-500">Weight units</p>
+        <div className="grid grid-cols-2 gap-2">
+          {UNIT_OPTIONS.map((opt) => (
+            <button
+              key={opt.id}
+              type="button"
+              onClick={() => selectUnits(opt.id)}
+              className={`border-2 px-3 py-2.5 text-[11px] font-extrabold uppercase tracking-wide ${
+                units === opt.id ? 'border-accent text-accent' : 'border-neutral-700 text-bg'
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+        <p className="text-[11px] text-neutral-500">
+          Changes how weights are shown and entered. Your data stays stored in pounds either way.
+        </p>
       </div>
     </div>
   )

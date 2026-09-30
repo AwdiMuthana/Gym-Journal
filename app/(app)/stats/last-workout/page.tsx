@@ -6,6 +6,7 @@ import {
   normalizeExerciseName,
 } from '@/lib/db'
 import LocalDateTime from '../../local-date-time'
+import { Weight, Volume } from '../../weight'
 import ClearSessionStorage from './clear-storage'
 import ShareButton from './share-button'
 
@@ -75,14 +76,10 @@ export default async function LastWorkoutPage({
   const minutesRaw = sp.minutes ? parseInt(sp.minutes, 10) : NaN
   const minutes = Number.isFinite(minutesRaw) ? minutesRaw : null
 
-  const shareText = `${session.day_name ?? 'Workout'} done — ${totalSets} set${totalSets === 1 ? '' : 's'}, ${Math.round(
-    totalVolume
-  ).toLocaleString()} lb moved${prCount > 0 ? `, ${prCount} PR${prCount === 1 ? '' : 's'}` : ''}.`
-
-  const stats: { label: string; value: string }[] = []
+  const stats: { label: string; value: React.ReactNode }[] = []
   if (minutes !== null) stats.push({ label: 'Minutes', value: String(minutes) })
   stats.push({ label: 'Sets', value: String(totalSets) })
-  stats.push({ label: 'Volume', value: Math.round(totalVolume).toLocaleString() })
+  stats.push({ label: 'Volume', value: <Volume lbs={totalVolume} /> })
 
   return (
     <div className="space-y-4">
@@ -148,7 +145,7 @@ export default async function LastWorkoutPage({
                 <p className="font-bold uppercase tracking-tight">{ex.exercise_name}</p>
                 {isPR && (
                   <span className="shrink-0 bg-accent px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-bg">
-                    {delta ? `▲${delta} PR` : 'PR'}
+                    {delta ? <>▲<Weight lbs={delta} /> PR</> : 'PR'}
                   </span>
                 )}
               </div>
@@ -159,7 +156,7 @@ export default async function LastWorkoutPage({
                       Set {s.set_number}
                     </span>
                     <span className="font-bold tabular-nums">
-                      {s.weight ?? '–'} × {s.reps ?? '–'}
+                      <Weight lbs={s.weight} /> × {s.reps ?? '–'}
                     </span>
                     {s.notes && <span className="ml-2 text-xs text-neutral-500">— {s.notes}</span>}
                   </div>
@@ -171,7 +168,13 @@ export default async function LastWorkoutPage({
       </div>
 
       <div className="grid grid-cols-2 gap-2">
-        <ShareButton title="Gym Journal" text={shareText} />
+        <ShareButton
+          title="Gym Journal"
+          dayName={session.day_name ?? 'Workout'}
+          totalSets={totalSets}
+          totalVolumeLbs={totalVolume}
+          prCount={prCount}
+        />
         <Link
           href="/log"
           className="flex items-center justify-center bg-accent px-3 py-4 text-center text-sm font-black uppercase tracking-wide text-bg"

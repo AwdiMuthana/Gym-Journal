@@ -1,23 +1,48 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { formatVolume, readStoredUnits, unitLabel } from '@/lib/units'
 
-export default function ShareButton({ title, text }: { title: string; text: string }) {
+export default function ShareButton({
+  title,
+  dayName,
+  totalSets,
+  totalVolumeLbs,
+  prCount,
+}: {
+  title: string
+  dayName: string
+  totalSets: number
+  totalVolumeLbs: number
+  prCount: number
+}) {
   const [mode, setMode] = useState<'none' | 'share' | 'copy'>('none')
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
-    if (typeof navigator === 'undefined') return
-    if (typeof navigator.share === 'function') {
-      setMode('share')
-    } else if (navigator.clipboard) {
-      setMode('copy')
+    function sync() {
+      if (typeof navigator === 'undefined') return
+      if (typeof navigator.share === 'function') {
+        setMode('share')
+      } else if (navigator.clipboard) {
+        setMode('copy')
+      }
     }
+    sync()
   }, [])
 
   if (mode === 'none') return null
 
+  function buildText() {
+    const unit = readStoredUnits()
+    const volume = formatVolume(totalVolumeLbs, unit)
+    return `${dayName} done — ${totalSets} set${totalSets === 1 ? '' : 's'}, ${volume} ${unitLabel(unit)} moved${
+      prCount > 0 ? `, ${prCount} PR${prCount === 1 ? '' : 's'}` : ''
+    }.`
+  }
+
   async function handleClick() {
+    const text = buildText()
     if (mode === 'share') {
       try {
         await navigator.share({ title, text })

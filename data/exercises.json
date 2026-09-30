@@ -1,0 +1,4382 @@
+[
+{
+"name":"3/4 Sit-Up",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"90/90 Hamstring",
+"muscle":"Hamstrings",
+"equipment":"Bodyweight"
+},
+{
+"name":"Ab Crunch Machine",
+"muscle":"Abdominals",
+"equipment":"Machine"
+},
+{
+"name":"Ab Roller",
+"muscle":"Abdominals",
+"equipment":"Other"
+},
+{
+"name":"Adductor",
+"muscle":"Adductors",
+"equipment":"Foam Roller"
+},
+{
+"name":"Adductor/Groin",
+"muscle":"Adductors",
+"equipment":"Other"
+},
+{
+"name":"Advanced Kettlebell Windmill",
+"muscle":"Abdominals",
+"equipment":"Kettlebell"
+},
+{
+"name":"Air Bike",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"All Fours Quad Stretch",
+"muscle":"Quadriceps",
+"equipment":"Bodyweight"
+},
+{
+"name":"Alternate Hammer Curl",
+"muscle":"Biceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Alternate Heel Touchers",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Alternate Incline Dumbbell Curl",
+"muscle":"Biceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Alternate Leg Diagonal Bound",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Alternating Cable Shoulder Press",
+"muscle":"Shoulders",
+"equipment":"Cable"
+},
+{
+"name":"Alternating Deltoid Raise",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Alternating Floor Press",
+"muscle":"Chest",
+"equipment":"Kettlebell"
+},
+{
+"name":"Alternating Hang Clean",
+"muscle":"Hamstrings",
+"equipment":"Kettlebell"
+},
+{
+"name":"Alternating Kettlebell Press",
+"muscle":"Shoulders",
+"equipment":"Kettlebell"
+},
+{
+"name":"Alternating Kettlebell Row",
+"muscle":"Middle Back",
+"equipment":"Kettlebell"
+},
+{
+"name":"Alternating Renegade Row",
+"muscle":"Middle Back",
+"equipment":"Kettlebell"
+},
+{
+"name":"Ankle Circles",
+"muscle":"Calves",
+"equipment":"Other"
+},
+{
+"name":"Ankle On The Knee",
+"muscle":"Glutes",
+"equipment":"Other"
+},
+{
+"name":"Anterior Tibialis-SMR",
+"muscle":"Calves",
+"equipment":"Other"
+},
+{
+"name":"Anti-Gravity Press",
+"muscle":"Shoulders",
+"equipment":"Barbell"
+},
+{
+"name":"Arm Circles",
+"muscle":"Shoulders",
+"equipment":"Other"
+},
+{
+"name":"Arnold Dumbbell Press",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Around The Worlds",
+"muscle":"Chest",
+"equipment":"Dumbbell"
+},
+{
+"name":"Atlas Stone Trainer",
+"muscle":"Lower Back",
+"equipment":"Other"
+},
+{
+"name":"Atlas Stones",
+"muscle":"Lower Back",
+"equipment":"Other"
+},
+{
+"name":"Axle Deadlift",
+"muscle":"Lower Back",
+"equipment":"Other"
+},
+{
+"name":"Back Flyes - With Bands",
+"muscle":"Shoulders",
+"equipment":"Bands"
+},
+{
+"name":"Backward Drag",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Backward Medicine Ball Throw",
+"muscle":"Shoulders",
+"equipment":"Medicine Ball"
+},
+{
+"name":"Balance Board",
+"muscle":"Calves",
+"equipment":"Other"
+},
+{
+"name":"Ball Leg Curl",
+"muscle":"Hamstrings",
+"equipment":"Exercise Ball"
+},
+{
+"name":"Band Assisted Pull-Up",
+"muscle":"Lats",
+"equipment":"Other"
+},
+{
+"name":"Band Good Morning",
+"muscle":"Hamstrings",
+"equipment":"Bands"
+},
+{
+"name":"Band Good Morning (Pull Through)",
+"muscle":"Hamstrings",
+"equipment":"Bands"
+},
+{
+"name":"Band Hip Adductions",
+"muscle":"Adductors",
+"equipment":"Bands"
+},
+{
+"name":"Band Pull Apart",
+"muscle":"Shoulders",
+"equipment":"Bands"
+},
+{
+"name":"Band Skull Crusher",
+"muscle":"Triceps",
+"equipment":"Bands"
+},
+{
+"name":"Barbell Ab Rollout",
+"muscle":"Abdominals",
+"equipment":"Barbell"
+},
+{
+"name":"Barbell Ab Rollout - On Knees",
+"muscle":"Abdominals",
+"equipment":"Barbell"
+},
+{
+"name":"Barbell Bench Press - Medium Grip",
+"muscle":"Chest",
+"equipment":"Barbell"
+},
+{
+"name":"Barbell Curl",
+"muscle":"Biceps",
+"equipment":"Barbell"
+},
+{
+"name":"Barbell Curls Lying Against An Incline",
+"muscle":"Biceps",
+"equipment":"Barbell"
+},
+{
+"name":"Barbell Deadlift",
+"muscle":"Lower Back",
+"equipment":"Barbell"
+},
+{
+"name":"Barbell Full Squat",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Barbell Glute Bridge",
+"muscle":"Glutes",
+"equipment":"Barbell"
+},
+{
+"name":"Barbell Guillotine Bench Press",
+"muscle":"Chest",
+"equipment":"Barbell"
+},
+{
+"name":"Barbell Hack Squat",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Barbell Hip Thrust",
+"muscle":"Glutes",
+"equipment":"Barbell"
+},
+{
+"name":"Barbell Incline Bench Press - Medium Grip",
+"muscle":"Chest",
+"equipment":"Barbell"
+},
+{
+"name":"Barbell Incline Shoulder Raise",
+"muscle":"Shoulders",
+"equipment":"Barbell"
+},
+{
+"name":"Barbell Lunge",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Barbell Rear Delt Row",
+"muscle":"Shoulders",
+"equipment":"Barbell"
+},
+{
+"name":"Barbell Rollout from Bench",
+"muscle":"Abdominals",
+"equipment":"Barbell"
+},
+{
+"name":"Barbell Seated Calf Raise",
+"muscle":"Calves",
+"equipment":"Barbell"
+},
+{
+"name":"Barbell Shoulder Press",
+"muscle":"Shoulders",
+"equipment":"Barbell"
+},
+{
+"name":"Barbell Shrug",
+"muscle":"Traps",
+"equipment":"Barbell"
+},
+{
+"name":"Barbell Shrug Behind The Back",
+"muscle":"Traps",
+"equipment":"Barbell"
+},
+{
+"name":"Barbell Side Bend",
+"muscle":"Abdominals",
+"equipment":"Barbell"
+},
+{
+"name":"Barbell Side Split Squat",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Barbell Squat",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Barbell Squat To A Bench",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Barbell Step Ups",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Barbell Walking Lunge",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Battling Ropes",
+"muscle":"Shoulders",
+"equipment":"Other"
+},
+{
+"name":"Bear Crawl Sled Drags",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Behind Head Chest Stretch",
+"muscle":"Chest",
+"equipment":"Other"
+},
+{
+"name":"Bench Dips",
+"muscle":"Triceps",
+"equipment":"Bodyweight"
+},
+{
+"name":"Bench Jump",
+"muscle":"Quadriceps",
+"equipment":"Bodyweight"
+},
+{
+"name":"Bench Press - Powerlifting",
+"muscle":"Triceps",
+"equipment":"Barbell"
+},
+{
+"name":"Bench Press - With Bands",
+"muscle":"Chest",
+"equipment":"Bands"
+},
+{
+"name":"Bench Press with Chains",
+"muscle":"Triceps",
+"equipment":"Barbell"
+},
+{
+"name":"Bench Sprint",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Bent Over Barbell Row",
+"muscle":"Middle Back",
+"equipment":"Barbell"
+},
+{
+"name":"Bent Over Dumbbell Rear Delt Raise With Head On Bench",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Bent Over Low-Pulley Side Lateral",
+"muscle":"Shoulders",
+"equipment":"Cable"
+},
+{
+"name":"Bent Over One-Arm Long Bar Row",
+"muscle":"Middle Back",
+"equipment":"Barbell"
+},
+{
+"name":"Bent Over Two-Arm Long Bar Row",
+"muscle":"Middle Back",
+"equipment":"Barbell"
+},
+{
+"name":"Bent Over Two-Dumbbell Row",
+"muscle":"Middle Back",
+"equipment":"Dumbbell"
+},
+{
+"name":"Bent Over Two-Dumbbell Row With Palms In",
+"muscle":"Middle Back",
+"equipment":"Dumbbell"
+},
+{
+"name":"Bent Press",
+"muscle":"Abdominals",
+"equipment":"Kettlebell"
+},
+{
+"name":"Bent-Arm Barbell Pullover",
+"muscle":"Lats",
+"equipment":"Barbell"
+},
+{
+"name":"Bent-Arm Dumbbell Pullover",
+"muscle":"Chest",
+"equipment":"Dumbbell"
+},
+{
+"name":"Bent-Knee Hip Raise",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Bicycling",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Bicycling, Stationary",
+"muscle":"Quadriceps",
+"equipment":"Machine"
+},
+{
+"name":"Board Press",
+"muscle":"Triceps",
+"equipment":"Barbell"
+},
+{
+"name":"Body Tricep Press",
+"muscle":"Triceps",
+"equipment":"Bodyweight"
+},
+{
+"name":"Body-Up",
+"muscle":"Triceps",
+"equipment":"Bodyweight"
+},
+{
+"name":"Bodyweight Flyes",
+"muscle":"Chest",
+"equipment":"EZ Curl Bar"
+},
+{
+"name":"Bodyweight Mid Row",
+"muscle":"Middle Back",
+"equipment":"Other"
+},
+{
+"name":"Bodyweight Squat",
+"muscle":"Quadriceps",
+"equipment":"Bodyweight"
+},
+{
+"name":"Bodyweight Walking Lunge",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Bosu Ball Cable Crunch With Side Bends",
+"muscle":"Abdominals",
+"equipment":"Cable"
+},
+{
+"name":"Bottoms Up",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Bottoms-Up Clean From The Hang Position",
+"muscle":"Forearms",
+"equipment":"Kettlebell"
+},
+{
+"name":"Box Jump (Multiple Response)",
+"muscle":"Hamstrings",
+"equipment":"Other"
+},
+{
+"name":"Box Skip",
+"muscle":"Hamstrings",
+"equipment":"Other"
+},
+{
+"name":"Box Squat",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Box Squat with Bands",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Box Squat with Chains",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Brachialis-SMR",
+"muscle":"Biceps",
+"equipment":"Foam Roller"
+},
+{
+"name":"Bradford/Rocky Presses",
+"muscle":"Shoulders",
+"equipment":"Barbell"
+},
+{
+"name":"Butt Lift (Bridge)",
+"muscle":"Glutes",
+"equipment":"Bodyweight"
+},
+{
+"name":"Butt-Ups",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Butterfly",
+"muscle":"Chest",
+"equipment":"Machine"
+},
+{
+"name":"Cable Chest Press",
+"muscle":"Chest",
+"equipment":"Cable"
+},
+{
+"name":"Cable Crossover",
+"muscle":"Chest",
+"equipment":"Cable"
+},
+{
+"name":"Cable Crunch",
+"muscle":"Abdominals",
+"equipment":"Cable"
+},
+{
+"name":"Cable Deadlifts",
+"muscle":"Quadriceps",
+"equipment":"Cable"
+},
+{
+"name":"Cable Hammer Curls - Rope Attachment",
+"muscle":"Biceps",
+"equipment":"Cable"
+},
+{
+"name":"Cable Hip Adduction",
+"muscle":"Quadriceps",
+"equipment":"Cable"
+},
+{
+"name":"Cable Incline Pushdown",
+"muscle":"Lats",
+"equipment":"Cable"
+},
+{
+"name":"Cable Incline Triceps Extension",
+"muscle":"Triceps",
+"equipment":"Cable"
+},
+{
+"name":"Cable Internal Rotation",
+"muscle":"Shoulders",
+"equipment":"Cable"
+},
+{
+"name":"Cable Iron Cross",
+"muscle":"Chest",
+"equipment":"Cable"
+},
+{
+"name":"Cable Judo Flip",
+"muscle":"Abdominals",
+"equipment":"Cable"
+},
+{
+"name":"Cable Lying Triceps Extension",
+"muscle":"Triceps",
+"equipment":"Cable"
+},
+{
+"name":"Cable One Arm Tricep Extension",
+"muscle":"Triceps",
+"equipment":"Cable"
+},
+{
+"name":"Cable Preacher Curl",
+"muscle":"Biceps",
+"equipment":"Cable"
+},
+{
+"name":"Cable Rear Delt Fly",
+"muscle":"Shoulders",
+"equipment":"Cable"
+},
+{
+"name":"Cable Reverse Crunch",
+"muscle":"Abdominals",
+"equipment":"Cable"
+},
+{
+"name":"Cable Rope Overhead Triceps Extension",
+"muscle":"Triceps",
+"equipment":"Cable"
+},
+{
+"name":"Cable Rope Rear-Delt Rows",
+"muscle":"Shoulders",
+"equipment":"Cable"
+},
+{
+"name":"Cable Russian Twists",
+"muscle":"Abdominals",
+"equipment":"Cable"
+},
+{
+"name":"Cable Seated Crunch",
+"muscle":"Abdominals",
+"equipment":"Cable"
+},
+{
+"name":"Cable Seated Lateral Raise",
+"muscle":"Shoulders",
+"equipment":"Cable"
+},
+{
+"name":"Cable Shoulder Press",
+"muscle":"Shoulders",
+"equipment":"Cable"
+},
+{
+"name":"Cable Shrugs",
+"muscle":"Traps",
+"equipment":"Cable"
+},
+{
+"name":"Cable Wrist Curl",
+"muscle":"Forearms",
+"equipment":"Cable"
+},
+{
+"name":"Calf Press",
+"muscle":"Calves",
+"equipment":"Machine"
+},
+{
+"name":"Calf Press On The Leg Press Machine",
+"muscle":"Calves",
+"equipment":"Machine"
+},
+{
+"name":"Calf Raise On A Dumbbell",
+"muscle":"Calves",
+"equipment":"Dumbbell"
+},
+{
+"name":"Calf Raises - With Bands",
+"muscle":"Calves",
+"equipment":"Bands"
+},
+{
+"name":"Calf Stretch Elbows Against Wall",
+"muscle":"Calves",
+"equipment":"Other"
+},
+{
+"name":"Calf Stretch Hands Against Wall",
+"muscle":"Calves",
+"equipment":"Other"
+},
+{
+"name":"Calf-Machine Shoulder Shrug",
+"muscle":"Traps",
+"equipment":"Machine"
+},
+{
+"name":"Calves-SMR",
+"muscle":"Calves",
+"equipment":"Foam Roller"
+},
+{
+"name":"Car Deadlift",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Car Drivers",
+"muscle":"Shoulders",
+"equipment":"Barbell"
+},
+{
+"name":"Carioca Quick Step",
+"muscle":"Adductors",
+"equipment":"Other"
+},
+{
+"name":"Cat Stretch",
+"muscle":"Lower Back",
+"equipment":"Other"
+},
+{
+"name":"Catch and Overhead Throw",
+"muscle":"Lats",
+"equipment":"Medicine Ball"
+},
+{
+"name":"Chain Handle Extension",
+"muscle":"Triceps",
+"equipment":"Other"
+},
+{
+"name":"Chain Press",
+"muscle":"Chest",
+"equipment":"Other"
+},
+{
+"name":"Chair Leg Extended Stretch",
+"muscle":"Hamstrings",
+"equipment":"Other"
+},
+{
+"name":"Chair Lower Back Stretch",
+"muscle":"Lats",
+"equipment":"Other"
+},
+{
+"name":"Chair Squat",
+"muscle":"Quadriceps",
+"equipment":"Machine"
+},
+{
+"name":"Chair Upper Body Stretch",
+"muscle":"Shoulders",
+"equipment":"Other"
+},
+{
+"name":"Chest And Front Of Shoulder Stretch",
+"muscle":"Chest",
+"equipment":"Other"
+},
+{
+"name":"Chest Push (multiple response)",
+"muscle":"Chest",
+"equipment":"Medicine Ball"
+},
+{
+"name":"Chest Push (single response)",
+"muscle":"Chest",
+"equipment":"Medicine Ball"
+},
+{
+"name":"Chest Push from 3 point stance",
+"muscle":"Chest",
+"equipment":"Medicine Ball"
+},
+{
+"name":"Chest Push with Run Release",
+"muscle":"Chest",
+"equipment":"Medicine Ball"
+},
+{
+"name":"Chest Stretch on Stability Ball",
+"muscle":"Chest",
+"equipment":"Exercise Ball"
+},
+{
+"name":"Child's Pose",
+"muscle":"Lower Back",
+"equipment":"Other"
+},
+{
+"name":"Chin To Chest Stretch",
+"muscle":"Neck",
+"equipment":"Other"
+},
+{
+"name":"Chin-Up",
+"muscle":"Lats",
+"equipment":"Bodyweight"
+},
+{
+"name":"Circus Bell",
+"muscle":"Shoulders",
+"equipment":"Other"
+},
+{
+"name":"Clean",
+"muscle":"Hamstrings",
+"equipment":"Barbell"
+},
+{
+"name":"Clean and Jerk",
+"muscle":"Shoulders",
+"equipment":"Barbell"
+},
+{
+"name":"Clean and Press",
+"muscle":"Shoulders",
+"equipment":"Barbell"
+},
+{
+"name":"Clean Deadlift",
+"muscle":"Hamstrings",
+"equipment":"Barbell"
+},
+{
+"name":"Clean from Blocks",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Clean Pull",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Clean Shrug",
+"muscle":"Traps",
+"equipment":"Barbell"
+},
+{
+"name":"Clock Push-Up",
+"muscle":"Chest",
+"equipment":"Bodyweight"
+},
+{
+"name":"Close-Grip Barbell Bench Press",
+"muscle":"Triceps",
+"equipment":"Barbell"
+},
+{
+"name":"Close-Grip Dumbbell Press",
+"muscle":"Triceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Close-Grip EZ Bar Curl",
+"muscle":"Biceps",
+"equipment":"Barbell"
+},
+{
+"name":"Close-Grip EZ-Bar Curl with Band",
+"muscle":"Biceps",
+"equipment":"EZ Curl Bar"
+},
+{
+"name":"Close-Grip EZ-Bar Press",
+"muscle":"Triceps",
+"equipment":"EZ Curl Bar"
+},
+{
+"name":"Close-Grip Front Lat Pulldown",
+"muscle":"Lats",
+"equipment":"Cable"
+},
+{
+"name":"Close-Grip Push-Up off of a Dumbbell",
+"muscle":"Triceps",
+"equipment":"Bodyweight"
+},
+{
+"name":"Close-Grip Standing Barbell Curl",
+"muscle":"Biceps",
+"equipment":"Barbell"
+},
+{
+"name":"Cocoons",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Conan's Wheel",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Concentration Curls",
+"muscle":"Biceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Cross Body Hammer Curl",
+"muscle":"Biceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Cross Over - With Bands",
+"muscle":"Chest",
+"equipment":"Bands"
+},
+{
+"name":"Cross-Body Crunch",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Crossover Reverse Lunge",
+"muscle":"Lower Back",
+"equipment":"Other"
+},
+{
+"name":"Crucifix",
+"muscle":"Shoulders",
+"equipment":"Other"
+},
+{
+"name":"Crunch - Hands Overhead",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Crunch - Legs On Exercise Ball",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Crunches",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Cuban Press",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dancer's Stretch",
+"muscle":"Lower Back",
+"equipment":"Other"
+},
+{
+"name":"Dead Bug",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Deadlift with Bands",
+"muscle":"Lower Back",
+"equipment":"Barbell"
+},
+{
+"name":"Deadlift with Chains",
+"muscle":"Lower Back",
+"equipment":"Barbell"
+},
+{
+"name":"Decline Barbell Bench Press",
+"muscle":"Chest",
+"equipment":"Barbell"
+},
+{
+"name":"Decline Close-Grip Bench To Skull Crusher",
+"muscle":"Triceps",
+"equipment":"Barbell"
+},
+{
+"name":"Decline Crunch",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Decline Dumbbell Bench Press",
+"muscle":"Chest",
+"equipment":"Dumbbell"
+},
+{
+"name":"Decline Dumbbell Flyes",
+"muscle":"Chest",
+"equipment":"Dumbbell"
+},
+{
+"name":"Decline Dumbbell Triceps Extension",
+"muscle":"Triceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Decline EZ Bar Triceps Extension",
+"muscle":"Triceps",
+"equipment":"Barbell"
+},
+{
+"name":"Decline Oblique Crunch",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Decline Push-Up",
+"muscle":"Chest",
+"equipment":"Other"
+},
+{
+"name":"Decline Reverse Crunch",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Decline Smith Press",
+"muscle":"Chest",
+"equipment":"Machine"
+},
+{
+"name":"Deficit Deadlift",
+"muscle":"Lower Back",
+"equipment":"Barbell"
+},
+{
+"name":"Depth Jump Leap",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Dip Machine",
+"muscle":"Triceps",
+"equipment":"Machine"
+},
+{
+"name":"Dips - Chest Version",
+"muscle":"Chest",
+"equipment":"Other"
+},
+{
+"name":"Dips - Triceps Version",
+"muscle":"Triceps",
+"equipment":"Bodyweight"
+},
+{
+"name":"Donkey Calf Raises",
+"muscle":"Calves",
+"equipment":"Other"
+},
+{
+"name":"Double Kettlebell Alternating Hang Clean",
+"muscle":"Hamstrings",
+"equipment":"Kettlebell"
+},
+{
+"name":"Double Kettlebell Jerk",
+"muscle":"Shoulders",
+"equipment":"Kettlebell"
+},
+{
+"name":"Double Kettlebell Push Press",
+"muscle":"Shoulders",
+"equipment":"Kettlebell"
+},
+{
+"name":"Double Kettlebell Snatch",
+"muscle":"Shoulders",
+"equipment":"Kettlebell"
+},
+{
+"name":"Double Kettlebell Windmill",
+"muscle":"Abdominals",
+"equipment":"Kettlebell"
+},
+{
+"name":"Double Leg Butt Kick",
+"muscle":"Quadriceps",
+"equipment":"Bodyweight"
+},
+{
+"name":"Downward Facing Balance",
+"muscle":"Glutes",
+"equipment":"Exercise Ball"
+},
+{
+"name":"Drag Curl",
+"muscle":"Biceps",
+"equipment":"Barbell"
+},
+{
+"name":"Drop Push",
+"muscle":"Chest",
+"equipment":"Other"
+},
+{
+"name":"Dumbbell Alternate Bicep Curl",
+"muscle":"Biceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dumbbell Bench Press",
+"muscle":"Chest",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dumbbell Bench Press with Neutral Grip",
+"muscle":"Chest",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dumbbell Bicep Curl",
+"muscle":"Biceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dumbbell Clean",
+"muscle":"Hamstrings",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dumbbell Floor Press",
+"muscle":"Triceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dumbbell Flyes",
+"muscle":"Chest",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dumbbell Incline Row",
+"muscle":"Middle Back",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dumbbell Incline Shoulder Raise",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dumbbell Lunges",
+"muscle":"Quadriceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dumbbell Lying One-Arm Rear Lateral Raise",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dumbbell Lying Pronation",
+"muscle":"Forearms",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dumbbell Lying Rear Lateral Raise",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dumbbell Lying Supination",
+"muscle":"Forearms",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dumbbell One-Arm Shoulder Press",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dumbbell One-Arm Triceps Extension",
+"muscle":"Triceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dumbbell One-Arm Upright Row",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dumbbell Prone Incline Curl",
+"muscle":"Biceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dumbbell Raise",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dumbbell Rear Lunge",
+"muscle":"Quadriceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dumbbell Scaption",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dumbbell Seated Box Jump",
+"muscle":"Quadriceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dumbbell Seated One-Leg Calf Raise",
+"muscle":"Calves",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dumbbell Shoulder Press",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dumbbell Shrug",
+"muscle":"Traps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dumbbell Side Bend",
+"muscle":"Abdominals",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dumbbell Squat",
+"muscle":"Quadriceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dumbbell Squat To A Bench",
+"muscle":"Quadriceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dumbbell Step Ups",
+"muscle":"Quadriceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dumbbell Tricep Extension -Pronated Grip",
+"muscle":"Triceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Dynamic Back Stretch",
+"muscle":"Lats",
+"equipment":"Other"
+},
+{
+"name":"Dynamic Chest Stretch",
+"muscle":"Chest",
+"equipment":"Other"
+},
+{
+"name":"Elbow Circles",
+"muscle":"Shoulders",
+"equipment":"Other"
+},
+{
+"name":"Elbow to Knee",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Elbows Back",
+"muscle":"Chest",
+"equipment":"Other"
+},
+{
+"name":"Elevated Back Lunge",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Elevated Cable Rows",
+"muscle":"Lats",
+"equipment":"Cable"
+},
+{
+"name":"Elliptical Trainer",
+"muscle":"Quadriceps",
+"equipment":"Machine"
+},
+{
+"name":"Exercise Ball Crunch",
+"muscle":"Abdominals",
+"equipment":"Exercise Ball"
+},
+{
+"name":"Exercise Ball Pull-In",
+"muscle":"Abdominals",
+"equipment":"Exercise Ball"
+},
+{
+"name":"Extended Range One-Arm Kettlebell Floor Press",
+"muscle":"Chest",
+"equipment":"Kettlebell"
+},
+{
+"name":"External Rotation",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"External Rotation with Band",
+"muscle":"Shoulders",
+"equipment":"Bands"
+},
+{
+"name":"External Rotation with Cable",
+"muscle":"Shoulders",
+"equipment":"Cable"
+},
+{
+"name":"EZ-Bar Curl",
+"muscle":"Biceps",
+"equipment":"EZ Curl Bar"
+},
+{
+"name":"EZ-Bar Skullcrusher",
+"muscle":"Triceps",
+"equipment":"EZ Curl Bar"
+},
+{
+"name":"Face Pull",
+"muscle":"Shoulders",
+"equipment":"Cable"
+},
+{
+"name":"Farmer's Walk",
+"muscle":"Forearms",
+"equipment":"Other"
+},
+{
+"name":"Fast Skipping",
+"muscle":"Quadriceps",
+"equipment":"Bodyweight"
+},
+{
+"name":"Finger Curls",
+"muscle":"Forearms",
+"equipment":"Barbell"
+},
+{
+"name":"Flat Bench Cable Flyes",
+"muscle":"Chest",
+"equipment":"Cable"
+},
+{
+"name":"Flat Bench Leg Pull-In",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Flat Bench Lying Leg Raise",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Flexor Incline Dumbbell Curls",
+"muscle":"Biceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Floor Glute-Ham Raise",
+"muscle":"Hamstrings",
+"equipment":"Other"
+},
+{
+"name":"Floor Press",
+"muscle":"Triceps",
+"equipment":"Barbell"
+},
+{
+"name":"Floor Press with Chains",
+"muscle":"Triceps",
+"equipment":"Barbell"
+},
+{
+"name":"Flutter Kicks",
+"muscle":"Glutes",
+"equipment":"Bodyweight"
+},
+{
+"name":"Foot-SMR",
+"muscle":"Calves",
+"equipment":"Other"
+},
+{
+"name":"Forward Drag with Press",
+"muscle":"Chest",
+"equipment":"Other"
+},
+{
+"name":"Frankenstein Squat",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Freehand Jump Squat",
+"muscle":"Quadriceps",
+"equipment":"Bodyweight"
+},
+{
+"name":"Frog Hops",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Frog Sit-Ups",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Front Barbell Squat",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Front Barbell Squat To A Bench",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Front Box Jump",
+"muscle":"Hamstrings",
+"equipment":"Other"
+},
+{
+"name":"Front Cable Raise",
+"muscle":"Shoulders",
+"equipment":"Cable"
+},
+{
+"name":"Front Cone Hops (or hurdle hops)",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Front Dumbbell Raise",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Front Incline Dumbbell Raise",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Front Leg Raises",
+"muscle":"Hamstrings",
+"equipment":"Bodyweight"
+},
+{
+"name":"Front Plate Raise",
+"muscle":"Shoulders",
+"equipment":"Other"
+},
+{
+"name":"Front Raise And Pullover",
+"muscle":"Chest",
+"equipment":"Barbell"
+},
+{
+"name":"Front Squat (Clean Grip)",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Front Squats With Two Kettlebells",
+"muscle":"Quadriceps",
+"equipment":"Kettlebell"
+},
+{
+"name":"Front Two-Dumbbell Raise",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Full Range-Of-Motion Lat Pulldown",
+"muscle":"Lats",
+"equipment":"Cable"
+},
+{
+"name":"Gironda Sternum Chins",
+"muscle":"Lats",
+"equipment":"Other"
+},
+{
+"name":"Glute Ham Raise",
+"muscle":"Hamstrings",
+"equipment":"Machine"
+},
+{
+"name":"Glute Kickback",
+"muscle":"Glutes",
+"equipment":"Bodyweight"
+},
+{
+"name":"Goblet Squat",
+"muscle":"Quadriceps",
+"equipment":"Kettlebell"
+},
+{
+"name":"Good Morning",
+"muscle":"Hamstrings",
+"equipment":"Barbell"
+},
+{
+"name":"Good Morning off Pins",
+"muscle":"Hamstrings",
+"equipment":"Barbell"
+},
+{
+"name":"Gorilla Chin/Crunch",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Groin and Back Stretch",
+"muscle":"Adductors",
+"equipment":"Other"
+},
+{
+"name":"Groiners",
+"muscle":"Adductors",
+"equipment":"Bodyweight"
+},
+{
+"name":"Hack Squat",
+"muscle":"Quadriceps",
+"equipment":"Machine"
+},
+{
+"name":"Hammer Curls",
+"muscle":"Biceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Hammer Grip Incline DB Bench Press",
+"muscle":"Chest",
+"equipment":"Dumbbell"
+},
+{
+"name":"Hamstring Stretch",
+"muscle":"Hamstrings",
+"equipment":"Other"
+},
+{
+"name":"Hamstring-SMR",
+"muscle":"Hamstrings",
+"equipment":"Foam Roller"
+},
+{
+"name":"Handstand Push-Ups",
+"muscle":"Shoulders",
+"equipment":"Bodyweight"
+},
+{
+"name":"Hang Clean",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Hang Clean - Below the Knees",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Hang Snatch",
+"muscle":"Hamstrings",
+"equipment":"Barbell"
+},
+{
+"name":"Hang Snatch - Below Knees",
+"muscle":"Hamstrings",
+"equipment":"Barbell"
+},
+{
+"name":"Hanging Bar Good Morning",
+"muscle":"Hamstrings",
+"equipment":"Barbell"
+},
+{
+"name":"Hanging Leg Raise",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Hanging Pike",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Heaving Snatch Balance",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Heavy Bag Thrust",
+"muscle":"Chest",
+"equipment":"Other"
+},
+{
+"name":"High Cable Curls",
+"muscle":"Biceps",
+"equipment":"Cable"
+},
+{
+"name":"Hip Circles (prone)",
+"muscle":"Abductors",
+"equipment":"Bodyweight"
+},
+{
+"name":"Hip Extension with Bands",
+"muscle":"Glutes",
+"equipment":"Bands"
+},
+{
+"name":"Hip Flexion with Band",
+"muscle":"Quadriceps",
+"equipment":"Bands"
+},
+{
+"name":"Hip Lift with Band",
+"muscle":"Glutes",
+"equipment":"Bands"
+},
+{
+"name":"Hug A Ball",
+"muscle":"Lower Back",
+"equipment":"Exercise Ball"
+},
+{
+"name":"Hug Knees To Chest",
+"muscle":"Lower Back",
+"equipment":"Other"
+},
+{
+"name":"Hurdle Hops",
+"muscle":"Hamstrings",
+"equipment":"Other"
+},
+{
+"name":"Hyperextensions (Back Extensions)",
+"muscle":"Lower Back",
+"equipment":"Other"
+},
+{
+"name":"Hyperextensions With No Hyperextension Bench",
+"muscle":"Lower Back",
+"equipment":"Bodyweight"
+},
+{
+"name":"Iliotibial Tract-SMR",
+"muscle":"Abductors",
+"equipment":"Foam Roller"
+},
+{
+"name":"Inchworm",
+"muscle":"Hamstrings",
+"equipment":"Bodyweight"
+},
+{
+"name":"Incline Barbell Triceps Extension",
+"muscle":"Triceps",
+"equipment":"Barbell"
+},
+{
+"name":"Incline Bench Pull",
+"muscle":"Middle Back",
+"equipment":"Barbell"
+},
+{
+"name":"Incline Cable Chest Press",
+"muscle":"Chest",
+"equipment":"Cable"
+},
+{
+"name":"Incline Cable Flye",
+"muscle":"Chest",
+"equipment":"Cable"
+},
+{
+"name":"Incline Dumbbell Bench With Palms Facing In",
+"muscle":"Chest",
+"equipment":"Dumbbell"
+},
+{
+"name":"Incline Dumbbell Curl",
+"muscle":"Biceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Incline Dumbbell Flyes",
+"muscle":"Chest",
+"equipment":"Dumbbell"
+},
+{
+"name":"Incline Dumbbell Flyes - With A Twist",
+"muscle":"Chest",
+"equipment":"Dumbbell"
+},
+{
+"name":"Incline Dumbbell Press",
+"muscle":"Chest",
+"equipment":"Dumbbell"
+},
+{
+"name":"Incline Hammer Curls",
+"muscle":"Biceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Incline Inner Biceps Curl",
+"muscle":"Biceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Incline Push-Up",
+"muscle":"Chest",
+"equipment":"Bodyweight"
+},
+{
+"name":"Incline Push-Up Close-Grip",
+"muscle":"Triceps",
+"equipment":"Bodyweight"
+},
+{
+"name":"Incline Push-Up Depth Jump",
+"muscle":"Chest",
+"equipment":"Other"
+},
+{
+"name":"Incline Push-Up Medium",
+"muscle":"Chest",
+"equipment":"Bodyweight"
+},
+{
+"name":"Incline Push-Up Reverse Grip",
+"muscle":"Chest",
+"equipment":"Bodyweight"
+},
+{
+"name":"Incline Push-Up Wide",
+"muscle":"Chest",
+"equipment":"Bodyweight"
+},
+{
+"name":"Intermediate Groin Stretch",
+"muscle":"Hamstrings",
+"equipment":"Other"
+},
+{
+"name":"Intermediate Hip Flexor and Quad Stretch",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Internal Rotation with Band",
+"muscle":"Shoulders",
+"equipment":"Bands"
+},
+{
+"name":"Inverted Row",
+"muscle":"Middle Back",
+"equipment":"Other"
+},
+{
+"name":"Inverted Row with Straps",
+"muscle":"Middle Back",
+"equipment":"Other"
+},
+{
+"name":"Iron Cross",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Iron Crosses (stretch)",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Isometric Chest Squeezes",
+"muscle":"Chest",
+"equipment":"Bodyweight"
+},
+{
+"name":"Isometric Neck Exercise - Front And Back",
+"muscle":"Neck",
+"equipment":"Bodyweight"
+},
+{
+"name":"Isometric Neck Exercise - Sides",
+"muscle":"Neck",
+"equipment":"Bodyweight"
+},
+{
+"name":"Isometric Wipers",
+"muscle":"Chest",
+"equipment":"Bodyweight"
+},
+{
+"name":"IT Band and Glute Stretch",
+"muscle":"Abductors",
+"equipment":"Other"
+},
+{
+"name":"Jackknife Sit-Up",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Janda Sit-Up",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Jefferson Squats",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Jerk Balance",
+"muscle":"Shoulders",
+"equipment":"Barbell"
+},
+{
+"name":"Jerk Dip Squat",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"JM Press",
+"muscle":"Triceps",
+"equipment":"Barbell"
+},
+{
+"name":"Jogging, Treadmill",
+"muscle":"Quadriceps",
+"equipment":"Machine"
+},
+{
+"name":"Keg Load",
+"muscle":"Lower Back",
+"equipment":"Other"
+},
+{
+"name":"Kettlebell Arnold Press",
+"muscle":"Shoulders",
+"equipment":"Kettlebell"
+},
+{
+"name":"Kettlebell Dead Clean",
+"muscle":"Hamstrings",
+"equipment":"Kettlebell"
+},
+{
+"name":"Kettlebell Figure 8",
+"muscle":"Abdominals",
+"equipment":"Kettlebell"
+},
+{
+"name":"Kettlebell Halo",
+"muscle":"Shoulders",
+"equipment":"Kettlebell"
+},
+{
+"name":"Kettlebell Halo with Overhead Extension",
+"muscle":"Shoulders",
+"equipment":"Kettlebell"
+},
+{
+"name":"Kettlebell Hang Clean",
+"muscle":"Hamstrings",
+"equipment":"Kettlebell"
+},
+{
+"name":"Kettlebell One-Legged Deadlift",
+"muscle":"Hamstrings",
+"equipment":"Kettlebell"
+},
+{
+"name":"Kettlebell Overhead Triceps Extension",
+"muscle":"Triceps",
+"equipment":"Kettlebell"
+},
+{
+"name":"Kettlebell Pass Between The Legs",
+"muscle":"Abdominals",
+"equipment":"Kettlebell"
+},
+{
+"name":"Kettlebell Pirate Ships",
+"muscle":"Shoulders",
+"equipment":"Kettlebell"
+},
+{
+"name":"Kettlebell Pistol Squat",
+"muscle":"Quadriceps",
+"equipment":"Kettlebell"
+},
+{
+"name":"Kettlebell Seated Press",
+"muscle":"Shoulders",
+"equipment":"Kettlebell"
+},
+{
+"name":"Kettlebell Seesaw Press",
+"muscle":"Shoulders",
+"equipment":"Kettlebell"
+},
+{
+"name":"Kettlebell Sumo High Pull",
+"muscle":"Traps",
+"equipment":"Kettlebell"
+},
+{
+"name":"Kettlebell Thruster",
+"muscle":"Shoulders",
+"equipment":"Kettlebell"
+},
+{
+"name":"Kettlebell Turkish Get-Up (Lunge style)",
+"muscle":"Shoulders",
+"equipment":"Kettlebell"
+},
+{
+"name":"Kettlebell Turkish Get-Up (Squat style)",
+"muscle":"Shoulders",
+"equipment":"Kettlebell"
+},
+{
+"name":"Kettlebell Windmill",
+"muscle":"Abdominals",
+"equipment":"Kettlebell"
+},
+{
+"name":"Kipping Muscle Up",
+"muscle":"Lats",
+"equipment":"Other"
+},
+{
+"name":"Knee Across The Body",
+"muscle":"Glutes",
+"equipment":"Other"
+},
+{
+"name":"Knee Circles",
+"muscle":"Calves",
+"equipment":"Bodyweight"
+},
+{
+"name":"Knee Tuck Jump",
+"muscle":"Hamstrings",
+"equipment":"Bodyweight"
+},
+{
+"name":"Knee/Hip Raise On Parallel Bars",
+"muscle":"Abdominals",
+"equipment":"Other"
+},
+{
+"name":"Kneeling Arm Drill",
+"muscle":"Shoulders",
+"equipment":"Other"
+},
+{
+"name":"Kneeling Cable Crunch With Alternating Oblique Twists",
+"muscle":"Abdominals",
+"equipment":"Cable"
+},
+{
+"name":"Kneeling Cable Triceps Extension",
+"muscle":"Triceps",
+"equipment":"Cable"
+},
+{
+"name":"Kneeling Forearm Stretch",
+"muscle":"Forearms",
+"equipment":"Other"
+},
+{
+"name":"Kneeling High Pulley Row",
+"muscle":"Lats",
+"equipment":"Cable"
+},
+{
+"name":"Kneeling Hip Flexor",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Kneeling Jump Squat",
+"muscle":"Glutes",
+"equipment":"Barbell"
+},
+{
+"name":"Kneeling Single-Arm High Pulley Row",
+"muscle":"Lats",
+"equipment":"Cable"
+},
+{
+"name":"Kneeling Squat",
+"muscle":"Glutes",
+"equipment":"Barbell"
+},
+{
+"name":"Landmine 180's",
+"muscle":"Abdominals",
+"equipment":"Barbell"
+},
+{
+"name":"Landmine Linear Jammer",
+"muscle":"Shoulders",
+"equipment":"Barbell"
+},
+{
+"name":"Lateral Bound",
+"muscle":"Adductors",
+"equipment":"Bodyweight"
+},
+{
+"name":"Lateral Box Jump",
+"muscle":"Adductors",
+"equipment":"Other"
+},
+{
+"name":"Lateral Cone Hops",
+"muscle":"Adductors",
+"equipment":"Other"
+},
+{
+"name":"Lateral Raise - With Bands",
+"muscle":"Shoulders",
+"equipment":"Bands"
+},
+{
+"name":"Latissimus Dorsi-SMR",
+"muscle":"Lats",
+"equipment":"Foam Roller"
+},
+{
+"name":"Leg Extensions",
+"muscle":"Quadriceps",
+"equipment":"Machine"
+},
+{
+"name":"Leg Lift",
+"muscle":"Glutes",
+"equipment":"Bodyweight"
+},
+{
+"name":"Leg Press",
+"muscle":"Quadriceps",
+"equipment":"Machine"
+},
+{
+"name":"Leg Pull-In",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Leg-Over Floor Press",
+"muscle":"Chest",
+"equipment":"Kettlebell"
+},
+{
+"name":"Leg-Up Hamstring Stretch",
+"muscle":"Hamstrings",
+"equipment":"Other"
+},
+{
+"name":"Leverage Chest Press",
+"muscle":"Chest",
+"equipment":"Machine"
+},
+{
+"name":"Leverage Deadlift",
+"muscle":"Quadriceps",
+"equipment":"Machine"
+},
+{
+"name":"Leverage Decline Chest Press",
+"muscle":"Chest",
+"equipment":"Machine"
+},
+{
+"name":"Leverage High Row",
+"muscle":"Middle Back",
+"equipment":"Machine"
+},
+{
+"name":"Leverage Incline Chest Press",
+"muscle":"Chest",
+"equipment":"Machine"
+},
+{
+"name":"Leverage Iso Row",
+"muscle":"Lats",
+"equipment":"Machine"
+},
+{
+"name":"Leverage Shoulder Press",
+"muscle":"Shoulders",
+"equipment":"Machine"
+},
+{
+"name":"Leverage Shrug",
+"muscle":"Traps",
+"equipment":"Machine"
+},
+{
+"name":"Linear 3-Part Start Technique",
+"muscle":"Hamstrings",
+"equipment":"Other"
+},
+{
+"name":"Linear Acceleration Wall Drill",
+"muscle":"Hamstrings",
+"equipment":"Other"
+},
+{
+"name":"Linear Depth Jump",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Log Lift",
+"muscle":"Shoulders",
+"equipment":"Other"
+},
+{
+"name":"London Bridges",
+"muscle":"Lats",
+"equipment":"Other"
+},
+{
+"name":"Looking At Ceiling",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Low Cable Crossover",
+"muscle":"Chest",
+"equipment":"Cable"
+},
+{
+"name":"Low Cable Triceps Extension",
+"muscle":"Triceps",
+"equipment":"Cable"
+},
+{
+"name":"Low Pulley Row To Neck",
+"muscle":"Shoulders",
+"equipment":"Cable"
+},
+{
+"name":"Lower Back Curl",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Lower Back-SMR",
+"muscle":"Lower Back",
+"equipment":"Foam Roller"
+},
+{
+"name":"Lunge Pass Through",
+"muscle":"Hamstrings",
+"equipment":"Kettlebell"
+},
+{
+"name":"Lunge Sprint",
+"muscle":"Quadriceps",
+"equipment":"Machine"
+},
+{
+"name":"Lying Bent Leg Groin",
+"muscle":"Adductors",
+"equipment":"Other"
+},
+{
+"name":"Lying Cable Curl",
+"muscle":"Biceps",
+"equipment":"Cable"
+},
+{
+"name":"Lying Cambered Barbell Row",
+"muscle":"Middle Back",
+"equipment":"Barbell"
+},
+{
+"name":"Lying Close-Grip Bar Curl On High Pulley",
+"muscle":"Biceps",
+"equipment":"Cable"
+},
+{
+"name":"Lying Close-Grip Barbell Triceps Extension Behind The Head",
+"muscle":"Triceps",
+"equipment":"Barbell"
+},
+{
+"name":"Lying Close-Grip Barbell Triceps Press To Chin",
+"muscle":"Triceps",
+"equipment":"EZ Curl Bar"
+},
+{
+"name":"Lying Crossover",
+"muscle":"Abductors",
+"equipment":"Bodyweight"
+},
+{
+"name":"Lying Dumbbell Tricep Extension",
+"muscle":"Triceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Lying Face Down Plate Neck Resistance",
+"muscle":"Neck",
+"equipment":"Other"
+},
+{
+"name":"Lying Face Up Plate Neck Resistance",
+"muscle":"Neck",
+"equipment":"Other"
+},
+{
+"name":"Lying Glute",
+"muscle":"Glutes",
+"equipment":"Bodyweight"
+},
+{
+"name":"Lying Hamstring",
+"muscle":"Hamstrings",
+"equipment":"Other"
+},
+{
+"name":"Lying High Bench Barbell Curl",
+"muscle":"Biceps",
+"equipment":"Barbell"
+},
+{
+"name":"Lying Leg Curls",
+"muscle":"Hamstrings",
+"equipment":"Machine"
+},
+{
+"name":"Lying Machine Squat",
+"muscle":"Quadriceps",
+"equipment":"Machine"
+},
+{
+"name":"Lying One-Arm Lateral Raise",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Lying Prone Quadriceps",
+"muscle":"Quadriceps",
+"equipment":"Bodyweight"
+},
+{
+"name":"Lying Rear Delt Raise",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Lying Supine Dumbbell Curl",
+"muscle":"Biceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Lying T-Bar Row",
+"muscle":"Middle Back",
+"equipment":"Machine"
+},
+{
+"name":"Lying Triceps Press",
+"muscle":"Triceps",
+"equipment":"EZ Curl Bar"
+},
+{
+"name":"Machine Bench Press",
+"muscle":"Chest",
+"equipment":"Machine"
+},
+{
+"name":"Machine Bicep Curl",
+"muscle":"Biceps",
+"equipment":"Machine"
+},
+{
+"name":"Machine Preacher Curls",
+"muscle":"Biceps",
+"equipment":"Machine"
+},
+{
+"name":"Machine Shoulder (Military) Press",
+"muscle":"Shoulders",
+"equipment":"Machine"
+},
+{
+"name":"Machine Triceps Extension",
+"muscle":"Triceps",
+"equipment":"Machine"
+},
+{
+"name":"Medicine Ball Chest Pass",
+"muscle":"Chest",
+"equipment":"Medicine Ball"
+},
+{
+"name":"Medicine Ball Full Twist",
+"muscle":"Abdominals",
+"equipment":"Medicine Ball"
+},
+{
+"name":"Medicine Ball Scoop Throw",
+"muscle":"Shoulders",
+"equipment":"Medicine Ball"
+},
+{
+"name":"Middle Back Shrug",
+"muscle":"Middle Back",
+"equipment":"Dumbbell"
+},
+{
+"name":"Middle Back Stretch",
+"muscle":"Middle Back",
+"equipment":"Other"
+},
+{
+"name":"Mixed Grip Chin",
+"muscle":"Middle Back",
+"equipment":"Other"
+},
+{
+"name":"Monster Walk",
+"muscle":"Abductors",
+"equipment":"Bands"
+},
+{
+"name":"Mountain Climbers",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Moving Claw Series",
+"muscle":"Hamstrings",
+"equipment":"Other"
+},
+{
+"name":"Muscle Snatch",
+"muscle":"Hamstrings",
+"equipment":"Barbell"
+},
+{
+"name":"Muscle Up",
+"muscle":"Lats",
+"equipment":"Other"
+},
+{
+"name":"Narrow Stance Hack Squats",
+"muscle":"Quadriceps",
+"equipment":"Machine"
+},
+{
+"name":"Narrow Stance Leg Press",
+"muscle":"Quadriceps",
+"equipment":"Machine"
+},
+{
+"name":"Narrow Stance Squats",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Natural Glute Ham Raise",
+"muscle":"Hamstrings",
+"equipment":"Bodyweight"
+},
+{
+"name":"Neck Press",
+"muscle":"Chest",
+"equipment":"Barbell"
+},
+{
+"name":"Neck-SMR",
+"muscle":"Neck",
+"equipment":"Other"
+},
+{
+"name":"Oblique Crunches",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Oblique Crunches - On The Floor",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Olympic Squat",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"On Your Side Quad Stretch",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"On-Your-Back Quad Stretch",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"One Arm Against Wall",
+"muscle":"Lats",
+"equipment":"Other"
+},
+{
+"name":"One Arm Chin-Up",
+"muscle":"Middle Back",
+"equipment":"Other"
+},
+{
+"name":"One Arm Dumbbell Bench Press",
+"muscle":"Chest",
+"equipment":"Dumbbell"
+},
+{
+"name":"One Arm Dumbbell Preacher Curl",
+"muscle":"Biceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"One Arm Floor Press",
+"muscle":"Triceps",
+"equipment":"Barbell"
+},
+{
+"name":"One Arm Lat Pulldown",
+"muscle":"Lats",
+"equipment":"Cable"
+},
+{
+"name":"One Arm Pronated Dumbbell Triceps Extension",
+"muscle":"Triceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"One Arm Supinated Dumbbell Triceps Extension",
+"muscle":"Triceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"One Half Locust",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"One Handed Hang",
+"muscle":"Lats",
+"equipment":"Other"
+},
+{
+"name":"One Knee To Chest",
+"muscle":"Glutes",
+"equipment":"Other"
+},
+{
+"name":"One Leg Barbell Squat",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"One-Arm Dumbbell Row",
+"muscle":"Middle Back",
+"equipment":"Dumbbell"
+},
+{
+"name":"One-Arm Flat Bench Dumbbell Flye",
+"muscle":"Chest",
+"equipment":"Dumbbell"
+},
+{
+"name":"One-Arm High-Pulley Cable Side Bends",
+"muscle":"Abdominals",
+"equipment":"Cable"
+},
+{
+"name":"One-Arm Incline Lateral Raise",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"One-Arm Kettlebell Clean",
+"muscle":"Hamstrings",
+"equipment":"Kettlebell"
+},
+{
+"name":"One-Arm Kettlebell Clean and Jerk",
+"muscle":"Shoulders",
+"equipment":"Kettlebell"
+},
+{
+"name":"One-Arm Kettlebell Floor Press",
+"muscle":"Chest",
+"equipment":"Kettlebell"
+},
+{
+"name":"One-Arm Kettlebell Jerk",
+"muscle":"Shoulders",
+"equipment":"Kettlebell"
+},
+{
+"name":"One-Arm Kettlebell Military Press To The Side",
+"muscle":"Shoulders",
+"equipment":"Kettlebell"
+},
+{
+"name":"One-Arm Kettlebell Para Press",
+"muscle":"Shoulders",
+"equipment":"Kettlebell"
+},
+{
+"name":"One-Arm Kettlebell Push Press",
+"muscle":"Shoulders",
+"equipment":"Kettlebell"
+},
+{
+"name":"One-Arm Kettlebell Row",
+"muscle":"Middle Back",
+"equipment":"Kettlebell"
+},
+{
+"name":"One-Arm Kettlebell Snatch",
+"muscle":"Shoulders",
+"equipment":"Kettlebell"
+},
+{
+"name":"One-Arm Kettlebell Split Jerk",
+"muscle":"Shoulders",
+"equipment":"Kettlebell"
+},
+{
+"name":"One-Arm Kettlebell Split Snatch",
+"muscle":"Shoulders",
+"equipment":"Kettlebell"
+},
+{
+"name":"One-Arm Kettlebell Swings",
+"muscle":"Hamstrings",
+"equipment":"Kettlebell"
+},
+{
+"name":"One-Arm Long Bar Row",
+"muscle":"Middle Back",
+"equipment":"Barbell"
+},
+{
+"name":"One-Arm Medicine Ball Slam",
+"muscle":"Abdominals",
+"equipment":"Medicine Ball"
+},
+{
+"name":"One-Arm Open Palm Kettlebell Clean",
+"muscle":"Hamstrings",
+"equipment":"Kettlebell"
+},
+{
+"name":"One-Arm Overhead Kettlebell Squats",
+"muscle":"Quadriceps",
+"equipment":"Kettlebell"
+},
+{
+"name":"One-Arm Side Deadlift",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"One-Arm Side Laterals",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"One-Legged Cable Kickback",
+"muscle":"Glutes",
+"equipment":"Cable"
+},
+{
+"name":"Open Palm Kettlebell Clean",
+"muscle":"Hamstrings",
+"equipment":"Kettlebell"
+},
+{
+"name":"Otis-Up",
+"muscle":"Abdominals",
+"equipment":"Other"
+},
+{
+"name":"Overhead Cable Curl",
+"muscle":"Biceps",
+"equipment":"Cable"
+},
+{
+"name":"Overhead Lat",
+"muscle":"Lats",
+"equipment":"Other"
+},
+{
+"name":"Overhead Slam",
+"muscle":"Lats",
+"equipment":"Medicine Ball"
+},
+{
+"name":"Overhead Squat",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Overhead Stretch",
+"muscle":"Abdominals",
+"equipment":"Other"
+},
+{
+"name":"Overhead Triceps",
+"muscle":"Triceps",
+"equipment":"Bodyweight"
+},
+{
+"name":"Pallof Press",
+"muscle":"Abdominals",
+"equipment":"Cable"
+},
+{
+"name":"Pallof Press With Rotation",
+"muscle":"Abdominals",
+"equipment":"Cable"
+},
+{
+"name":"Palms-Down Dumbbell Wrist Curl Over A Bench",
+"muscle":"Forearms",
+"equipment":"Dumbbell"
+},
+{
+"name":"Palms-Down Wrist Curl Over A Bench",
+"muscle":"Forearms",
+"equipment":"Barbell"
+},
+{
+"name":"Palms-Up Barbell Wrist Curl Over A Bench",
+"muscle":"Forearms",
+"equipment":"Barbell"
+},
+{
+"name":"Palms-Up Dumbbell Wrist Curl Over A Bench",
+"muscle":"Forearms",
+"equipment":"Dumbbell"
+},
+{
+"name":"Parallel Bar Dip",
+"muscle":"Triceps",
+"equipment":"Other"
+},
+{
+"name":"Pelvic Tilt Into Bridge",
+"muscle":"Lower Back",
+"equipment":"Other"
+},
+{
+"name":"Peroneals Stretch",
+"muscle":"Calves",
+"equipment":"Other"
+},
+{
+"name":"Peroneals-SMR",
+"muscle":"Calves",
+"equipment":"Foam Roller"
+},
+{
+"name":"Physioball Hip Bridge",
+"muscle":"Glutes",
+"equipment":"Exercise Ball"
+},
+{
+"name":"Pin Presses",
+"muscle":"Triceps",
+"equipment":"Barbell"
+},
+{
+"name":"Piriformis-SMR",
+"muscle":"Glutes",
+"equipment":"Foam Roller"
+},
+{
+"name":"Plank",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Plate Pinch",
+"muscle":"Forearms",
+"equipment":"Other"
+},
+{
+"name":"Plate Twist",
+"muscle":"Abdominals",
+"equipment":"Other"
+},
+{
+"name":"Platform Hamstring Slides",
+"muscle":"Hamstrings",
+"equipment":"Other"
+},
+{
+"name":"Plie Dumbbell Squat",
+"muscle":"Quadriceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Plyo Kettlebell Pushups",
+"muscle":"Chest",
+"equipment":"Kettlebell"
+},
+{
+"name":"Plyo Push-up",
+"muscle":"Chest",
+"equipment":"Bodyweight"
+},
+{
+"name":"Posterior Tibialis Stretch",
+"muscle":"Calves",
+"equipment":"Other"
+},
+{
+"name":"Power Clean",
+"muscle":"Hamstrings",
+"equipment":"Barbell"
+},
+{
+"name":"Power Clean from Blocks",
+"muscle":"Hamstrings",
+"equipment":"Barbell"
+},
+{
+"name":"Power Jerk",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Power Partials",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Power Snatch",
+"muscle":"Hamstrings",
+"equipment":"Barbell"
+},
+{
+"name":"Power Snatch from Blocks",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Power Stairs",
+"muscle":"Hamstrings",
+"equipment":"Other"
+},
+{
+"name":"Preacher Curl",
+"muscle":"Biceps",
+"equipment":"Barbell"
+},
+{
+"name":"Preacher Hammer Dumbbell Curl",
+"muscle":"Biceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Press Sit-Up",
+"muscle":"Abdominals",
+"equipment":"Barbell"
+},
+{
+"name":"Prone Manual Hamstring",
+"muscle":"Hamstrings",
+"equipment":"Other"
+},
+{
+"name":"Prowler Sprint",
+"muscle":"Hamstrings",
+"equipment":"Other"
+},
+{
+"name":"Pull Through",
+"muscle":"Glutes",
+"equipment":"Cable"
+},
+{
+"name":"Pullups",
+"muscle":"Lats",
+"equipment":"Bodyweight"
+},
+{
+"name":"Push Press",
+"muscle":"Shoulders",
+"equipment":"Barbell"
+},
+{
+"name":"Push Press - Behind the Neck",
+"muscle":"Shoulders",
+"equipment":"Barbell"
+},
+{
+"name":"Push Up to Side Plank",
+"muscle":"Chest",
+"equipment":"Bodyweight"
+},
+{
+"name":"Push-Up Wide",
+"muscle":"Chest",
+"equipment":"Bodyweight"
+},
+{
+"name":"Push-Ups - Close Triceps Position",
+"muscle":"Triceps",
+"equipment":"Bodyweight"
+},
+{
+"name":"Push-Ups With Feet Elevated",
+"muscle":"Chest",
+"equipment":"Bodyweight"
+},
+{
+"name":"Push-Ups With Feet On An Exercise Ball",
+"muscle":"Chest",
+"equipment":"Exercise Ball"
+},
+{
+"name":"Pushups",
+"muscle":"Chest",
+"equipment":"Bodyweight"
+},
+{
+"name":"Pushups (Close and Wide Hand Positions)",
+"muscle":"Chest",
+"equipment":"Bodyweight"
+},
+{
+"name":"Pyramid",
+"muscle":"Lower Back",
+"equipment":"Exercise Ball"
+},
+{
+"name":"Quad Stretch",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Quadriceps-SMR",
+"muscle":"Quadriceps",
+"equipment":"Foam Roller"
+},
+{
+"name":"Quick Leap",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Rack Delivery",
+"muscle":"Shoulders",
+"equipment":"Barbell"
+},
+{
+"name":"Rack Pull with Bands",
+"muscle":"Lower Back",
+"equipment":"Barbell"
+},
+{
+"name":"Rack Pulls",
+"muscle":"Lower Back",
+"equipment":"Barbell"
+},
+{
+"name":"Rear Leg Raises",
+"muscle":"Quadriceps",
+"equipment":"Bodyweight"
+},
+{
+"name":"Recumbent Bike",
+"muscle":"Quadriceps",
+"equipment":"Machine"
+},
+{
+"name":"Return Push from Stance",
+"muscle":"Shoulders",
+"equipment":"Medicine Ball"
+},
+{
+"name":"Reverse Band Bench Press",
+"muscle":"Triceps",
+"equipment":"Barbell"
+},
+{
+"name":"Reverse Band Box Squat",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Reverse Band Deadlift",
+"muscle":"Lower Back",
+"equipment":"Barbell"
+},
+{
+"name":"Reverse Band Power Squat",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Reverse Band Sumo Deadlift",
+"muscle":"Hamstrings",
+"equipment":"Barbell"
+},
+{
+"name":"Reverse Barbell Curl",
+"muscle":"Biceps",
+"equipment":"Barbell"
+},
+{
+"name":"Reverse Barbell Preacher Curls",
+"muscle":"Biceps",
+"equipment":"EZ Curl Bar"
+},
+{
+"name":"Reverse Cable Curl",
+"muscle":"Biceps",
+"equipment":"Cable"
+},
+{
+"name":"Reverse Crunch",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Reverse Flyes",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Reverse Flyes With External Rotation",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Reverse Grip Bent-Over Rows",
+"muscle":"Middle Back",
+"equipment":"Barbell"
+},
+{
+"name":"Reverse Grip Triceps Pushdown",
+"muscle":"Triceps",
+"equipment":"Cable"
+},
+{
+"name":"Reverse Hyperextension",
+"muscle":"Hamstrings",
+"equipment":"Machine"
+},
+{
+"name":"Reverse Machine Flyes",
+"muscle":"Shoulders",
+"equipment":"Machine"
+},
+{
+"name":"Reverse Plate Curls",
+"muscle":"Biceps",
+"equipment":"Other"
+},
+{
+"name":"Reverse Triceps Bench Press",
+"muscle":"Triceps",
+"equipment":"Barbell"
+},
+{
+"name":"Rhomboids-SMR",
+"muscle":"Middle Back",
+"equipment":"Foam Roller"
+},
+{
+"name":"Rickshaw Carry",
+"muscle":"Forearms",
+"equipment":"Other"
+},
+{
+"name":"Rickshaw Deadlift",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Ring Dips",
+"muscle":"Triceps",
+"equipment":"Other"
+},
+{
+"name":"Rocket Jump",
+"muscle":"Quadriceps",
+"equipment":"Bodyweight"
+},
+{
+"name":"Rocking Standing Calf Raise",
+"muscle":"Calves",
+"equipment":"Barbell"
+},
+{
+"name":"Rocky Pull-Ups/Pulldowns",
+"muscle":"Lats",
+"equipment":"Other"
+},
+{
+"name":"Romanian Deadlift",
+"muscle":"Hamstrings",
+"equipment":"Barbell"
+},
+{
+"name":"Romanian Deadlift from Deficit",
+"muscle":"Hamstrings",
+"equipment":"Barbell"
+},
+{
+"name":"Rope Climb",
+"muscle":"Lats",
+"equipment":"Other"
+},
+{
+"name":"Rope Crunch",
+"muscle":"Abdominals",
+"equipment":"Cable"
+},
+{
+"name":"Rope Jumping",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Rope Straight-Arm Pulldown",
+"muscle":"Lats",
+"equipment":"Cable"
+},
+{
+"name":"Round The World Shoulder Stretch",
+"muscle":"Shoulders",
+"equipment":"Other"
+},
+{
+"name":"Rowing, Stationary",
+"muscle":"Quadriceps",
+"equipment":"Machine"
+},
+{
+"name":"Runner's Stretch",
+"muscle":"Hamstrings",
+"equipment":"Other"
+},
+{
+"name":"Running, Treadmill",
+"muscle":"Quadriceps",
+"equipment":"Machine"
+},
+{
+"name":"Russian Twist",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Sandbag Load",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Scapular Pull-Up",
+"muscle":"Traps",
+"equipment":"Other"
+},
+{
+"name":"Scissor Kick",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Scissors Jump",
+"muscle":"Quadriceps",
+"equipment":"Bodyweight"
+},
+{
+"name":"Seated Band Hamstring Curl",
+"muscle":"Hamstrings",
+"equipment":"Other"
+},
+{
+"name":"Seated Barbell Military Press",
+"muscle":"Shoulders",
+"equipment":"Barbell"
+},
+{
+"name":"Seated Barbell Twist",
+"muscle":"Abdominals",
+"equipment":"Barbell"
+},
+{
+"name":"Seated Bent-Over One-Arm Dumbbell Triceps Extension",
+"muscle":"Triceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Seated Bent-Over Rear Delt Raise",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Seated Bent-Over Two-Arm Dumbbell Triceps Extension",
+"muscle":"Triceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Seated Biceps",
+"muscle":"Biceps",
+"equipment":"Bodyweight"
+},
+{
+"name":"Seated Cable Rows",
+"muscle":"Middle Back",
+"equipment":"Cable"
+},
+{
+"name":"Seated Cable Shoulder Press",
+"muscle":"Shoulders",
+"equipment":"Cable"
+},
+{
+"name":"Seated Calf Raise",
+"muscle":"Calves",
+"equipment":"Machine"
+},
+{
+"name":"Seated Calf Stretch",
+"muscle":"Calves",
+"equipment":"Other"
+},
+{
+"name":"Seated Close-Grip Concentration Barbell Curl",
+"muscle":"Biceps",
+"equipment":"Barbell"
+},
+{
+"name":"Seated Dumbbell Curl",
+"muscle":"Biceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Seated Dumbbell Inner Biceps Curl",
+"muscle":"Biceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Seated Dumbbell Palms-Down Wrist Curl",
+"muscle":"Forearms",
+"equipment":"Dumbbell"
+},
+{
+"name":"Seated Dumbbell Palms-Up Wrist Curl",
+"muscle":"Forearms",
+"equipment":"Dumbbell"
+},
+{
+"name":"Seated Dumbbell Press",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Seated Flat Bench Leg Pull-In",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Seated Floor Hamstring Stretch",
+"muscle":"Hamstrings",
+"equipment":"Other"
+},
+{
+"name":"Seated Front Deltoid",
+"muscle":"Shoulders",
+"equipment":"Bodyweight"
+},
+{
+"name":"Seated Glute",
+"muscle":"Glutes",
+"equipment":"Bodyweight"
+},
+{
+"name":"Seated Good Mornings",
+"muscle":"Lower Back",
+"equipment":"Barbell"
+},
+{
+"name":"Seated Hamstring",
+"muscle":"Hamstrings",
+"equipment":"Other"
+},
+{
+"name":"Seated Hamstring and Calf Stretch",
+"muscle":"Hamstrings",
+"equipment":"Other"
+},
+{
+"name":"Seated Head Harness Neck Resistance",
+"muscle":"Neck",
+"equipment":"Other"
+},
+{
+"name":"Seated Leg Curl",
+"muscle":"Hamstrings",
+"equipment":"Machine"
+},
+{
+"name":"Seated Leg Tucks",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Seated One-arm Cable Pulley Rows",
+"muscle":"Middle Back",
+"equipment":"Cable"
+},
+{
+"name":"Seated One-Arm Dumbbell Palms-Down Wrist Curl",
+"muscle":"Forearms",
+"equipment":"Dumbbell"
+},
+{
+"name":"Seated One-Arm Dumbbell Palms-Up Wrist Curl",
+"muscle":"Forearms",
+"equipment":"Dumbbell"
+},
+{
+"name":"Seated Overhead Stretch",
+"muscle":"Abdominals",
+"equipment":"Other"
+},
+{
+"name":"Seated Palm-Up Barbell Wrist Curl",
+"muscle":"Forearms",
+"equipment":"Barbell"
+},
+{
+"name":"Seated Palms-Down Barbell Wrist Curl",
+"muscle":"Forearms",
+"equipment":"Barbell"
+},
+{
+"name":"Seated Side Lateral Raise",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Seated Triceps Press",
+"muscle":"Triceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Seated Two-Arm Palms-Up Low-Pulley Wrist Curl",
+"muscle":"Forearms",
+"equipment":"Cable"
+},
+{
+"name":"See-Saw Press (Alternating Side Press)",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Shotgun Row",
+"muscle":"Lats",
+"equipment":"Cable"
+},
+{
+"name":"Shoulder Circles",
+"muscle":"Shoulders",
+"equipment":"Other"
+},
+{
+"name":"Shoulder Press - With Bands",
+"muscle":"Shoulders",
+"equipment":"Bands"
+},
+{
+"name":"Shoulder Raise",
+"muscle":"Shoulders",
+"equipment":"Other"
+},
+{
+"name":"Shoulder Stretch",
+"muscle":"Shoulders",
+"equipment":"Other"
+},
+{
+"name":"Side Bridge",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Side Hop-Sprint",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Side Jackknife",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Side Lateral Raise",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Side Laterals to Front Raise",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Side Leg Raises",
+"muscle":"Adductors",
+"equipment":"Bodyweight"
+},
+{
+"name":"Side Lying Groin Stretch",
+"muscle":"Adductors",
+"equipment":"Other"
+},
+{
+"name":"Side Neck Stretch",
+"muscle":"Neck",
+"equipment":"Other"
+},
+{
+"name":"Side Standing Long Jump",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Side to Side Box Shuffle",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Side To Side Chins",
+"muscle":"Lats",
+"equipment":"Other"
+},
+{
+"name":"Side Wrist Pull",
+"muscle":"Shoulders",
+"equipment":"Other"
+},
+{
+"name":"Side-Lying Floor Stretch",
+"muscle":"Lats",
+"equipment":"Other"
+},
+{
+"name":"Single Dumbbell Raise",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Single Leg Butt Kick",
+"muscle":"Quadriceps",
+"equipment":"Bodyweight"
+},
+{
+"name":"Single Leg Glute Bridge",
+"muscle":"Glutes",
+"equipment":"Bodyweight"
+},
+{
+"name":"Single Leg Push-off",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Single-Arm Cable Crossover",
+"muscle":"Chest",
+"equipment":"Cable"
+},
+{
+"name":"Single-Arm Linear Jammer",
+"muscle":"Shoulders",
+"equipment":"Barbell"
+},
+{
+"name":"Single-Arm Push-Up",
+"muscle":"Chest",
+"equipment":"Bodyweight"
+},
+{
+"name":"Single-Cone Sprint Drill",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Single-Leg High Box Squat",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Single-Leg Hop Progression",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Single-Leg Lateral Hop",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Single-Leg Leg Extension",
+"muscle":"Quadriceps",
+"equipment":"Machine"
+},
+{
+"name":"Single-Leg Stride Jump",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Sit Squats",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Sit-Up",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Skating",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Sled Drag - Harness",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Sled Overhead Backward Walk",
+"muscle":"Shoulders",
+"equipment":"Other"
+},
+{
+"name":"Sled Overhead Triceps Extension",
+"muscle":"Triceps",
+"equipment":"Other"
+},
+{
+"name":"Sled Push",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Sled Reverse Flye",
+"muscle":"Shoulders",
+"equipment":"Other"
+},
+{
+"name":"Sled Row",
+"muscle":"Middle Back",
+"equipment":"Other"
+},
+{
+"name":"Sledgehammer Swings",
+"muscle":"Abdominals",
+"equipment":"Other"
+},
+{
+"name":"Smith Incline Shoulder Raise",
+"muscle":"Shoulders",
+"equipment":"Barbell"
+},
+{
+"name":"Smith Machine Behind the Back Shrug",
+"muscle":"Traps",
+"equipment":"Machine"
+},
+{
+"name":"Smith Machine Bench Press",
+"muscle":"Chest",
+"equipment":"Machine"
+},
+{
+"name":"Smith Machine Bent Over Row",
+"muscle":"Middle Back",
+"equipment":"Machine"
+},
+{
+"name":"Smith Machine Calf Raise",
+"muscle":"Calves",
+"equipment":"Machine"
+},
+{
+"name":"Smith Machine Close-Grip Bench Press",
+"muscle":"Triceps",
+"equipment":"Machine"
+},
+{
+"name":"Smith Machine Decline Press",
+"muscle":"Chest",
+"equipment":"Machine"
+},
+{
+"name":"Smith Machine Hang Power Clean",
+"muscle":"Hamstrings",
+"equipment":"Machine"
+},
+{
+"name":"Smith Machine Hip Raise",
+"muscle":"Abdominals",
+"equipment":"Machine"
+},
+{
+"name":"Smith Machine Incline Bench Press",
+"muscle":"Chest",
+"equipment":"Machine"
+},
+{
+"name":"Smith Machine Leg Press",
+"muscle":"Quadriceps",
+"equipment":"Machine"
+},
+{
+"name":"Smith Machine One-Arm Upright Row",
+"muscle":"Shoulders",
+"equipment":"Machine"
+},
+{
+"name":"Smith Machine Overhead Shoulder Press",
+"muscle":"Shoulders",
+"equipment":"Machine"
+},
+{
+"name":"Smith Machine Pistol Squat",
+"muscle":"Quadriceps",
+"equipment":"Machine"
+},
+{
+"name":"Smith Machine Reverse Calf Raises",
+"muscle":"Calves",
+"equipment":"Machine"
+},
+{
+"name":"Smith Machine Squat",
+"muscle":"Quadriceps",
+"equipment":"Machine"
+},
+{
+"name":"Smith Machine Stiff-Legged Deadlift",
+"muscle":"Hamstrings",
+"equipment":"Machine"
+},
+{
+"name":"Smith Machine Upright Row",
+"muscle":"Traps",
+"equipment":"Machine"
+},
+{
+"name":"Smith Single-Leg Split Squat",
+"muscle":"Quadriceps",
+"equipment":"Machine"
+},
+{
+"name":"Snatch",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Snatch Balance",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Snatch Deadlift",
+"muscle":"Hamstrings",
+"equipment":"Barbell"
+},
+{
+"name":"Snatch from Blocks",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Snatch Pull",
+"muscle":"Hamstrings",
+"equipment":"Barbell"
+},
+{
+"name":"Snatch Shrug",
+"muscle":"Traps",
+"equipment":"Barbell"
+},
+{
+"name":"Speed Band Overhead Triceps",
+"muscle":"Triceps",
+"equipment":"Bands"
+},
+{
+"name":"Speed Box Squat",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Speed Squats",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Spell Caster",
+"muscle":"Abdominals",
+"equipment":"Dumbbell"
+},
+{
+"name":"Spider Crawl",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Spider Curl",
+"muscle":"Biceps",
+"equipment":"EZ Curl Bar"
+},
+{
+"name":"Spinal Stretch",
+"muscle":"Middle Back",
+"equipment":"Other"
+},
+{
+"name":"Split Clean",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Split Jerk",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Split Jump",
+"muscle":"Quadriceps",
+"equipment":"Bodyweight"
+},
+{
+"name":"Split Snatch",
+"muscle":"Hamstrings",
+"equipment":"Barbell"
+},
+{
+"name":"Split Squat with Dumbbells",
+"muscle":"Quadriceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Split Squats",
+"muscle":"Hamstrings",
+"equipment":"Other"
+},
+{
+"name":"Squat Jerk",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Squat with Bands",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Squat with Chains",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Squat with Plate Movers",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Squats - With Bands",
+"muscle":"Quadriceps",
+"equipment":"Bands"
+},
+{
+"name":"Stairmaster",
+"muscle":"Quadriceps",
+"equipment":"Machine"
+},
+{
+"name":"Standing Alternating Dumbbell Press",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Standing Barbell Calf Raise",
+"muscle":"Calves",
+"equipment":"Barbell"
+},
+{
+"name":"Standing Barbell Press Behind Neck",
+"muscle":"Shoulders",
+"equipment":"Barbell"
+},
+{
+"name":"Standing Bent-Over One-Arm Dumbbell Triceps Extension",
+"muscle":"Triceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Standing Bent-Over Two-Arm Dumbbell Triceps Extension",
+"muscle":"Triceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Standing Biceps Cable Curl",
+"muscle":"Biceps",
+"equipment":"Cable"
+},
+{
+"name":"Standing Biceps Stretch",
+"muscle":"Biceps",
+"equipment":"Other"
+},
+{
+"name":"Standing Bradford Press",
+"muscle":"Shoulders",
+"equipment":"Barbell"
+},
+{
+"name":"Standing Cable Chest Press",
+"muscle":"Chest",
+"equipment":"Cable"
+},
+{
+"name":"Standing Cable Lift",
+"muscle":"Abdominals",
+"equipment":"Cable"
+},
+{
+"name":"Standing Cable Wood Chop",
+"muscle":"Abdominals",
+"equipment":"Cable"
+},
+{
+"name":"Standing Calf Raises",
+"muscle":"Calves",
+"equipment":"Machine"
+},
+{
+"name":"Standing Concentration Curl",
+"muscle":"Biceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Standing Dumbbell Calf Raise",
+"muscle":"Calves",
+"equipment":"Dumbbell"
+},
+{
+"name":"Standing Dumbbell Press",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Standing Dumbbell Reverse Curl",
+"muscle":"Biceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Standing Dumbbell Straight-Arm Front Delt Raise Above Head",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Standing Dumbbell Triceps Extension",
+"muscle":"Triceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Standing Dumbbell Upright Row",
+"muscle":"Traps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Standing Elevated Quad Stretch",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Standing Front Barbell Raise Over Head",
+"muscle":"Shoulders",
+"equipment":"Barbell"
+},
+{
+"name":"Standing Gastrocnemius Calf Stretch",
+"muscle":"Calves",
+"equipment":"Other"
+},
+{
+"name":"Standing Hamstring and Calf Stretch",
+"muscle":"Hamstrings",
+"equipment":"Other"
+},
+{
+"name":"Standing Hip Circles",
+"muscle":"Abductors",
+"equipment":"Bodyweight"
+},
+{
+"name":"Standing Hip Flexors",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Standing Inner-Biceps Curl",
+"muscle":"Biceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Standing Lateral Stretch",
+"muscle":"Abdominals",
+"equipment":"Other"
+},
+{
+"name":"Standing Leg Curl",
+"muscle":"Hamstrings",
+"equipment":"Machine"
+},
+{
+"name":"Standing Long Jump",
+"muscle":"Quadriceps",
+"equipment":"Bodyweight"
+},
+{
+"name":"Standing Low-Pulley Deltoid Raise",
+"muscle":"Shoulders",
+"equipment":"Cable"
+},
+{
+"name":"Standing Low-Pulley One-Arm Triceps Extension",
+"muscle":"Triceps",
+"equipment":"Cable"
+},
+{
+"name":"Standing Military Press",
+"muscle":"Shoulders",
+"equipment":"Barbell"
+},
+{
+"name":"Standing Olympic Plate Hand Squeeze",
+"muscle":"Forearms",
+"equipment":"Other"
+},
+{
+"name":"Standing One-Arm Cable Curl",
+"muscle":"Biceps",
+"equipment":"Cable"
+},
+{
+"name":"Standing One-Arm Dumbbell Curl Over Incline Bench",
+"muscle":"Biceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Standing One-Arm Dumbbell Triceps Extension",
+"muscle":"Triceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Standing Overhead Barbell Triceps Extension",
+"muscle":"Triceps",
+"equipment":"Barbell"
+},
+{
+"name":"Standing Palm-In One-Arm Dumbbell Press",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Standing Palms-In Dumbbell Press",
+"muscle":"Shoulders",
+"equipment":"Dumbbell"
+},
+{
+"name":"Standing Palms-Up Barbell Behind The Back Wrist Curl",
+"muscle":"Forearms",
+"equipment":"Barbell"
+},
+{
+"name":"Standing Pelvic Tilt",
+"muscle":"Lower Back",
+"equipment":"Other"
+},
+{
+"name":"Standing Rope Crunch",
+"muscle":"Abdominals",
+"equipment":"Cable"
+},
+{
+"name":"Standing Soleus And Achilles Stretch",
+"muscle":"Calves",
+"equipment":"Other"
+},
+{
+"name":"Standing Toe Touches",
+"muscle":"Hamstrings",
+"equipment":"Other"
+},
+{
+"name":"Standing Towel Triceps Extension",
+"muscle":"Triceps",
+"equipment":"Bodyweight"
+},
+{
+"name":"Standing Two-Arm Overhead Throw",
+"muscle":"Shoulders",
+"equipment":"Medicine Ball"
+},
+{
+"name":"Star Jump",
+"muscle":"Quadriceps",
+"equipment":"Bodyweight"
+},
+{
+"name":"Step Mill",
+"muscle":"Quadriceps",
+"equipment":"Machine"
+},
+{
+"name":"Step-up with Knee Raise",
+"muscle":"Glutes",
+"equipment":"Bodyweight"
+},
+{
+"name":"Stiff Leg Barbell Good Morning",
+"muscle":"Lower Back",
+"equipment":"Barbell"
+},
+{
+"name":"Stiff-Legged Barbell Deadlift",
+"muscle":"Hamstrings",
+"equipment":"Barbell"
+},
+{
+"name":"Stiff-Legged Dumbbell Deadlift",
+"muscle":"Hamstrings",
+"equipment":"Dumbbell"
+},
+{
+"name":"Stomach Vacuum",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Straight Bar Bench Mid Rows",
+"muscle":"Middle Back",
+"equipment":"Barbell"
+},
+{
+"name":"Straight Raises on Incline Bench",
+"muscle":"Shoulders",
+"equipment":"Barbell"
+},
+{
+"name":"Straight-Arm Dumbbell Pullover",
+"muscle":"Chest",
+"equipment":"Dumbbell"
+},
+{
+"name":"Straight-Arm Pulldown",
+"muscle":"Lats",
+"equipment":"Cable"
+},
+{
+"name":"Stride Jump Crossover",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Sumo Deadlift",
+"muscle":"Hamstrings",
+"equipment":"Barbell"
+},
+{
+"name":"Sumo Deadlift with Bands",
+"muscle":"Hamstrings",
+"equipment":"Barbell"
+},
+{
+"name":"Sumo Deadlift with Chains",
+"muscle":"Hamstrings",
+"equipment":"Barbell"
+},
+{
+"name":"Superman",
+"muscle":"Lower Back",
+"equipment":"Bodyweight"
+},
+{
+"name":"Supine Chest Throw",
+"muscle":"Triceps",
+"equipment":"Medicine Ball"
+},
+{
+"name":"Supine One-Arm Overhead Throw",
+"muscle":"Abdominals",
+"equipment":"Medicine Ball"
+},
+{
+"name":"Supine Two-Arm Overhead Throw",
+"muscle":"Abdominals",
+"equipment":"Medicine Ball"
+},
+{
+"name":"Suspended Fallout",
+"muscle":"Abdominals",
+"equipment":"Other"
+},
+{
+"name":"Suspended Push-Up",
+"muscle":"Chest",
+"equipment":"Other"
+},
+{
+"name":"Suspended Reverse Crunch",
+"muscle":"Abdominals",
+"equipment":"Other"
+},
+{
+"name":"Suspended Row",
+"muscle":"Middle Back",
+"equipment":"Other"
+},
+{
+"name":"Suspended Split Squat",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Svend Press",
+"muscle":"Chest",
+"equipment":"Other"
+},
+{
+"name":"T-Bar Row with Handle",
+"muscle":"Middle Back",
+"equipment":"Barbell"
+},
+{
+"name":"Tate Press",
+"muscle":"Triceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"The Straddle",
+"muscle":"Hamstrings",
+"equipment":"Other"
+},
+{
+"name":"Thigh Abductor",
+"muscle":"Abductors",
+"equipment":"Machine"
+},
+{
+"name":"Thigh Adductor",
+"muscle":"Adductors",
+"equipment":"Machine"
+},
+{
+"name":"Tire Flip",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Toe Touchers",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Torso Rotation",
+"muscle":"Abdominals",
+"equipment":"Exercise Ball"
+},
+{
+"name":"Trail Running/Walking",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Trap Bar Deadlift",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Tricep Dumbbell Kickback",
+"muscle":"Triceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Tricep Side Stretch",
+"muscle":"Triceps",
+"equipment":"Other"
+},
+{
+"name":"Triceps Overhead Extension with Rope",
+"muscle":"Triceps",
+"equipment":"Cable"
+},
+{
+"name":"Triceps Pushdown",
+"muscle":"Triceps",
+"equipment":"Cable"
+},
+{
+"name":"Triceps Pushdown - Rope Attachment",
+"muscle":"Triceps",
+"equipment":"Cable"
+},
+{
+"name":"Triceps Pushdown - V-Bar Attachment",
+"muscle":"Triceps",
+"equipment":"Cable"
+},
+{
+"name":"Triceps Stretch",
+"muscle":"Triceps",
+"equipment":"Other"
+},
+{
+"name":"Tuck Crunch",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Two-Arm Dumbbell Preacher Curl",
+"muscle":"Biceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Two-Arm Kettlebell Clean",
+"muscle":"Shoulders",
+"equipment":"Kettlebell"
+},
+{
+"name":"Two-Arm Kettlebell Jerk",
+"muscle":"Shoulders",
+"equipment":"Kettlebell"
+},
+{
+"name":"Two-Arm Kettlebell Military Press",
+"muscle":"Shoulders",
+"equipment":"Kettlebell"
+},
+{
+"name":"Two-Arm Kettlebell Row",
+"muscle":"Middle Back",
+"equipment":"Kettlebell"
+},
+{
+"name":"Underhand Cable Pulldowns",
+"muscle":"Lats",
+"equipment":"Cable"
+},
+{
+"name":"Upper Back Stretch",
+"muscle":"Middle Back",
+"equipment":"Other"
+},
+{
+"name":"Upper Back-Leg Grab",
+"muscle":"Hamstrings",
+"equipment":"Other"
+},
+{
+"name":"Upright Barbell Row",
+"muscle":"Shoulders",
+"equipment":"Barbell"
+},
+{
+"name":"Upright Cable Row",
+"muscle":"Traps",
+"equipment":"Cable"
+},
+{
+"name":"Upright Row - With Bands",
+"muscle":"Traps",
+"equipment":"Bands"
+},
+{
+"name":"Upward Stretch",
+"muscle":"Shoulders",
+"equipment":"Other"
+},
+{
+"name":"V-Bar Pulldown",
+"muscle":"Lats",
+"equipment":"Cable"
+},
+{
+"name":"V-Bar Pullup",
+"muscle":"Lats",
+"equipment":"Bodyweight"
+},
+{
+"name":"Vertical Swing",
+"muscle":"Hamstrings",
+"equipment":"Dumbbell"
+},
+{
+"name":"Walking, Treadmill",
+"muscle":"Quadriceps",
+"equipment":"Machine"
+},
+{
+"name":"Weighted Ball Hyperextension",
+"muscle":"Lower Back",
+"equipment":"Exercise Ball"
+},
+{
+"name":"Weighted Ball Side Bend",
+"muscle":"Abdominals",
+"equipment":"Exercise Ball"
+},
+{
+"name":"Weighted Bench Dip",
+"muscle":"Triceps",
+"equipment":"Other"
+},
+{
+"name":"Weighted Crunches",
+"muscle":"Abdominals",
+"equipment":"Medicine Ball"
+},
+{
+"name":"Weighted Jump Squat",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Weighted Pull Ups",
+"muscle":"Lats",
+"equipment":"Other"
+},
+{
+"name":"Weighted Sissy Squat",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Weighted Sit-Ups - With Bands",
+"muscle":"Abdominals",
+"equipment":"Other"
+},
+{
+"name":"Weighted Squat",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Wide Stance Barbell Squat",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Wide Stance Stiff Legs",
+"muscle":"Hamstrings",
+"equipment":"Barbell"
+},
+{
+"name":"Wide-Grip Barbell Bench Press",
+"muscle":"Chest",
+"equipment":"Barbell"
+},
+{
+"name":"Wide-Grip Decline Barbell Bench Press",
+"muscle":"Chest",
+"equipment":"Barbell"
+},
+{
+"name":"Wide-Grip Decline Barbell Pullover",
+"muscle":"Chest",
+"equipment":"Barbell"
+},
+{
+"name":"Wide-Grip Lat Pulldown",
+"muscle":"Lats",
+"equipment":"Cable"
+},
+{
+"name":"Wide-Grip Pulldown Behind The Neck",
+"muscle":"Lats",
+"equipment":"Cable"
+},
+{
+"name":"Wide-Grip Rear Pull-Up",
+"muscle":"Lats",
+"equipment":"Bodyweight"
+},
+{
+"name":"Wide-Grip Standing Barbell Curl",
+"muscle":"Biceps",
+"equipment":"Barbell"
+},
+{
+"name":"Wind Sprints",
+"muscle":"Abdominals",
+"equipment":"Bodyweight"
+},
+{
+"name":"Windmills",
+"muscle":"Abductors",
+"equipment":"Other"
+},
+{
+"name":"World's Greatest Stretch",
+"muscle":"Hamstrings",
+"equipment":"Other"
+},
+{
+"name":"Wrist Circles",
+"muscle":"Forearms",
+"equipment":"Bodyweight"
+},
+{
+"name":"Wrist Roller",
+"muscle":"Forearms",
+"equipment":"Other"
+},
+{
+"name":"Wrist Rotations with Straight Bar",
+"muscle":"Forearms",
+"equipment":"Barbell"
+},
+{
+"name":"Yoke Walk",
+"muscle":"Quadriceps",
+"equipment":"Other"
+},
+{
+"name":"Zercher Squats",
+"muscle":"Quadriceps",
+"equipment":"Barbell"
+},
+{
+"name":"Zottman Curl",
+"muscle":"Biceps",
+"equipment":"Dumbbell"
+},
+{
+"name":"Zottman Preacher Curl",
+"muscle":"Biceps",
+"equipment":"Dumbbell"
+}
+]

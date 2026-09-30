@@ -23,17 +23,20 @@ export default function FrequencyChart({ data }: { data: Point[] }) {
   const [chartData, setChartData] = useState<ChartPoint[] | null>(null)
 
   useEffect(() => {
-    setChartData(
-      data.map((p) => ({
-        ...p,
-        label: p.is_current_week
-          ? 'This wk'
-          : new Date(p.week_start_iso).toLocaleDateString(undefined, {
-              month: 'numeric',
-              day: 'numeric',
-            }),
-      }))
-    )
+    function sync() {
+      setChartData(
+        data.map((p) => ({
+          ...p,
+          label: p.is_current_week
+            ? 'This wk'
+            : new Date(p.week_start_iso).toLocaleDateString(undefined, {
+                month: 'numeric',
+                day: 'numeric',
+              }),
+        }))
+      )
+    }
+    sync()
   }, [data])
 
   if (!chartData) {

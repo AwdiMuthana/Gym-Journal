@@ -10,6 +10,7 @@ import FrequencyChart from './frequency-chart'
 import ProgressChart from './progress-chart'
 import ExercisePicker from './exercise-picker'
 import LocalDateTime from '../local-date-time'
+import { Weight } from '../weight'
 
 export default async function StatsPage({
   searchParams,
@@ -115,7 +116,7 @@ export default async function StatsPage({
                   </p>
                 </div>
                 <p className="ml-3 text-sm font-black tabular-nums text-accent">
-                  {pr.best_weight} × {pr.best_reps}
+                  <Weight lbs={pr.best_weight} /> × {pr.best_reps}
                 </p>
               </div>
             ))}

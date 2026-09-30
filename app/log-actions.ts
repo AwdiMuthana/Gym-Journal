@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { getLastSetsForExerciseName } from '@/lib/db'
+import { displayToLbs, type UnitSystem } from '@/lib/units'
 
 async function requireUser() {
   const supabase = await createClient()
@@ -85,13 +86,14 @@ export async function finishSession(formData: FormData) {
 export async function updateSetLog(formData: FormData) {
   const setLogId = formData.get('setLogId') as string
   const sessionId = formData.get('sessionId') as string
-  const weightRaw = (formData.get('weight') as string)?.trim() ?? ''
+  const weightRaw = (formData.get('weightDisplay') as string)?.trim() ?? ''
+  const weightUnit = ((formData.get('weightUnit') as string) === 'kg' ? 'kg' : 'lbs') as UnitSystem
   const repsRaw = (formData.get('reps') as string)?.trim() ?? ''
   const notes = ((formData.get('notes') as string) ?? '').trim()
 
   if (!setLogId || !sessionId) return
 
-  const weight = weightRaw === '' ? null : parseFloat(weightRaw)
+  const weight = weightRaw === '' ? null : Math.round(displayToLbs(parseFloat(weightRaw), weightUnit) * 100) / 100
   const reps = repsRaw === '' ? null : parseInt(repsRaw)
 
   const { supabase } = await requireUser()

@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { getDayWithExercises, getLastSetsForExercise } from '@/lib/db'
+import { getDayWithExercises, getLastSetsForExercise, getLoggedExercises } from '@/lib/db'
 import SessionForm from './session-form'
 
 export default async function LogSessionPage({
@@ -12,12 +12,15 @@ export default async function LogSessionPage({
   if (!day) notFound()
 
   // For each exercise, fetch last set log
-  const exercisesWithLast = await Promise.all(
-    day.exercises.map(async (ex) => ({
-      exercise: ex,
-      last: await getLastSetsForExercise(ex.id),
-    }))
-  )
+  const [exercisesWithLast, recentExercises] = await Promise.all([
+    Promise.all(
+      day.exercises.map(async (ex) => ({
+        exercise: ex,
+        last: await getLastSetsForExercise(ex.id),
+      }))
+    ),
+    getLoggedExercises(),
+  ])
 
-  return <SessionForm day={day} exercisesWithLast={exercisesWithLast} />
+  return <SessionForm day={day} exercisesWithLast={exercisesWithLast} recentExercises={recentExercises} />
 }

@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import {
   LineChart,
   Line,
@@ -10,6 +11,14 @@ import {
   CartesianGrid,
   Legend,
 } from 'recharts'
+import {
+  UNITS_STORAGE_KEY,
+  readStoredUnits,
+  toDisplayNumber,
+  unitLabel,
+  volumeToDisplayNumber,
+  type UnitSystem,
+} from '@/lib/units'
 
 type Point = {
   date: string
@@ -19,7 +28,38 @@ type Point = {
   volume: number
 }
 
+type ChartPoint = {
+  performed_at_label: string
+  top_weight: number | null
+  est_1rm: number | null
+  volume: number
+}
+
 export default function ProgressChart({ data }: { data: Point[] }) {
+  const [unit, setUnit] = useState<UnitSystem>('lbs')
+  const [chartData, setChartData] = useState<ChartPoint[] | null>(null)
+
+  useEffect(() => {
+    function sync() {
+      const u = readStoredUnits()
+      setUnit(u)
+      setChartData(
+        data.map((p) => ({
+          performed_at_label: p.performed_at_label,
+          top_weight: p.top_weight === null ? null : toDisplayNumber(p.top_weight, u),
+          est_1rm: p.est_1rm === null ? null : toDisplayNumber(p.est_1rm, u),
+          volume: volumeToDisplayNumber(p.volume, u),
+        }))
+      )
+    }
+    sync()
+    function onStorage(e: StorageEvent) {
+      if (e.key === UNITS_STORAGE_KEY) sync()
+    }
+    window.addEventListener('storage', onStorage)
+    return () => window.removeEventListener('storage', onStorage)
+  }, [data])
+
   if (data.length === 0) {
     return (
       <div className="py-8 text-center text-sm text-neutral-500">
@@ -28,11 +68,15 @@ export default function ProgressChart({ data }: { data: Point[] }) {
     )
   }
 
+  if (!chartData) {
+    return <div style={{ width: '100%', height: 220 }} />
+  }
+
   return (
     <div style={{ width: '100%', height: 220 }}>
       <ResponsiveContainer>
         <LineChart
-          data={data}
+          data={chartData}
           margin={{ top: 8, right: 10, left: -20, bottom: 0 }}
         >
           <CartesianGrid strokeDasharray="2 3" stroke="#444141" vertical={false} />
@@ -74,7 +118,7 @@ export default function ProgressChart({ data }: { data: Point[] }) {
             yAxisId="weight"
             type="monotone"
             dataKey="top_weight"
-            name="Top weight"
+            name={`Top weight (${unitLabel(unit)})`}
             stroke="#ec3013"
             strokeWidth={2}
             dot={{ r: 3, fill: '#ec3013' }}
@@ -84,7 +128,7 @@ export default function ProgressChart({ data }: { data: Point[] }) {
             yAxisId="weight"
             type="monotone"
             dataKey="est_1rm"
-            name="Est. 1RM"
+            name={`Est. 1RM (${unitLabel(unit)})`}
             stroke="#f3f2f2"
             strokeWidth={2}
             strokeDasharray="4 4"
@@ -94,7 +138,7 @@ export default function ProgressChart({ data }: { data: Point[] }) {
             yAxisId="volume"
             type="monotone"
             dataKey="volume"
-            name="Volume"
+            name={`Volume (${unitLabel(unit)})`}
             stroke="#9b9797"
             strokeWidth={1.5}
             strokeDasharray="2 2"
