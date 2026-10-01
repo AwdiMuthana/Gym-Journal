@@ -24,7 +24,9 @@ export default async function Header() {
   const { data: { user } } = await supabase.auth.getUser()
 
   return (
-    <header className="border-b-2 border-neutral-700 bg-ink">
+    // Pinned with a solid fill (and padded under the status bar) so the logo and
+    // settings stay sharp and reachable while content scrolls beneath it.
+    <header className="sticky top-0 z-30 border-b-2 border-neutral-700 bg-ink pt-[env(safe-area-inset-top)]">
       <div className="mx-auto flex max-w-[1180px] items-center justify-between gap-3 px-[18px] pt-4 pb-3.5 md:px-7 md:py-4">
         <Link href="/log" className="flex items-center gap-[9px] md:gap-3">
           <span className="md:hidden"><LogoMark size="sm" /></span>
