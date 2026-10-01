@@ -55,7 +55,7 @@ export default async function StatsPage({
 
         {records.length > 0 && (
           <div className="mt-5 border-t-2 border-neutral-700 pt-3 md:mt-[18px] md:border-t-0 md:pt-0">
-            <RecordsList records={records} />
+            <RecordsList records={records} collapseAfter={3} />
           </div>
         )}
       </div>

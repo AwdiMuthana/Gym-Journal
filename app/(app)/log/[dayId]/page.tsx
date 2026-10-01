@@ -22,5 +22,9 @@ export default async function LogSessionPage({
     getLoggedExercises(),
   ])
 
-  return <SessionForm day={day} exercisesWithLast={exercisesWithLast} recentExercises={recentExercises} />
+  return (
+    <div className="mx-auto max-w-2xl">
+      <SessionForm day={day} exercisesWithLast={exercisesWithLast} recentExercises={recentExercises} />
+    </div>
+  )
 }
