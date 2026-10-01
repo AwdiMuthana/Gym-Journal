@@ -1,15 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import type { Plan, Day, Exercise, PlanWithDays, DayWithExercises } from './types'
-
-export async function getPlans(): Promise<Plan[]> {
-  const supabase = await createClient()
-  const { data, error } = await supabase
-    .from('plans')
-    .select('*')
-    .order('created_at', { ascending: false })
-  if (error) throw error
-  return data ?? []
-}
+import type { PlanWithDays, DayWithExercises } from './types'
 
 export async function getPlanWithDays(planId: string): Promise<PlanWithDays | null> {
   const supabase = await createClient()
@@ -64,19 +54,6 @@ export async function getDayWithExercises(dayId: string): Promise<DayWithExercis
   return { ...day, exercises: exercises ?? [] }
 }
 
-export async function getAllDaysForUser(): Promise<(Day & { plan_name: string })[]> {
-  const supabase = await createClient()
-  const { data, error } = await supabase
-    .from('days')
-    .select('*, plans(name)')
-    .order('position', { ascending: true })
-  if (error) throw error
-  return (data ?? []).map((row: Day & { plans: { name: string } | null }) => ({
-    ...row,
-    plan_name: row.plans?.name ?? '',
-  }))
-}
-
 export async function getLastSetsForExercise(exerciseId: string): Promise<{
   performed_at: string
   sets: { weight: number | null; reps: number | null; notes: string | null }[]
@@ -106,27 +83,6 @@ export async function getLastSetsForExercise(exerciseId: string): Promise<{
     sets: rowsForSession.map((r) => ({ weight: r.weight, reps: r.reps, notes: r.notes })),
   }
 }
-export async function getPlansWithSessions(): Promise<{ id: string; name: string; days: Day[] }[]> {
-  const supabase = await createClient()
-  const { data: plans, error: plansErr } = await supabase
-    .from('plans')
-    .select('*')
-    .order('created_at', { ascending: true })
-  if (plansErr) throw plansErr
-
-  const { data: days, error: daysErr } = await supabase
-    .from('days')
-    .select('*')
-    .order('position', { ascending: true })
-  if (daysErr) throw daysErr
-
-  return (plans ?? []).map((plan) => ({
-    id: plan.id,
-    name: plan.name,
-    days: (days ?? []).filter((d) => d.plan_id === plan.id),
-  }))
-}
-
 export type SessionListItem = {
   id: string
   performed_at: string
@@ -242,115 +198,6 @@ export async function getSessionDetail(sessionId: string): Promise<SessionDetail
   }
 }
 
-// ---------------------- Analytics queries ----------------------
-
-export type OverviewStats = {
-  total_workouts: number
-  total_sets: number
-  current_streak_weeks: number
-}
-
-export async function getOverviewStats(): Promise<OverviewStats> {
-  const supabase = await createClient()
-
-  // Count workouts
-  const { count: workoutCount } = await supabase
-    .from('sessions')
-    .select('id', { count: 'exact', head: true })
-
-  // Count sets
-  const { count: setCount } = await supabase
-    .from('set_logs')
-    .select('id', { count: 'exact', head: true })
-
-  // Get session dates for streak calculation
-  const { data: sessions } = await supabase
-    .from('sessions')
-    .select('performed_at')
-    .order('performed_at', { ascending: false })
-
-  // Calculate current streak (consecutive weeks with at least one workout)
-  let streak = 0
-  if (sessions && sessions.length > 0) {
-    const weeks = new Set<string>()
-    for (const s of sessions) {
-      const d = new Date(s.performed_at)
-      // ISO week key: year-week
-      const year = d.getFullYear()
-      const startOfYear = new Date(year, 0, 1)
-      const dayOfYear = Math.floor(
-        (d.getTime() - startOfYear.getTime()) / 86400000
-      )
-      const week = Math.ceil((dayOfYear + startOfYear.getDay() + 1) / 7)
-      weeks.add(`${year}-${week}`)
-    }
-    // Walk backwards from this week
-    const today = new Date()
-    const startOfYear = new Date(today.getFullYear(), 0, 1)
-    const dayOfYear = Math.floor(
-      (today.getTime() - startOfYear.getTime()) / 86400000
-    )
-    let curYear = today.getFullYear()
-    let curWeek = Math.ceil((dayOfYear + startOfYear.getDay() + 1) / 7)
-    while (weeks.has(`${curYear}-${curWeek}`)) {
-      streak++
-      curWeek--
-      if (curWeek < 1) {
-        curYear--
-        curWeek = 52
-      }
-    }
-  }
-
-  return {
-    total_workouts: workoutCount ?? 0,
-    total_sets: setCount ?? 0,
-    current_streak_weeks: streak,
-  }
-}
-
-export type WeeklyFrequencyPoint = {
-  week_start_iso: string
-  is_current_week: boolean
-  workout_count: number
-}
-
-export async function getWeeklyFrequency(weeks = 8): Promise<WeeklyFrequencyPoint[]> {
-  const supabase = await createClient()
-  const cutoff = new Date()
-  cutoff.setDate(cutoff.getDate() - weeks * 7)
-
-  const { data, error } = await supabase
-    .from('sessions')
-    .select('performed_at')
-    .gte('performed_at', cutoff.toISOString())
-    .order('performed_at', { ascending: true })
-  if (error) throw error
-
-  const buckets: WeeklyFrequencyPoint[] = []
-  for (let i = weeks - 1; i >= 0; i--) {
-    const weekStart = new Date()
-    weekStart.setDate(weekStart.getDate() - i * 7)
-    buckets.push({
-      week_start_iso: weekStart.toISOString(),
-      is_current_week: i === 0,
-      workout_count: 0,
-    })
-  }
-
-  for (const s of data ?? []) {
-    const d = new Date(s.performed_at)
-    const now = new Date()
-    const diffDays = Math.floor((now.getTime() - d.getTime()) / 86400000)
-    const weeksAgo = Math.floor(diffDays / 7)
-    const idx = weeks - 1 - weeksAgo
-    if (idx >= 0 && idx < buckets.length) {
-      buckets[idx].workout_count++
-    }
-  }
-
-  return buckets
-}
 export type ExerciseOption = {
   key: string
   name: string
@@ -479,58 +326,6 @@ export async function getPRs(): Promise<PRItem[]> {
   }
 
   return [...bestPerExercise.values()].sort((a, b) => b.best_weight - a.best_weight)
-}
-
-// Maps normalized exercise key -> weight delta over the prior best for exercises
-// that hit a new PR this session. Delta is null when there's no prior session to
-// compare against (first time logging that exercise), so it's still a PR but the
-// UI shouldn't show a fabricated "▲" number.
-export async function getSessionPRs(sessionId: string): Promise<Map<string, number | null>> {
-  const supabase = await createClient()
-
-  const { data: sessionRow, error: sessionErr } = await supabase
-    .from('sessions')
-    .select('performed_at')
-    .eq('id', sessionId)
-    .single()
-  if (sessionErr || !sessionRow) return new Map()
-
-  const { data, error } = await supabase
-    .from('set_logs')
-    .select('exercise_name, weight, session_id, sessions!inner(performed_at)')
-    .not('weight', 'is', null)
-  if (error || !data) return new Map()
-
-  type Row = { exercise_name: string; weight: number; session_id: string; sessions: { performed_at: string } | null }
-  const rows = data as unknown as Row[]
-
-  const thisSessionMax = new Map<string, number>()
-  const priorMax = new Map<string, number>()
-
-  for (const row of rows) {
-    if (!row.sessions) continue
-    const key = normalizeExerciseName(row.exercise_name)
-    if (!key) continue
-
-    if (row.session_id === sessionId) {
-      thisSessionMax.set(key, Math.max(thisSessionMax.get(key) ?? 0, row.weight))
-    } else if (row.sessions.performed_at < sessionRow.performed_at) {
-      priorMax.set(key, Math.max(priorMax.get(key) ?? 0, row.weight))
-    }
-  }
-
-  const prDeltas = new Map<string, number | null>()
-  for (const [key, weight] of thisSessionMax.entries()) {
-    if (!priorMax.has(key)) {
-      prDeltas.set(key, null)
-      continue
-    }
-    const prior = priorMax.get(key)!
-    if (weight > prior) {
-      prDeltas.set(key, weight - prior)
-    }
-  }
-  return prDeltas
 }
 
 export async function getLastSetsForExerciseName(name: string): Promise<{ performed_at: string; sets: { weight: number | null; reps: number | null; notes: string | null }[] } | null> {

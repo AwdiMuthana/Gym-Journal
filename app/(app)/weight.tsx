@@ -8,6 +8,7 @@ import {
   formatWeight,
   readStoredUnits,
   unitLabel,
+  volumeToDisplayNumber,
   type UnitSystem,
 } from '@/lib/units'
 
@@ -49,11 +50,13 @@ export function Weight({
 }
 
 // Read-only display of an aggregate (e.g. session volume) stored in lb.
-export function Volume({ lbs, suffix = true }: { lbs: number; suffix?: boolean }) {
+// `compact` abbreviates thousands (18.9k) for dense list rows.
+export function Volume({ lbs, suffix = true, compact = false }: { lbs: number; suffix?: boolean; compact?: boolean }) {
   const unit = useUnits()
+  const value = volumeToDisplayNumber(lbs, unit)
   return (
     <>
-      {formatVolume(lbs, unit)}
+      {compact && value >= 1000 ? `${(value / 1000).toFixed(1)}k` : formatVolume(lbs, unit)}
       {suffix ? ` ${unitLabel(unit)}` : ''}
     </>
   )

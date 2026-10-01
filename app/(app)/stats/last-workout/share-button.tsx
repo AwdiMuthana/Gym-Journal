@@ -64,7 +64,7 @@ export default function ShareButton({
     <button
       type="button"
       onClick={handleClick}
-      className="w-full border-2 border-neutral-700 px-3 py-4 text-sm font-black uppercase tracking-wide text-bg hover:border-accent hover:text-accent"
+      className="border-r-2 border-neutral-700 px-4 pt-5 pb-[max(32px,env(safe-area-inset-bottom))] text-left text-[13px] font-extrabold tracking-[0.06em] text-bg uppercase hover:bg-bg/[0.07] active:bg-bg/[0.14] md:pb-5"
     >
       {mode === 'copy' && copied ? 'Copied' : 'Share'}
     </button>
