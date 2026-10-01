@@ -10,21 +10,16 @@ const TABS = [
   { href: '/stats', label: 'Stats', short: 'Stats' },
 ]
 
-// An active workout (/log/<dayId>) lays itself out edge to edge.
-export function isSessionRoute(pathname: string) {
-  return pathname.startsWith('/log/')
-}
-
-// The workout and its summary own the whole screen: no header, no tabs.
+// The post-workout summary owns the whole screen: no header, no tabs.
 function isFullscreenRoute(pathname: string) {
-  return isSessionRoute(pathname) || pathname === '/stats/last-workout'
+  return pathname === '/stats/last-workout'
 }
 
 function isActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(href + '/')
 }
 
-export function HideOnSession({ children }: { children: React.ReactNode }) {
+export function HideOnFullscreen({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   if (isFullscreenRoute(pathname)) return null
   return <>{children}</>
@@ -44,7 +39,7 @@ export default function Tabs() {
             key={tab.href}
             href={tab.href}
             aria-current={active ? 'page' : undefined}
-            className={`px-3 pt-3.5 pb-[max(26px,env(safe-area-inset-bottom))] text-[11px] font-extrabold uppercase tracking-[0.1em] ${
+            className={`flex min-h-[76px] items-start px-3 pt-[22px] pb-[max(30px,env(safe-area-inset-bottom))] text-[13px] font-extrabold uppercase tracking-[0.1em] ${
               i !== TABS.length - 1 ? 'border-r-2 border-neutral-700' : ''
             } ${active ? 'bg-bg text-ink' : 'text-neutral-500 hover:text-bg'}`}
           >
@@ -79,14 +74,11 @@ export function DesktopNav() {
 }
 
 // Screens get the 18px (mobile) / 28px (desktop) gutter and clear the pinned
-// tab bar. The session screen lays itself out edge to edge.
+// tab bar.
 export function AppMain({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  if (isSessionRoute(pathname)) {
-    return <main className="mx-auto w-full max-w-[1180px]">{children}</main>
-  }
   return (
-    <main key={pathname} className="screen-in mx-auto w-full max-w-[1180px] px-[18px] pt-6 pb-32 md:px-7 md:pb-12">
+    <main key={pathname} className="screen-in mx-auto w-full max-w-[1180px] px-[18px] pt-6 pb-36 md:px-7 md:pb-12">
       {children}
     </main>
   )

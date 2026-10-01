@@ -56,21 +56,37 @@ export function StreakBlock({ board }: { board: WeeklyBoard }) {
   )
 }
 
-export function RecordsList({ records, limit }: { records: PRItem[]; limit?: number }) {
+// Shows the top `collapseAfter` records; the rest sit behind "Show all".
+export function RecordsList({ records, limit, collapseAfter }: { records: PRItem[]; limit?: number; collapseAfter?: number }) {
   if (records.length === 0) return null
   const latest = records.reduce((a, b) => (b.performed_at > a.performed_at ? b : a))
   const shown = limit ? records.slice(0, limit) : records
+  const visible = collapseAfter ? shown.slice(0, collapseAfter) : shown
+  const hidden = collapseAfter ? shown.slice(collapseAfter) : []
+
+  const row = (r: PRItem) => (
+    <div key={r.key} className="flex items-baseline justify-between gap-3 border-b border-neutral-800 py-3">
+      <span className="min-w-0 truncate text-base font-extrabold uppercase">{r.exercise_name}</span>
+      <span className={`num shrink-0 text-xl font-black ${r.key === latest.key ? 'text-accent' : ''}`}>
+        <Weight lbs={r.best_weight} suffix={false} /> × {r.best_reps}
+      </span>
+    </div>
+  )
+
   return (
     <div>
       <div className="k text-neutral-500">Records</div>
-      {shown.map((r) => (
-        <div key={r.key} className="flex items-baseline justify-between gap-3 border-b border-neutral-800 py-3">
-          <span className="min-w-0 truncate text-base font-extrabold uppercase">{r.exercise_name}</span>
-          <span className={`num shrink-0 text-xl font-black ${r.key === latest.key ? 'text-accent' : ''}`}>
-            <Weight lbs={r.best_weight} suffix={false} /> × {r.best_reps}
-          </span>
-        </div>
-      ))}
+      {visible.map(row)}
+      {hidden.length > 0 && (
+        <details className="group">
+          <summary className="btn-outline mt-3 flex cursor-pointer list-none items-center justify-between px-3.5 py-3 text-xs font-extrabold tracking-[0.06em] text-bg uppercase [&::-webkit-details-marker]:hidden">
+            <span className="group-open:hidden">Show all {shown.length} records</span>
+            <span className="hidden group-open:inline">Show less</span>
+            <span aria-hidden="true" className="group-open:rotate-180">▾</span>
+          </summary>
+          <div className="mt-1">{hidden.map(row)}</div>
+        </details>
+      )}
     </div>
   )
 }
