@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { signOut } from '@/app/actions'
 import {
   ACCENT_PRESETS,
   ACCENT_STORAGE_KEY,
@@ -128,6 +129,14 @@ export default function SettingsPage() {
           Changes how weights are shown and entered. Your data stays stored in pounds either way.
         </p>
       </div>
+      <form action={signOut} className="md:hidden">
+        <button
+          type="submit"
+          className="btn-outline w-full px-4 py-3 text-left text-xs font-extrabold tracking-[0.06em] text-bg uppercase"
+        >
+          Sign out
+        </button>
+      </form>
     </div>
   )
 }

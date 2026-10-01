@@ -1,22 +1,18 @@
 import Link from 'next/link'
-import {
-  getMostRecentSessionId,
-  getSessionDetail,
-  getSessionPRs,
-  normalizeExerciseName,
-} from '@/lib/db'
-import LocalDateTime from '../../local-date-time'
+import { getMostRecentSessionId, getSessionDetail, normalizeExerciseName } from '@/lib/db'
+import { getSessionTotals } from '@/lib/board'
 import { Weight, Volume } from '../../weight'
 import ClearSessionStorage from './clear-storage'
 import ShareButton from './share-button'
 
+// Scattered across the top ~300px; they drop in once, only when there are PRs.
 const CONFETTI_PIECES = [
-  { left: '8%', size: 10, color: 'var(--color-accent)', delay: '0s' },
-  { left: '22%', size: 8, color: 'var(--color-bg)', delay: '0.15s' },
-  { left: '48%', size: 12, color: 'var(--color-accent)', delay: '0.3s' },
-  { left: '64%', size: 8, color: 'var(--color-bg)', delay: '0.1s' },
-  { left: '78%', size: 10, color: 'var(--color-accent)', delay: '0.4s' },
-  { left: '90%', size: 9, color: 'var(--color-bg)', delay: '0.25s' },
+  { left: '9%', top: 150, size: 10, accent: true, rot: 20, delay: 0 },
+  { left: '33%', top: 104, size: 8, accent: false, rot: 45, delay: 80 },
+  { left: '67%', top: 164, size: 12, accent: true, rot: -15, delay: 160 },
+  { left: '86%', top: 118, size: 8, accent: false, rot: 0, delay: 40 },
+  { left: '18%', top: 250, size: 8, accent: true, rot: 30, delay: 220 },
+  { left: '79%', top: 262, size: 10, accent: false, rot: 12, delay: 120 },
 ]
 
 export default async function LastWorkoutPage({
@@ -30,43 +26,26 @@ export default async function LastWorkoutPage({
   if (!sessionId) {
     return (
       <div className="space-y-4">
-        <Link href="/stats" className="text-sm font-extrabold uppercase tracking-wide text-neutral-500 hover:text-accent">
-          ← Stats
+        <div className="k text-neutral-500">Session complete</div>
+        <p className="text-[15px] leading-[1.5] font-medium text-neutral-500">No workouts logged yet.</p>
+        <Link href="/log" className="btn-primary block px-[18px] py-[22px] text-left text-lg font-black uppercase">
+          Go to Log →
         </Link>
-        <div className="border-2 border-neutral-700 py-12 text-center">
-          <p className="text-neutral-400">No workouts logged yet.</p>
-          <p className="mt-1 mb-4 text-[11px] font-extrabold uppercase tracking-wide text-neutral-500">
-            Log one from the Log tab and it&apos;ll show up here.
-          </p>
-          <Link
-            href="/log"
-            className="inline-block bg-accent px-4 py-2 text-sm font-black uppercase tracking-wide text-bg"
-          >
-            Go to Log
-          </Link>
-        </div>
       </div>
     )
   }
 
-  const [session, prDeltas] = await Promise.all([
-    getSessionDetail(sessionId),
-    getSessionPRs(sessionId),
-  ])
+  const [session, totals] = await Promise.all([getSessionDetail(sessionId), getSessionTotals()])
 
   if (!session) {
     return (
-      <div className="space-y-4">
-        <Link href="/stats" className="text-sm font-extrabold uppercase tracking-wide text-neutral-500 hover:text-accent">
-          ← Stats
-        </Link>
-        <div className="border-2 border-neutral-700 py-12 text-center text-neutral-400">
-          Couldn&apos;t load your last workout.
-        </div>
+      <div className="border-2 border-accent p-4 text-bg">
+        Couldn&apos;t load your last workout.
       </div>
     )
   }
 
+  const prDeltas = totals.get(session.id)?.prs ?? new Map<string, number>()
   const totalSets = session.exercises.reduce((sum, ex) => sum + ex.sets.length, 0)
   const totalVolume = session.exercises.reduce(
     (sum, ex) => sum + ex.sets.reduce((s, set) => s + (set.weight ?? 0) * (set.reps ?? 0), 0),
@@ -76,98 +55,91 @@ export default async function LastWorkoutPage({
   const minutesRaw = sp.minutes ? parseInt(sp.minutes, 10) : NaN
   const minutes = Number.isFinite(minutesRaw) ? minutesRaw : null
 
-  const stats: { label: string; value: React.ReactNode }[] = []
-  if (minutes !== null) stats.push({ label: 'Minutes', value: String(minutes) })
-  stats.push({ label: 'Sets', value: String(totalSets) })
-  stats.push({ label: 'Volume', value: <Volume lbs={totalVolume} /> })
+  // Best set = heaviest, ties broken by reps.
+  const rows = session.exercises.map((ex) => {
+    const best = ex.sets.reduce<(typeof ex.sets)[number] | null>((b, s) => {
+      if (!b) return s
+      const bw = b.weight ?? 0
+      const sw = s.weight ?? 0
+      return sw > bw || (sw === bw && (s.reps ?? 0) > (b.reps ?? 0)) ? s : b
+    }, null)
+    const key = normalizeExerciseName(ex.exercise_name)
+    return { ex, best, delta: prDeltas.get(key) ?? null }
+  })
+  const prRows = rows.filter((r) => r.delta !== null)
+  const held = rows.filter((r) => r.delta === null)
 
   return (
-    <div className="space-y-4">
+    <div className="relative">
       <ClearSessionStorage dayId={sp.dayId} />
 
-      <div className="relative overflow-hidden border-2 border-neutral-700 p-5">
-        {prCount > 0 && (
-          <div className="pointer-events-none absolute inset-0 overflow-hidden">
-            {CONFETTI_PIECES.map((c, i) => (
-              <i
-                key={i}
-                className="confetti-piece"
-                style={{
-                  left: c.left,
-                  width: c.size,
-                  height: c.size,
-                  background: c.color,
-                  animationDelay: c.delay,
-                }}
-              />
-            ))}
-          </div>
-        )}
-        <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-accent">Session complete</p>
-        <h2 className="mt-2 text-5xl font-black uppercase leading-[0.85] tracking-tight">
+      {prCount > 0 && (
+        <div className="pointer-events-none absolute inset-x-0 -top-6 h-[300px] overflow-hidden" aria-hidden="true">
+          {CONFETTI_PIECES.map((c, i) => (
+            <i
+              key={i}
+              className={`confetti-piece block ${c.accent ? 'bg-accent' : 'bg-bg'}`}
+              style={{
+                left: c.left,
+                top: c.top - 60,
+                width: c.size,
+                height: c.size,
+                animationDelay: `${c.delay}ms`,
+                ['--confetti-rot' as string]: `${c.rot}deg`,
+              }}
+            />
+          ))}
+        </div>
+      )}
+
+      <div className="pt-2.5 md:max-w-[640px] md:pt-10">
+        <div className="k text-accent">Session complete</div>
+        <h2 className="mt-3 text-[78px] leading-[0.84] font-black tracking-[-0.05em] break-words uppercase">
           {session.day_name ?? 'Workout'}
           <br />
           done.
         </h2>
-        <p className="mt-3 text-[11px] font-extrabold uppercase tracking-wide text-neutral-500">
-          <LocalDateTime iso={session.performed_at} variant="full" />
-          {session.plan_name && <> · {session.plan_name}</>}
-        </p>
-      </div>
-
-      <div className={`grid gap-2 ${stats.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
-        {stats.map((s) => (
-          <div key={s.label} className="border-2 border-neutral-700 px-3 py-3 text-center">
-            <p className="text-3xl font-black tabular-nums">{s.value}</p>
-            <p className="mt-1 text-[10px] font-extrabold uppercase tracking-[0.14em] text-neutral-500">{s.label}</p>
-          </div>
-        ))}
-      </div>
-
-      {prCount > 0 && (
-        <div className="bg-accent px-4 py-3 text-bg">
-          <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] opacity-80">New personal records</p>
-          <p className="mt-1 text-3xl font-black uppercase tracking-tight">
-            {prCount} PR{prCount === 1 ? '' : 's'}
-          </p>
+        <div className="k num mt-4 text-neutral-500">
+          {minutes !== null && <>{minutes} minute{minutes === 1 ? '' : 's'} · </>}
+          {totalSets} set{totalSets === 1 ? '' : 's'} · <Volume lbs={totalVolume} /> moved
         </div>
-      )}
 
-      <div className="divide-y-2 divide-neutral-800 border-2 border-neutral-700">
-        {session.exercises.map((ex) => {
-          const key = normalizeExerciseName(ex.exercise_name)
-          const isPR = prDeltas.has(key)
-          const delta = prDeltas.get(key)
-
-          return (
-            <div key={ex.exercise_id ?? ex.exercise_name} className="p-3">
-              <div className="flex items-center justify-between gap-2">
-                <p className="font-bold uppercase tracking-tight">{ex.exercise_name}</p>
-                {isPR && (
-                  <span className="shrink-0 bg-accent px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-bg">
-                    {delta ? <>▲<Weight lbs={delta} /> PR</> : 'PR'}
-                  </span>
-                )}
-              </div>
-              <div className="mt-1 space-y-1">
-                {ex.sets.map((s) => (
-                  <div key={s.id} className="text-sm text-neutral-300">
-                    <span className="mr-3 text-[10px] font-extrabold uppercase tracking-wide text-neutral-500">
-                      Set {s.set_number}
-                    </span>
-                    <span className="font-bold tabular-nums">
-                      <Weight lbs={s.weight} /> × {s.reps ?? '–'}
-                    </span>
-                    {s.notes && <span className="ml-2 text-xs text-neutral-500">— {s.notes}</span>}
-                  </div>
-                ))}
-              </div>
+        {prCount > 0 && (
+          <div className="mt-6 bg-accent px-[18px] py-4 text-bg">
+            <div className="k opacity-80">New personal records</div>
+            <div className="mt-2 text-[40px] leading-none font-black tracking-[-0.04em] uppercase">
+              {prCount} PR{prCount === 1 ? '' : 's'}
             </div>
-          )
-        })}
+          </div>
+        )}
+
+        <div className="mt-[18px] border-t-2 border-neutral-700">
+          {prRows.map(({ ex, best, delta }) => (
+            <div key={ex.exercise_id ?? ex.exercise_name} className="flex items-baseline justify-between gap-3 border-b border-neutral-800 py-[13px]">
+              <span className="min-w-0 truncate text-base font-extrabold uppercase">{ex.exercise_name}</span>
+              <span className="num shrink-0 text-lg font-black">
+                <Weight lbs={best?.weight ?? null} suffix={false} /> × {best?.reps ?? '–'}{' '}
+                <span className="text-accent">
+                  ▲<Weight lbs={delta} suffix={false} />
+                </span>
+              </span>
+            </div>
+          ))}
+          {held.length > 0 && (
+            <div className="flex items-baseline justify-between gap-3 border-b-2 border-neutral-700 py-[13px] text-neutral-500">
+              <span className="min-w-0 text-sm font-medium">{held.map((r) => r.ex.exercise_name).join(' · ')}</span>
+              <span className="shrink-0 text-sm font-semibold">held</span>
+            </div>
+          )}
+        </div>
+
+        <Link href={`/history/${session.id}`} className="k mt-4 inline-block text-neutral-500 hover:text-bg">
+          View or edit sets →
+        </Link>
       </div>
 
-      <div className="grid grid-cols-2 gap-2">
+      {/* Pinned to the bottom on mobile, inline on desktop. */}
+      <div className="fixed inset-x-0 bottom-0 z-20 grid grid-cols-[1fr_1.2fr] border-t-2 border-neutral-700 bg-ink md:static md:mt-8 md:max-w-[640px] md:border-2">
         <ShareButton
           title="Gym Journal"
           dayName={session.day_name ?? 'Workout'}
@@ -175,19 +147,10 @@ export default async function LastWorkoutPage({
           totalVolumeLbs={totalVolume}
           prCount={prCount}
         />
-        <Link
-          href="/log"
-          className="flex items-center justify-center bg-accent px-3 py-4 text-center text-sm font-black uppercase tracking-wide text-bg"
-        >
+        <Link href="/log" className="btn-primary col-start-2 px-4 pt-5 pb-[max(32px,env(safe-area-inset-bottom))] text-left md:pb-5 text-[13px] font-extrabold tracking-[0.06em] uppercase">
           Done →
         </Link>
       </div>
-      <Link
-        href={`/history/${session.id}`}
-        className="block w-full border-2 border-neutral-700 px-4 py-2.5 text-center text-sm font-extrabold uppercase tracking-wide text-bg hover:border-accent hover:text-accent"
-      >
-        View or edit in History
-      </Link>
     </div>
   )
 }

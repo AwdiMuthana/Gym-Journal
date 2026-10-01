@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Header from '../header'
-import Tabs from '../tabs'
+import Tabs, { AppMain, HideOnSession } from '../tabs'
 
 export default async function AppLayout({
   children,
@@ -17,9 +17,11 @@ export default async function AppLayout({
 
   return (
     <div className="min-h-screen bg-ink text-bg">
-      <Header />
+      <HideOnSession>
+        <Header />
+      </HideOnSession>
+      <AppMain>{children}</AppMain>
       <Tabs />
-      <main className="mx-auto max-w-2xl px-4 py-6">{children}</main>
     </div>
   )
 }

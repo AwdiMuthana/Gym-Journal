@@ -1,54 +1,76 @@
 import Link from 'next/link'
 import { getSessionsList } from '@/lib/db'
-import LocalDateTime from '../local-date-time'
+import { getSessionTotals } from '@/lib/board'
+import { ScreenTitle } from '../board-ui'
+import { Volume } from '../weight'
+import { DayStamp, MonthStrip, MonthYear } from './calendar'
 
 export default async function HistoryPage() {
-  const sessions = await getSessionsList()
+  const [sessions, totals] = await Promise.all([getSessionsList(), getSessionTotals()])
 
   if (sessions.length === 0) {
     return (
-      <div className="border-2 border-neutral-700 py-12 text-center">
-        <p className="text-neutral-400">No workouts logged yet.</p>
-        <p className="mt-1 mb-4 text-[11px] font-extrabold uppercase tracking-wide text-neutral-500">
-          Log a workout from the Log tab and it&apos;ll show up here.
+      <div>
+        <ScreenTitle title="History" meta="0 sessions" />
+        <p className="mt-[18px] text-[15px] leading-[1.5] font-medium text-neutral-500">
+          Nothing logged yet. Finish a workout from the Log tab and it lands here.
         </p>
-        <Link
-          href="/log"
-          className="inline-block bg-accent px-4 py-2 text-sm font-black uppercase tracking-wide text-bg"
-        >
-          Go to Log
+        <Link href="/log" className="btn-primary mt-4 block px-[18px] py-[22px] text-left text-[17px] font-black tracking-[0.02em] uppercase">
+          Go to Log →
         </Link>
       </div>
     )
   }
 
+  const oldest = sessions[sessions.length - 1]
+
   return (
-    <div className="space-y-4">
-      <h2 className="text-2xl font-black uppercase tracking-tight">History</h2>
-      <div className="divide-y-2 divide-neutral-800 border-2 border-neutral-700">
-        {sessions.map((s) => (
-          <Link
-            key={s.id}
-            href={`/history/${s.id}`}
-            className="block px-4 py-3 hover:bg-neutral-900"
-          >
-            <div className="flex items-center justify-between">
-              <div className="min-w-0 flex-1">
-                <p className="font-bold uppercase tracking-tight">{s.day_name ?? 'Workout'}</p>
-                <p className="mt-0.5 text-[11px] font-extrabold uppercase tracking-wide text-neutral-500">
-                  <LocalDateTime iso={s.performed_at} variant="relative" />
-                  {s.plan_name && <> · {s.plan_name}</>}
-                </p>
-              </div>
-              <div className="ml-3 flex items-center gap-3">
-                <span className="text-xs font-semibold tabular-nums text-neutral-500">
-                  {s.total_sets} set{s.total_sets === 1 ? '' : 's'}
-                </span>
-                <span className="text-neutral-500">›</span>
-              </div>
-            </div>
-          </Link>
-        ))}
+    <div>
+      <ScreenTitle
+        title="History"
+        meta={
+          <>
+            {sessions.length} session{sessions.length === 1 ? '' : 's'} · since <MonthYear iso={oldest.performed_at} />
+          </>
+        }
+      />
+
+      <div className="md:grid md:grid-cols-[1fr_1.4fr] md:gap-10">
+        <div className="pt-4 md:max-w-[360px]">
+          <MonthStrip dates={sessions.map((s) => s.performed_at)} />
+        </div>
+
+        <div className="mt-5 border-t-2 border-neutral-700 md:mt-4">
+          {sessions.map((s, i) => {
+            const t = totals.get(s.id)
+            const prs = t?.prs.size ?? 0
+            return (
+              <Link
+                key={s.id}
+                href={`/history/${s.id}`}
+                className={`flex gap-3.5 py-[15px] hover:bg-bg/[0.04] ${i === sessions.length - 1 ? 'border-b-2 border-neutral-700' : 'border-b border-neutral-800'}`}
+              >
+                <div className="w-11 shrink-0">
+                  <DayStamp iso={s.performed_at} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="truncate text-[21px] leading-none font-black tracking-[-0.02em] uppercase">{s.day_name ?? 'Workout'}</div>
+                  <div className="k num mt-[5px] text-neutral-500">
+                    {s.total_sets} set{s.total_sets === 1 ? '' : 's'}
+                    {t && t.volume > 0 && (
+                      <>
+                        {' · '}
+                        <Volume lbs={t.volume} compact />
+                      </>
+                    )}
+                    {s.plan_name && <> · {s.plan_name}</>}
+                  </div>
+                </div>
+                {prs > 0 && <span className="k shrink-0 self-center text-accent">{prs} PR</span>}
+              </Link>
+            )
+          })}
+        </div>
       </div>
     </div>
   )
