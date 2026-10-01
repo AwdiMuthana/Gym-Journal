@@ -70,7 +70,7 @@ export default async function LastWorkoutPage({
   const held = rows.filter((r) => r.delta === null)
 
   return (
-    <div className="relative">
+    <div className="relative pt-[env(safe-area-inset-top)]">
       <ClearSessionStorage dayId={sp.dayId} />
 
       {prCount > 0 && (
